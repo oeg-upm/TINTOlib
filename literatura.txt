@@ -1,0 +1,14 @@
+
+Técnica muy muy rudimentaria, dibuja los valores en una imagen --> https://openaccess.thecvf.com/content_CVPRW_2019/papers/Precognition/Sun_SuperTML_Two-Dimensional_Word_Embedding_for_the_Precognition_on_Structured_Tabular_CVPRW_2019_paper.pdf
+
+Técnica rudimentaria, pero interesante, lo que hace es si tiene 12 características convierte a una imagen de 12x12 en la que cada píxel es representado en una tonalidad según su valor numérico --> https://ieeexplore.ieee.org/document/9237969
+
+Técnica muy interesante --> https://paperswithcode.com/paper/converting-tabular-data-into-images-for-deep
+Deepinsight --> https://www.nature.com/articles/s41598-021-90923-y
+	El código PIP de Deepinsight --> https://github.com/nicomignoni/tab2img
+	
+Este Kaggle es interesante ya que tiene el link de dos técnicas con el código que hay que incorporar --> https://www.kaggle.com/general/199227
+Otro código sacado del ejemplo de Kaggle --> https://gist.github.com/oguiza/26020067f499d48dc52e5bcb8f5f1c57
+
+
+
