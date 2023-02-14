@@ -35,7 +35,7 @@ parser.add_argument("-px",  "--pixels", dest="pixels", default=20, help="Image's
 
 parser.add_argument("-B",  "--blurr", dest="blurr_active", action='store_true', help="Active option blurring")
 parser.add_argument("-aB",  "--amplification_blurr", dest="amplification", default=np.pi, help="Amplification in blurring", type=float)
-parser.add_argument("-dB",  "--distance_blurr", dest="distance", default=0.1, help="Distance in blurring (porcentage 0 to 1)", type=float)
+parser.add_argument("-dB",  "--distance_blurr", dest="distance", default=2, help="Distance in blurring (number of pixels)", type=int)
 parser.add_argument("-sB",  "--steps_blurr", dest="steps", default=4, help="Steps in blurring", type=int)
 parser.add_argument("-oB",  "--option_blurr", dest="option", default='mean', choices=['mean','maximum'], help="Option in blurring (mean and maximum)")
 
@@ -89,61 +89,99 @@ def m_imagen(coord,vertices,filename,pixeles=24):
           in the same position.
     """
     size = (pixeles,pixeles)
-    matriz = np.zeros(size)
+    matrix = np.zeros(size)
     
     coord_m = (coord/vertices[2,0])*(pixeles-1)
     coord_m = np.round(abs(coord_m))
     
     for i,j in zip(coord_m[:,1],coord_m[:,0]):
-        matriz[int(i),int(j)] = 1       
+        matrix[int(i),int(j)] = 1       
     
-    if(np.count_nonzero(matriz!=0)!=coord.shape[0]):
-        return coord_m, matriz, True
+    if(np.count_nonzero(matrix!=0)!=coord.shape[0]):
+        return coord_m, matrix, True
     else:
-        return coord_m, matriz, False
+        return coord_m, matrix, False
+
+def createFilter(distance=2, steps=3, amplification=np.pi):
+    """
+    In this function a filter is created since a matrix of size "2*distance*total_steps+1" 
+    is being created to act as a "filter", which covers the whole circular space of the minutiae 
+    determined by the distance and by the total number of steps. 
+    This "filter", which is a matrix, would be multiplied with a scalar, which is the intensity value. 
+    Finally, this resulting matrix is placed as a submatrix within the final matrix where the centre 
+    of the submatrix would be the position of the characteristic pixel.
+    """
+    size_filter = int(2 * distance * steps + 1)
+    center_x = distance * steps
+    center_y = distance * steps
+    print(distance,steps)
+    filter  = np.zeros([size_filter,size_filter])
+    
+    for step in reversed(range(steps)):
+        r_actual = int(distance*(step+1))   # current radius from largest to smallest
+        
+        #Function of intensity
+        intensity=min(amplification*1/(np.pi*r_actual**2),1)
+        
+        #Delimitation of the area
+        lim_inf_i = max(center_x - r_actual - 1, 0)
+        lim_sup_i = min(center_x + r_actual + 1, size_filter)
+        lim_inf_j = max(center_y - r_actual - 1, 0)
+        lim_sup_j = min(center_y + r_actual + 1, size_filter)
+        
+        #Allocation of values
+        for i in range(lim_inf_i, lim_sup_i):
+            for j in range(lim_inf_j, lim_sup_j):
+                if((center_x-i)**2 + (center_y-j)**2 <= r_actual**2):
+                    filter[i,j]=intensity
+    filter[center_x,center_y] = 1
+    return filter
 
 
-def blurring(matriz, coordinate, distance=0.1, steps=3, amplification=np.pi, option='maximum'):
+def blurringFilter(matrix, filter, values, coordinates, option):
     """
    This function is to be able to add more ordered contextual information to the image through the
    classical painting technique called blurring. This function develops the following main steps:
    - Take the coordinate matrix of the characteristic pixels.
    - Create the blurring according to the number of steps taken in a loop with the 
      following specifications:
-        - Take the current radius (from largest to smallest).
-        - Take the intensity of each step it makes
         - Delimit the blurring area according to $(x,y)$ on an upper and lower boundary.
         - Set the new intensity values in the matrix, taking into account that if there is 
           pixel overlap, the maximum or average will be taken as specified.
     """
-    x = int(coordinate[1])
-    y = int(coordinate[0])
-    core_value = matriz[x,y]
-    
-    for p in range(steps):
-        r_actual = int(matriz.shape[0]*distance*(p+1))   
-        intensity=min(amplification*core_value/(np.pi*r_actual**2),core_value)
-        
-        # Delimitation of the area
-        lim_inf_i = max(x-r_actual-1,0)
-        lim_sup_i = min(x+r_actual+1,matriz.shape[0])
-        lim_inf_j = max(y-r_actual-1,0)
-        lim_sup_j = min(y+r_actual+1,matriz.shape[1])
-        
-        for i in range(lim_inf_i, lim_sup_i):
-            for j in range(lim_inf_j, lim_sup_j):
-                if((x-i)**2 + (y-j)**2 <= r_actual**2):
-                    if(matriz[i,j]==0):
-                        matriz[i,j]=intensity
-                    elif(x!=i and y!=j): # Pixel overlapping
-                        if(option=='mean'):
-                            matriz[i,j]=(matriz[i,j]+intensity)/2 
-                        elif(option=='maximum'):
-                            matriz[i,j]=max(matriz[i,j],intensity)
-    return matriz
+    iter_values = iter(values)
+    size_matrix = matrix.shape[0]
+    size_filter = filter.shape[0]
+    matrix_extended = np.zeros([size_filter+size_matrix,size_filter+size_matrix])
+    matrix_add = np.zeros([size_filter+size_matrix,size_filter+size_matrix])
+    center_filter = int((size_filter - 1)/2)
+    for i,j in coordinates:
+        i = int(i)
+        j = int(j)
+        value = next(iter_values)
+        submatrix = filter * value
 
-   
-def imageSample(X, Y, coord, matriz, folder, amplification, distance=0.1, steps=3, option='maximum', train_m=False):
+        #Delimitación del área
+        lim_inf_i = i
+        lim_sup_i = i+2*center_filter+1
+        lim_inf_j = j
+        lim_sup_j = j+2*center_filter+1
+
+        if(option=='mean'):
+            matrix_extended[lim_inf_i:lim_sup_i,lim_inf_j:lim_sup_j] += submatrix
+            matrix_add[lim_inf_i:lim_sup_i,lim_inf_j:lim_sup_j] += (submatrix > 0)*1
+        elif(option=='maximum'):
+            matrix_extended[lim_inf_i:lim_sup_i,lim_inf_j:lim_sup_j] = np.maximum(matrix_extended[lim_inf_i:lim_sup_i,lim_inf_j:lim_sup_j], submatrix)
+
+    if(option=='mean'):
+        matrix_add[matrix_add == 0] = 1
+        matrix_extended = matrix_extended / matrix_add
+
+    matrix_final = matrix_extended[center_filter:-center_filter-1,center_filter:-center_filter-1]
+
+    return matrix_final
+
+def imageSampleFilter(X, Y, coord, matrix, folder, amplification, distance=2, steps=3, option='maximum', train_m=False):
     """
     This function creates the samples, i.e., the images. This function has the following specifications:
     - The first conditional performs the pre-processing of the images by creating the matrices.
@@ -153,39 +191,35 @@ def imageSample(X, Y, coord, matriz, folder, amplification, distance=0.1, steps=
           created will contain the images created for each target. 
         - In the code, the images are exported in PNG format; this can be changed to any other format.
     """
-
-    if train_m:
-        matriz_a = np.zeros(matriz.shape)
-        for i in range(X.shape[0]):
-            for j in range(X.shape[1]):
-                matriz_a[int(coord[j,1]),int(coord[j,0])]=X[i,j]
-                matriz_a = blurring(matriz_a, coord[j], distance, steps, amplification, option)
-        matriz = np.copy(matriz_a)
+    
+    # Generate the filter
+    if distance * steps * amplification != 0:          # The function is only called if there are no zeros (blurring).
+        filter = createFilter(distance,steps,amplification)
     
     # In this part, images are generated for each sample.
     for i in range(X.shape[0]):
-        matriz_a = np.copy(matriz)
+        matrix_a = np.zeros(matrix.shape)
+        if distance * steps * amplification != 0:      # The function is only called if there are no zeros (blurring).
+            matrix_a = blurringFilter(matrix_a, filter, X[i], coord, option)
+        else:   #(no blurring)
+            iter_values_X = iter(X[i])
+            for eje_x,eje_y in coord:
+                matrix_a[int(eje_x),int(eje_y)]=next(iter_values_X)
         
-        for j in range(X.shape[1]):
-            matriz_a[int(coord[j,1]),int(coord[j,0])]=X[i,j]
-            matriz_a = blurring(matriz_a, coord[j], distance, steps, amplification, option)
-        
-        for j in range(X.shape[1]):
-            matriz_a[int(coord[j,1]),int(coord[j,0])]=X[i,j]
-        
-        extension = 'png'   # eps o pdf
-        subfolder = str(int(Y[i])).zfill(2)    # sub-folder to group the results of each class
-        image_name = str(i).zfill(6)
-        path = os.path.join(folder, subfolder)
-        path_full = os.path.join(path, image_name+'.'+extension)
-        if not os.path.isdir(path):            
+        extension = 'png'   #eps o pdf
+        subfolder = str(int(Y[i])).zfill(2)    # subfolder for grouping the results of each class
+        name_image = str(i).zfill(6)
+        route = os.path.join(folder,subfolder)
+        route_complete = os.path.join(route,name_image+'.'+extension)
+        if not os.path.isdir(route):            
             try:
-                os.makedirs(path)
+                os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
-        matplotlib.image.imsave(path_full, matriz_a, cmap='binary', format=extension)
-                
-    return matriz
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+        
+    return matrix
+
 
 def saveVariable(X, filename='objs.pkl',verbose=False):
     """
@@ -221,7 +255,7 @@ class DataImg:
     related to each step in the data transformation process
     """
     
-    def __init__(self, algorithm='PCA', pixeles=20, seed=20, times=4, amp=np.pi, distance=0.1, steps=4, option='maximum'):
+    def __init__(self, algorithm='PCA', pixeles=20, seed=20, times=4, amp=np.pi, distance=2, steps=4, option='maximum'):
         """
         This function initialises packages and objects in Python, i.e., displays 
         the initialisation of each object.
@@ -301,7 +335,8 @@ class DataImg:
             if(verbose):
                 print("The folder "+folder+" is already created...")
          
-        self.m = imageSample(X_scaled, Y, self.pos_pixel_caract, self.m, folder, self.amp, distance=self.distance, steps=self.steps, option=self.option, train_m=train_m)
+        self.m = imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder, self.amp, 
+                            distance=self.distance, steps=self.steps, option=self.option, train_m=train_m)
         
     def trainingAlg(self, X, Y, folder = 'img_train/', verbose=False):
         """
@@ -328,7 +363,7 @@ class DataImg:
 # Blurring verification
 if not args.blurr_active:
     args.amplification = 0
-    args.distance = 0.1
+    args.distance = 2
     args.steps = 0
 
 
