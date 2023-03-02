@@ -11,4 +11,20 @@ Este Kaggle es interesante ya que tiene el link de dos técnicas con el código 
 Otro código sacado del ejemplo de Kaggle --> https://gist.github.com/oguiza/26020067f499d48dc52e5bcb8f5f1c57
 
 
+######## Nuevos códigos #################
 
+Sharma, A., Vans, E., Shigemizu, D. et al. DeepInsight: A methodology to transform a non-image data to an image for convolution neural network architecture. Sci Rep 9, 11399 (2019).
+https://doi.org/10.1038/s41598-019-47765-6
+http://www.alok-ai-lab.com/tools.php
+https://pypi.org/project/tab2img/
+
+Zhu, Y., Brettin, T., Xia, F. et al. Converting tabular data into images for deep learning with convolutional neural networks. Sci Rep 11, 11325 (2021).
+https://doi.org/10.1038/s41598-021-90923-y
+https://github.com/zhuyitan/IGTD
+
+Sharma, A., Kumar, D. Classification with 2-D convolutional neural networks for breast cancer diagnosis. Sci Rep 12, 21857 (2022).
+https://doi.org/ 10.1038/s41598-022-26378-6
+
+Lee, Euna, Myungwoo Nam, and Hongchul Lee. "Tab2vox: CNN-Based Multivariate Multilevel Demand Forecasting Framework by Tabular-To-Voxel
+Image Conversion." Sustainability 14.18 (2022): 11745.
+https://doi.org/10.3390/su141811745
