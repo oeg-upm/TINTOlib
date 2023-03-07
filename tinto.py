@@ -374,7 +374,7 @@ if args.load_configuration:
     X = array
     modeloIMG = loadVariable(filename=args.load_configuration,verbose=args.verbose)
     
-    modeloIMG.testAlg(X,folder=args.dest_folder,verbose=args.verbose)
+    modeloIMG.__testAlg(X, folder=args.dest_folder, verbose=args.verbose)
 else:
     X = array[:,:-1]
     Y = array[:,-1]

@@ -1,0 +1,7 @@
+pandas
+scikit-learn
+matplotlib
+argparse
+scipy
+math
+pickle
