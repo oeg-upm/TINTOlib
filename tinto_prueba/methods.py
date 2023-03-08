@@ -23,27 +23,28 @@ import pickle
 ################    TINTO EXECUTION    ####################
 ###########################################################
 
-###### default values ###############
-
-default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
-default_pixeles = 20  # Image's Pixels (one side)
-
-default_blur = False  # Active option blurring
-default_amplification = np.pi  # Amplification in blurring
-default_distance = 2  # Distance in blurring (number of pixels)
-default_steps = 4  # Steps in blurring
-default_option = 'mean'  # Option in blurring (mean and maximum)
-
-default_seed = 20  # Seed
-default_times = 4  # Times replication in t-SNE
-default_verbose = False  # Verbose: if it's true, show the compilation text
-
-# A parte funciones
-default_save = False  # Save configurations (to reuse)
-default_load = False  # Load configurations (.pkl)
 
 
 class tinto:
+    ###### default values ###############
+
+    default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
+    default_pixeles = 20  # Image's Pixels (one side)
+
+    default_blur = False  # Active option blurring
+    default_amplification = np.pi  # Amplification in blurring
+    default_distance = 2  # Distance in blurring (number of pixels)
+    default_steps = 4  # Steps in blurring
+    default_option = 'mean'  # Option in blurring (mean and maximum)
+
+    default_seed = 20  # Seed
+    default_times = 4  # Times replication in t-SNE
+    default_verbose = False  # Verbose: if it's true, show the compilation text
+
+    # A parte funciones
+    default_save = False  # Save configurations (to reuse)
+    default_load = False  # Load configurations (.pkl)
+
     def __init__(self, src_data=None, dest_folder=None, algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
                  seed=default_seed, times=default_times, verbose=default_verbose):
