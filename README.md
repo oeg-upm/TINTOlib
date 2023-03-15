@@ -46,7 +46,7 @@ Create the model. If you don't set any hyperparameter, the model will use the de
 ````
     model = tinto(blur=True)
 ````
-To generate the synthetic images use ``.genereateImages(data,folder)`` method.
+To generate the synthetic images use ``.generateImages(data,folder)`` method.
 ````
     model.generateImages(data, resultsFolderPath)
 ````
