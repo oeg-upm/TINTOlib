@@ -45,7 +45,7 @@ class tinto:
     default_save = False  # Save configurations (to reuse)
     default_load = False  # Load configurations (.pkl)
 
-    def __init__(self, src_data=None, dest_folder=None, algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
+    def __init__(self, algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
                  seed=default_seed, times=default_times, verbose=default_verbose):
 
@@ -62,8 +62,9 @@ class tinto:
         self.times = times
         self.verbose = verbose
 
-        self.src_data = src_data  # Source location (tidy data in csv without head)
-        self.dest_folder = dest_folder  # Destination location (folder)
+        #self.src_data = src_data  # Source location (tidy data in csv without head)
+        #self.dest_folder = dest_folder  # Destination location (folder)
+        #src_data=None, dest_folder=None,
 
         self.error_pos = False  # Indicates the overlap of characteristic pixels.
 
@@ -75,7 +76,7 @@ class tinto:
         """
         with open(filename+".pkl", 'wb') as f:
             pickle.dump(self.__dict__, f)
-        if (self.verbose):
+        if self.verbose:
             print("It has been successfully saved in " + filename)
 
     def loadHyperparameters(self, filename='objs.pkl'):
@@ -99,8 +100,8 @@ class tinto:
             self.times = variables["times"]
             self.verbose = variables["verbose"]
 
-            self.src_data = variables["src_data"]  # Source location (tidy data in csv without head)
-            self.dest_folder = variables["dest_folder"]  # Destination location (folder)
+            #self.src_data = variables["src_data"]  # Source location (tidy data in csv without head)
+            #self.dest_folder = variables["dest_folder"]  # Destination location (folder)
 
         if self.verbose:
             print("It has been successfully loaded in " + filename)
@@ -148,7 +149,7 @@ class tinto:
         for i, j in zip(coord_m[:, 1], coord_m[:, 0]):
             matrix[int(i), int(j)] = 1
 
-        if (np.count_nonzero(matrix != 0) != coord.shape[0]):
+        if np.count_nonzero(matrix != 0) != coord.shape[0]:
             return coord_m, matrix, True
         else:
             return coord_m, matrix, False
@@ -186,7 +187,7 @@ class tinto:
             # Allocation of values
             for i in range(lim_inf_i, lim_sup_i):
                 for j in range(lim_inf_j, lim_sup_j):
-                    if ((center_x - i) ** 2 + (center_y - j) ** 2 <= r_actual ** 2):
+                    if (center_x - i) ** 2 + (center_y - j) ** 2 <= r_actual ** 2:
                         filter[i, j] = intensity
         filter[center_x, center_y] = 1
         return filter
@@ -296,12 +297,12 @@ class tinto:
         labels = np.arange(X.shape[1])
         X_trans = X.T
 
-        if (self.verbose):
+        if self.verbose:
             print("Selected algorithm: " + self.algorithm)
 
-        if (self.algorithm == 'PCA'):
+        if self.algorithm == 'PCA':
             X_embedded = PCA(n_components=2, random_state=self.seed).fit(X_trans).transform(X_trans)
-        elif (self.algorithm == 't-SNE'):
+        elif self.algorithm == 't-SNE':
             for i in range(self.times):
                 X_trans = np.append(X_trans, X_trans, axis=0)
                 labels = np.append(labels, labels, axis=0)
@@ -323,13 +324,13 @@ class tinto:
         """
         self.initial_coordinates, self.vertices = self.__square(self.obtain_coord)
 
-    def __matrixPositions(self, filename='original'):
+    def __matrixPositions(self):
         """
         This function gets the positions in the matrix
         """
         self.pos_pixel_caract, self.m, self.error_pos = self.__m_imagen(self.initial_coordinates, self.vertices)
 
-    def __CrearImg(self, X, Y, folder='prueba/', train_m=False):
+    def __createImage(self, X, Y, folder='prueba/', train_m=False):
         """
         This function creates the images that will be processed by CNN.
         """
@@ -346,38 +347,47 @@ class tinto:
 
         self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder)
 
-    def __trainingAlg(self, X, Y, folder='img_train/', verbose=False):
+    def __trainingAlg(self, X, Y, folder='img_train/'):
         """
         This function uses the above functions for the training.
         """
         self.__obtainCoord(X)
         self.__areaDelimitation()
         self.__matrixPositions()
-        self.__CrearImg(X, Y, folder, train_m=True)
+        self.__createImage(X, Y, folder, train_m=True)
 
-    def __testAlg(self, X, Y=None, folder='img_test/', verbose=False):
+    def __testAlg(self, X, Y=None, folder='img_test/'):
         """
         This function uses the above functions for the validation.
         """
         if (Y is None):
             Y = np.zeros(X.shape[0])
-        self.__CrearImg(X, Y, folder, train_m=False, verbose=verbose)
+        self.__createImage(X, Y, folder, train_m=False)
 
     ###########################################################
 
-    def generateImages(self):
+    def generateImages(self,data, folder):
+        """
+            This function generate and save the synthetic images in folders.
+                - data : data CSV or pandas Dataframe
+                - folder : the folder where the images are created
+        """
         # Blurring verification
+
         if not self.blur:
             self.amplification = 0
             self.distance = 2
             self.steps = 0
 
         # Read the CSV
-        dataset = pd.read_csv(self.src_data)
-        array = dataset.values
+        if type(data)==str:
+            dataset = pd.read_csv(data)
+            array = dataset.values
+        elif type(data)==pd:
+            array = data.values
 
         X = array[:, :-1]
         Y = array[:, -1]
 
         # Training
-        self.__trainingAlg(X, Y, folder=self.dest_folder, verbose=self.verbose)
+        self.__trainingAlg(X, Y, folder=folder)
