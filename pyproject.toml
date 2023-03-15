@@ -3,18 +3,18 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tintonera-prueba"
+name = "data2image-alpha"
 version = "0.0.1"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
 ]
-description = "TINTO package test"
+description = "Converting tabular data into images"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 
