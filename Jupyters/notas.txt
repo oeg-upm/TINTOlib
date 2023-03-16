@@ -1,0 +1,2 @@
+- https://pyimagesearch.com/2019/01/28/keras-regression-and-cnns/
+- https://www.kaggle.com/code/amir22010/house-price-estimation-from-image-and-text-feature
