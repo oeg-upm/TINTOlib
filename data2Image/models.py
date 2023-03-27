@@ -27,7 +27,7 @@ import pickle
 
 class tinto:
     ###### default values ###############
-
+    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
     default_pixeles = 20  # Image's Pixels (one side)
 
@@ -45,10 +45,10 @@ class tinto:
     default_save = False  # Save configurations (to reuse)
     default_load = False  # Load configurations (.pkl)
 
-    def __init__(self, algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
+    def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
                  seed=default_seed, times=default_times, verbose=default_verbose):
-
+        self.problem = problem
         self.algorithm = algorithm
         self.pixels = pixels
 
@@ -238,6 +238,45 @@ class tinto:
 
         return matrix_final
 
+    def __saveSupervised(self,Y,i,folder,matrix_a):
+        extension = 'png'  # eps o pdf
+        subfolder = str(int(Y[i])).zfill(2)  # subfolder for grouping the results of each class
+        name_image = str(i).zfill(6)
+        route = os.path.join(folder, subfolder)
+        route_complete = os.path.join(route, name_image + '.' + extension)
+        if not os.path.isdir(route):
+            try:
+                os.makedirs(route)
+            except:
+                print("Error: Could not create subfolder")
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+    def __saveUnsupervised(self,i,folder,matrix_a):
+        extension = 'png'  # eps o pdf
+        name_image = str(i).zfill(6)
+        route = os.path.join(folder)
+        route_complete = os.path.join(route, name_image + '.' + extension)
+        if not os.path.isdir(route):
+            try:
+                os.makedirs(route)
+            except:
+                print("Error: Could not create subfolder")
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+    def __saveRegression(self,value,i,folder,matrix_a):
+        extension = 'png'  # eps o pdf
+        subfolder = "images"
+        name_image = str(i).zfill(6)+'('+str(value)+')'+ '.' + extension
+        route = os.path.join(folder,subfolder)
+        route_complete = os.path.join(route, name_image )
+        #route_complete = os.path.join(route, name_image +'.' + extension)
+        if not os.path.isdir(route):
+            try:
+                os.makedirs(route)
+            except:
+                print("Error: Could not create subfolder")
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+
+        route_relative = os.path.join(subfolder, name_image)
+        return route_relative
     def __imageSampleFilter(self, X, Y, coord, matrix, folder):
         """
         This function creates the samples, i.e., the images. This function has the following specifications:
@@ -253,7 +292,8 @@ class tinto:
         distance = self.distance
         steps = self.steps
         option = self.option
-
+        # Variable for regression problem
+        imagesRoutesArr=[]
         # Generate the filter
         if distance * steps * amplification != 0:  # The function is only called if there are no zeros (blurring).
             filter = self.__createFilter()
@@ -268,18 +308,23 @@ class tinto:
                 for eje_x, eje_y in coord:
                     matrix_a[int(eje_x), int(eje_y)] = next(iter_values_X)
 
-            extension = 'png'  # eps o pdf
-            subfolder = str(int(Y[i])).zfill(2)  # subfolder for grouping the results of each class
-            name_image = str(i).zfill(6)
-            route = os.path.join(folder, subfolder)
-            route_complete = os.path.join(route, name_image + '.' + extension)
-            if not os.path.isdir(route):
-                try:
-                    os.makedirs(route)
-                except:
-                    print("Error: Could not create subfolder")
-            matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+            if self.problem == "supervised":
+                self.__saveSupervised(Y,i,folder,matrix_a)
+            elif self.problem == "unsupervised":
+                self.__saveUnsupervised(i,folder,matrix_a)
+            elif self.problem == "regression":
+                value = Y[i]
+                route = self.__saveRegression(value, i, folder, matrix_a)
+                imagesRoutesArr.append(route)
+            else:
+                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
 
+
+        if self.problem == "regression":
+            data={'images':imagesRoutesArr,
+                  'values':Y}
+            regressionCSV=pd.DataFrame(data=data)
+            regressionCSV.to_csv(folder+"/regression.csv",index=False)
         return matrix
 
     def __obtainCoord(self, X):
@@ -354,6 +399,7 @@ class tinto:
         self.__obtainCoord(X)
         self.__areaDelimitation()
         self.__matrixPositions()
+
         self.__createImage(X, Y, folder, train_m=True)
 
     def __testAlg(self, X, Y=None, folder='img_test/'):
@@ -366,7 +412,7 @@ class tinto:
 
     ###########################################################
 
-    def generateImages(self,data, folder):
+    def generateImages(self,data, folder="/tintoData"):
         """
             This function generate and save the synthetic images in folders.
                 - data : data CSV or pandas Dataframe
