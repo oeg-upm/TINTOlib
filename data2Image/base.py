@@ -1,4 +1,8 @@
 import pickle
+import os
+import matplotlib
+import pandas as pd
+import numpy as np
 class BaseModel:
     default_verbose = False  # Verbose: if it's true, show the compilation text
     def __init__(self, verbose=default_verbose):
