@@ -116,10 +116,10 @@ class SuperTML:
         """
         # Read the CSV
         self.folder=folder
-        if type(data)==str:
+        if type(data) == str:
             dataset = pd.read_csv(data)
             array = dataset.values
-        elif type(data)==pd:
+        elif isinstance(data, pd.DataFrame):
             array = data.values
 
         X = array[:, :-1]
