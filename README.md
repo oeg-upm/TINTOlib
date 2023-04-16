@@ -20,11 +20,12 @@
 
 ## Models
 
-|                              Model                               |    Class     | Features |                                                       Hyperparameters                                                       |
-|:----------------------------------------------------------------:|:------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------:|
-|            [TINTO](https://github.com/oeg-upm/TINTO)             |  `tinto()`   |  `blur`  |         `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`          |
-| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                                     `problem` `verbose`                                                     |
-|   [IGTD](https://github.com/zhuyitan/igtd)   |   `IGTD()`   |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
+|                              Model                               |    Class     | Features |                                                                Hyperparameters                                                                 |
+|:----------------------------------------------------------------:|:------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
+|            [TINTO](https://github.com/oeg-upm/TINTO)             |  `TINTO()`   |  `blur`  |                   `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`                   |
+| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                                              `problem` `verbose`                                                               |
+|             [IGTD](https://github.com/zhuyitan/igtd)             |   `IGTD()`   |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
+|           [REFINED](https://github.com/omidbazgirTTU/REFINED)            | `REFINED()`  |          |                                                      `problem` `hcIterations`  `verbose`                                                       |
 
 ## Documentation
 
@@ -41,7 +42,7 @@
 
 To import a specific model use 
 ```
-    from data2Image.models import tinto
+    from data2Image.tinto import TINTO
 ```
 
 Create the model. If you don't set any hyperparameter, the model will use the default values ([read documentation](https://data2image.readthedocs.io/en/latest/)).
