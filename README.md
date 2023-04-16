@@ -20,9 +20,11 @@
 
 ## Models
 
-|  Model  |   Class   | Features |                                          Hyperparameters                                          |
-|:-------:|:---------:|:--------:|:-------------------------------------------------------------------------------------------------:|
-| [TINTO](https://github.com/oeg-upm/TINTO)| `tinto()` |  `blur`  | `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`  |
+|                              Model                               |    Class     | Features |                                                       Hyperparameters                                                       |
+|:----------------------------------------------------------------:|:------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------:|
+|            [TINTO](https://github.com/oeg-upm/TINTO)             |  `tinto()`   |  `blur`  |         `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`          |
+| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                                     `problem` `verbose`                                                     |
+|   [IGTD](https://github.com/zhuyitan/igtd)   |   `IGTD()`   |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
 
 ## Documentation
 
@@ -46,7 +48,7 @@ Create the model. If you don't set any hyperparameter, the model will use the de
 ````
     model = tinto(blur=True)
 ````
-To generate the synthetic images use ``.generateImages(data,folder)`` method.
+To generate the synthetic images use ``.genereateImages(data,folder)`` method.
 ````
     model.generateImages(data, resultsFolderPath)
 ````

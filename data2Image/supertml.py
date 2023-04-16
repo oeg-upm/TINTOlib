@@ -1,13 +1,10 @@
 from __future__ import division
-import sys
 import os
-from ctypes import Union
-
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
-from concurrent.futures import ProcessPoolExecutor
 import numpy as np
-class supert:
+
+class SuperTML:
     ###### default values ###############
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False  # Verbose: if it's true, show the compilation text

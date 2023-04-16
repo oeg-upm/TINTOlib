@@ -4,9 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "data2image-alpha"
-version = "0.0.1"
+version = "0.2.0"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
+    { name= "manwestc", email="jcastillo@fi.upm.es"}
 ]
 description = "Converting tabular data into images"
 readme = "README.md"
@@ -19,4 +20,4 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/oeg-upm/TINTO"
+"Homepage" = "https://github.com/BorjaRei/Data2Image"

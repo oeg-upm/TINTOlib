@@ -110,18 +110,12 @@ class BaseModel:
         """
         # Blurring verification
 
-        if not self.blur:
-            self.amplification = 0
-            self.distance = 2
-            self.steps = 0
-
         # Read the CSV
-        if type(data)==str:
+        if type(data) == str:
             dataset = pd.read_csv(data)
             array = dataset.values
-        elif type(data)==pd:
+        elif isinstance(data,pd.DataFrame) :
             array = data.values
-
         X = array[:, :-1]
         Y = array[:, -1]
 
