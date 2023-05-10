@@ -1,11 +1,11 @@
-## Data2Image
+## TINTOlib
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/BorjaRei/Data2Image/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pypi.python.org/pypi/)
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)]()
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/)
 
-**Data2Image** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from [Sorted Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
+**TINTOlib** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from [Sorted Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
 
 ## Features
 - Input data formats (2 options):
@@ -36,13 +36,13 @@
 **You can install Data2Image using [Pypi(test)](https://pypi.org/project/data2image-alpha/)**:
 
 ```
-    pip install data2image-alpha
+    pip install TINTOlib-alpha
 ```
 
 
 To import a specific model use 
 ```
-    from data2Image.tinto import TINTO
+    from TINTOlib.tinto import TINTO
 ```
 
 Create the model. If you don't set any hyperparameter, the model will use the default values ([read documentation](https://data2image.readthedocs.io/en/latest/)).

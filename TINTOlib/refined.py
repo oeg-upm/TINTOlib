@@ -1,0 +1,327 @@
+import os
+import matplotlib.pyplot as plt
+import scipy.misc
+import utils.Toolbox
+from utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
+from sklearn.manifold import MDS
+from sklearn.metrics.pairwise import euclidean_distances
+import math
+from mpi4py import MPI
+import utils.paraHill
+import pickle
+import numpy as np
+from itertools import product
+import time
+import datetime
+import pandas as pd
+import pickle
+
+class REFINED:
+    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
+    default_verbose = False  # Verbose: if it's true, show the compilation text
+    default_hc_iterations = 5 #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
+    def __init__(self, problem=default_problem,verbose=default_verbose, hcIterations=default_hc_iterations):
+        self.verbose = verbose
+        self.problem = problem
+        self.hcIterations = hcIterations
+    def saveHyperparameters(self, filename='objs'):
+        """
+        This function allows SAVING the transformation options to images in a Pickle object.
+        This point is basically to be able to reproduce the experiments or reuse the transformation
+        on unlabelled data.
+        """
+        with open(filename+".pkl", 'wb') as f:
+            pickle.dump(self.__dict__, f)
+        if self.verbose:
+            print("It has been successfully saved in " + filename)
+
+    def loadHyperparameters(self, filename='objs.pkl'):
+        """
+        This function allows LOADING the transformation options to images in a Pickle object.
+        This point is basically to be able to reproduce the experiments or reuse the transformation
+        on unlabelled data.
+        """
+        with open(filename, 'rb') as f:
+            variables = pickle.load(f)
+
+        if self.verbose:
+            print("It has been successfully loaded in " + filename)
+
+
+    def __imageSampleFilter(self, X, Y, coord, matrix, folder):
+        """
+        This function creates the samples, i.e., the images. This function has the following specifications:
+        - The first conditional performs the pre-processing of the images by creating the matrices.
+        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
+          account in this step:
+            - The samples will be created according to the number of targets. Therefore, each folder that is
+              created will contain the images created for each target.
+            - In the code, the images are exported in PNG format; this can be changed to any other format.
+        """
+
+
+    def scatter_list_to_processors(self,comm, data_list, n_processors):
+        import math
+        data_amount = len(data_list)
+        heap_size = math.ceil(data_amount / (n_processors))
+
+        for pidx in range(1, n_processors):
+            try:
+                heap = data_list[heap_size * (pidx - 1):heap_size * pidx]
+            except:
+                heap = data_list[heap_size * (pidx - 1):]
+            comm.send(heap, dest=pidx)
+
+        return True
+
+    def receive_from_processors_to_dict(self,comm, n_processors):
+        # receives dicts, combine them and return
+        feedback = dict()
+        for pidx in range(1, n_processors):
+            receved = comm.recv(source=pidx)
+            feedback.update(receved)
+        return feedback
+
+    def __createImage(self, X, Y, folder='prueba/', train_m=False):
+        """
+        This function creates the images that will be processed by CNN.
+        """
+
+        X_scaled = self.min_max_scaler.transform(X)
+        Y = np.array(Y)
+        try:
+            os.mkdir(folder)
+            if self.verbose:
+                print("The folder was created " + folder + "...")
+        except:
+            if self.verbose:
+                print("The folder " + folder + " is already created...")
+
+        self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder)
+    def __saveSupervised(self,classValue,i,folder,matrix_a):
+        extension = 'png'  # eps o pdf
+        subfolder = str(int(classValue)).zfill(2)  # subfolder for grouping the results of each class
+        name_image = str(i).zfill(6)
+        route = os.path.join(folder, subfolder)
+        route_complete = os.path.join(route, name_image + '.' + extension)
+        if not os.path.isdir(route):
+            try:
+                os.makedirs(route)
+            except:
+                print("Error: Could not create subfolder")
+
+        shape = int(math.sqrt(matrix_a.shape[0]))
+        plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
+        plt.axis('off')
+        plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+
+        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        return route_relative
+
+    def __saveRegressionOrUnsupervised(self, i, folder, matrix_a):
+        extension = 'png'  # eps o pdf
+        subfolder = "images"
+        name_image = str(i).zfill(6)  + '.' + extension
+        route = os.path.join(folder, subfolder)
+        route_complete = os.path.join(route, name_image)
+
+        if not os.path.isdir(route):
+            try:
+                os.makedirs(route)
+            except:
+                print("Error: Could not create subfolder")
+        shape = int(math.sqrt(matrix_a.shape[0]))
+        plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
+        plt.axis('off')
+        plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+
+        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        return route_relative
+
+    def __saveImages(self,gene_names,coords,map_in_int, X, Y, nn):
+
+        gene_names_MDS, coords_MDS, map_in_int_MDS=(gene_names,coords,map_in_int)
+        X_REFINED_MDS = REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
+        imagesRoutesArr=[]
+        total = Y.shape[0]
+        print(X_REFINED_MDS.shape)
+        for i in range(len(X_REFINED_MDS)):
+            if self.problem == "supervised":
+                route=self.__saveSupervised(Y[i], i, self.folder, X_REFINED_MDS[i])
+                imagesRoutesArr.append(route)
+
+            elif self.problem == "unsupervised" or self.problem == "regression" :
+                route = self.__saveRegressionOrUnsupervised(i, self.folder, X_REFINED_MDS[i])
+                imagesRoutesArr.append(route)
+            else:
+                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+            if self.verbose:
+                print("Created ", str(i+1), "/", int(total))
+
+        if self.problem == "supervised" :
+            data={'images':imagesRoutesArr,'class':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
+        elif self.problem == "unsupervised":
+            data = {'images': imagesRoutesArr}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
+        elif self.problem == "regression":
+            data = {'images': imagesRoutesArr,'values':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+
+
+
+
+
+    def __hillClimbing(self,desc, dist, img):
+        """
+        Desc: genes names
+        dist: distance matrix
+        img: init map
+        """
+
+        comm = MPI.COMM_WORLD
+        my_rank = comm.Get_rank()
+        n_processors = comm.Get_size()
+        if self.verbose:
+            print("Processors found: ", n_processors)
+        # print("My Rank: ", comm.Get_info().items())
+        current_time = datetime.datetime.now()
+        if self.verbose:
+            print("Time now at the beginning is: ", current_time)
+        gene_names, dist_matr, init_map= (desc,dist,img)
+        Nn = len(gene_names)
+
+        if init_map.shape[0] != init_map.shape[1]:
+            raise ValueError("For now only square images are considered.")
+        nn = init_map.shape[0]
+        # Convert from 'F34' to int 34
+        init_map = np.char.strip(init_map.astype(str), 'F').astype(int)
+        map_in_int = init_map
+        # %%
+        corr_evol = []
+        if my_rank == 0:
+            if self.verbose:
+                print("Initial corr: >>>", utils.paraHill.universial_corr(dist_matr, map_in_int))
+            for n_iter in range(self.hcIterations):
+                # 9 initial coordinates.
+                init_coords = [x for x in product([0, 1, 2], repeat=2)]
+                for init_coord in init_coords:
+                    # Update the mapping.
+                    broadcast_msg = map_in_int
+                    comm.bcast(broadcast_msg, root=0)
+                    # generate the centroids
+                    xxx = [init_coord[0] + i * 3 for i in range(int(nn / 3) + 1) if (init_coord[0] + i * 3) < nn]
+                    yyy = [init_coord[1] + i * 3 for i in range(int(nn / 3) + 1) if (init_coord[1] + i * 3) < nn]
+                    centr_list = [x for x in product(xxx, yyy)]
+                    # Master send and recv
+                    self.scatter_list_to_processors(comm, centr_list, n_processors)
+                    swap_dict = self.receive_from_processors_to_dict(comm, n_processors)
+                    #print(swap_dict)
+                    map_in_int = utils.paraHill.execute_dict_swap(swap_dict, map_in_int)
+                    if self.verbose:
+                        print(">", init_coord, "Corr:", utils.paraHill.universial_corr(dist_matr, map_in_int))
+
+                if self.verbose:
+                    print(">>>", n_iter, "Corr:", utils.paraHill.universial_corr(dist_matr, map_in_int))
+                corr_evol.append(utils.paraHill.universial_corr(dist_matr, map_in_int))
+
+            coords = np.array([[item[0] for item in np.where(map_in_int == ii)] for ii in range(Nn)])
+            """with open(mapping, 'wb') as file:
+                pickle.dump([gene_names, coords, map_in_int], file)
+            # print("Consumed time:",start - time.time())"""
+
+            Endtime = datetime.datetime.now()
+            if self.verbose:
+                print("Time now at the end: ", Endtime)
+
+            return (gene_names, coords, map_in_int)
+
+        else:
+            # other processors
+            for n_iter in range(self.hcIterations):
+                broadcast_msg = init_map  # just for a size
+
+                # 9 initial Centroids
+                for ii in range(9):
+                    # Update the mapping
+                    map_in_int = comm.bcast(broadcast_msg, root=0)
+
+                    centr_list = comm.recv(source=0)
+                    each_swap_dict = utils.paraHill.evaluate_centroids_in_list(centr_list, dist_matr, map_in_int)
+                    comm.send(each_swap_dict, dest=0)
+            # result = dict()
+            # for each in data:
+            #    result.update({each: -each})
+            # comm.send(result,dest = 0)
+
+        MPI.Finalize
+
+
+    def __trainingAlg(self, X, Y,Desc):
+        """
+        This function uses the above functions for the training.
+        """
+        #Feat_DF = pd.read_csv(data)
+
+        #X = Feat_DF.values;
+
+        #X = X[:100, :-1]
+
+
+        original_input = pd.DataFrame(data=X)  # The MDS input should be in a dataframe format with rows as samples and columns as features
+        feature_names_list = original_input.columns.tolist()  # Extracting feature_names_list (gene_names or descriptor_names)
+        if self.verbose:
+            print(">>>> Data  is loaded")
+
+        # %% MDS
+        nn = math.ceil(np.sqrt(len(feature_names_list)))  # Image dimension
+        Nn = original_input.shape[1]  # Number of features
+
+        transposed_input = original_input.T  # The MDS input data must be transposed , because we want summarize each feature by two values (as compard to regular dimensionality reduction each sample will be described by two values)
+        Euc_Dist = euclidean_distances(transposed_input)  # Euclidean distance
+        Euc_Dist = np.maximum(Euc_Dist, Euc_Dist.transpose())  # Making the Euclidean distance matrix symmetric
+
+        embedding = MDS(n_components=2)  # Reduce the dimensionality by MDS into 2 components
+        mds_xy = embedding.fit_transform(transposed_input)  # Apply MDS
+
+        if self.verbose:
+            print(">>>> MDS dimensionality reduction is done")
+
+        eq_xy = two_d_eq(mds_xy, Nn)
+        Img = Assign_features_to_pixels(eq_xy, nn,verbose=self.verbose)  # Img is the none-overlapping coordinates generated by MDS
+
+        #Desc=Feat_DF.columns[:-1].tolist()
+        # Generating a distance matrix which includes the Euclidean distance between each and every descriptor
+
+        Dist = pd.DataFrame(data=Euc_Dist)
+        gene_names, coords, map_in_int=self.__hillClimbing(Desc, Dist, Img)
+
+        self.__saveImages(gene_names, coords, map_in_int,X,Y,nn)
+
+    def generateImages(self,data, folder="/refinedData"):
+        """
+            This function generate and save the synthetic images in folders.
+                - data : data CSV or pandas Dataframe
+                - folder : the folder where the images are created
+        """
+        # Blurring verification
+
+        # Read the CSV
+        self.folder = folder
+        if type(data) == str:
+            dataset = pd.read_csv(data)
+            array = dataset.values
+            Desc=dataset.columns[:-1].tolist()
+        elif isinstance(data, pd.DataFrame):
+            array = data.values
+            Desc = data.columns[:-1].tolist()
+
+        X = array[:, :-1]
+        Y = array[:, -1]
+
+        # Training
+        self.__trainingAlg(X, Y,Desc)
+        if self.verbose: print("End")
