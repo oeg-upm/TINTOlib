@@ -23,9 +23,12 @@
 |                              Model                               |    Class     | Features |                                                                Hyperparameters                                                                 |
 |:----------------------------------------------------------------:|:------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
 |            [TINTO](https://github.com/oeg-upm/TINTO)             |  `TINTO()`   |  `blur`  |                   `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`                   |
-| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                                              `problem` `verbose`                                                               |
+| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                             `problem` `columns` `font_size` `image_size` `verbose`                                             |
 |             [IGTD](https://github.com/zhuyitan/igtd)             |   `IGTD()`   |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
-|           [REFINED](https://github.com/omidbazgirTTU/REFINED)            | `REFINED()`  |          |                                                      `problem` `hcIterations`  `verbose`                                                       |
+|       [REFINED](https://github.com/omidbazgirTTU/REFINED)        | `REFINED()`  |          |                                                      `problem` `hcIterations`  `verbose`                                                       |
+|                           [BarGraph]()                           | `BarGraph()`  |          |                                                    `problem` `pixel_width` `gap`  `verbose`                                                    |
+|                        [DistanceMatrix]()                        | `DistanceMatrix()`  |          |                                                          `problem` `scale`  `verbose`                                                          |
+|                         [Combination]()                          | `Combination()`  |          |                                                             `problem` `pixel_width` `gap`  `verbose`                                                              |
 
 ## Documentation
 
@@ -36,7 +39,7 @@
 **You can install Data2Image using [Pypi(test)](https://pypi.org/project/data2image-alpha/)**:
 
 ```
-    pip install TINTOlib-alpha
+    pip install TINTOlib
 ```
 
 

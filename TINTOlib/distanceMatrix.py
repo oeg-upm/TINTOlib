@@ -7,14 +7,13 @@ from PIL import Image
 class DistanceMatrix:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False  # Verbose: if it's true, show the compilation text
-    default_gap = 1  # Gap between graph bars
     default_scale = 1 # Scale of the image 1:x
 
 
-    def __init__(self, verbose=default_verbose, gap=default_gap, scale=default_scale, problem=default_problem):
+    def __init__(self, verbose=default_verbose, scale=default_scale, problem=default_problem):
         self.problem = problem
         self.verbose = verbose
-        self.gap = gap
+
         self.scale = scale
 
     def saveHyperparameters(self, filename='objs'):
