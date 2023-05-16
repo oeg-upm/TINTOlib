@@ -79,7 +79,7 @@ class SuperTML:
                 print("Error: Could not create subfolder")
         image.save(route_complete)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __event2img(self,event: np.ndarray):

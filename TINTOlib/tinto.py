@@ -269,7 +269,7 @@ class TINTO:
                 print("Error: Could not create subfolder")
         matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __imageSampleFilter(self, X, Y, coord, matrix, folder):

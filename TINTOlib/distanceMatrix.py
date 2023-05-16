@@ -1,6 +1,5 @@
 import pickle
 import os
-import matplotlib
 import pandas as pd
 import numpy as np
 from PIL import Image
@@ -73,7 +72,7 @@ class DistanceMatrix:
         img = Image.fromarray(np.uint8(np.squeeze(image) * 255))
         img.save(route_complete)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __trainingAlg(self, X, Y, folder='img_train/'):

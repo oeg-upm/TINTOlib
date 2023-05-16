@@ -539,7 +539,7 @@ class IGTD:
 
         image.savefig(fname=route_complete, bbox_inches='tight',pad_inches=0)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
     def __generate_image_data(self, data, index, num_row, num_column, coord, labels):
         '''

@@ -1,13 +1,13 @@
 import os
 import matplotlib.pyplot as plt
 import scipy.misc
-import utils.Toolbox
-from utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
+import TINTOlib.utils.Toolbox
+from TINTOlib.utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
 from sklearn.manifold import MDS
 from sklearn.metrics.pairwise import euclidean_distances
 import math
 from mpi4py import MPI
-import utils.paraHill
+import TINTOlib.utils.paraHill
 import pickle
 import numpy as np
 from itertools import product
@@ -135,7 +135,7 @@ class REFINED:
         plt.axis('off')
         plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __saveImages(self,gene_names,coords,map_in_int, X, Y, nn):
