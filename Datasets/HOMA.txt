@@ -1,0 +1,5 @@
+El target es "homa_b" 
+
+Columnas que no se puede usar "psu", "stratum" y "samplewt...", "df_obs", "df_pre" e "id_study"
+
+Y la columna "HomaB_pred" es el predicho creo que con XGB.
