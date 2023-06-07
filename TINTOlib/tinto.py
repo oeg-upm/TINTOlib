@@ -30,6 +30,7 @@ class TINTO:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
     default_pixeles = 20  # Image's Pixels (one side)
+    default_submatrix = True #Use or not use submatrix
 
     default_blur = False  # Active option blurring
     default_amplification = np.pi  # Amplification in blurring
@@ -37,6 +38,7 @@ class TINTO:
     default_steps = 4  # Steps in blurring
     default_option = 'mean'  # Option in blurring (mean and maximum)
 
+    default_train_m = True
     default_seed = 20  # Seed
     default_times = 4  # Times replication in t-SNE
     default_verbose = False  # Verbose: if it's true, show the compilation text
@@ -45,12 +47,13 @@ class TINTO:
     default_save = False  # Save configurations (to reuse)
     default_load = False  # Load configurations (.pkl)
 
-    def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles, blur=default_blur,
+    def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles,submatrix=default_submatrix, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
-                 seed=default_seed, times=default_times, verbose=default_verbose):
+                 seed=default_seed, times=default_times, train_m=default_train_m, verbose=default_verbose):
         self.problem = problem
         self.algorithm = algorithm
         self.pixels = pixels
+        self.submatrix = submatrix
 
         self.blur = blur
         self.amplification = amplification
@@ -58,6 +61,7 @@ class TINTO:
         self.steps = steps
         self.option = option
 
+        self.train_m = train_m
         self.seed = seed
         self.times = times
         self.verbose = verbose
@@ -191,7 +195,7 @@ class TINTO:
         filter[center_x, center_y] = 1
         return filter
 
-    def __blurringFilter(self, matrix, filter, values, coordinates):
+    def __blurringFilterSubmatrix(self, matrix, filter, values, coordinates):
         """
        This function is to be able to add more ordered contextual information to the image through the
        classical painting technique called blurring. This function develops the following main steps:
@@ -237,6 +241,47 @@ class TINTO:
 
         return matrix_final
 
+    def __blurringFilter(self, matrix, coordinates):
+        """
+       This function is to be able to add more ordered contextual information to the image through the
+       classical painting technique called blurring. This function develops the following main steps:
+       - Take the coordinate matrix of the characteristic pixels.
+       - Create the blurring according to the number of steps taken in a loop with the
+         following specifications:
+            - Delimit the blurring area according to $(x,y)$ on an upper and lower boundary.
+            - Set the new intensity values in the matrix, taking into account that if there is
+              pixel overlap, the maximum or average will be taken as specified.
+        """
+
+        x = int(coordinates[1])
+        y = int(coordinates[0])
+        valor_central = matrix[x, y]
+
+        for p in range(self.steps):
+            r_actual = int(matrix.shape[0] * self.distance * (p + 1))  # radio actual  de mayor a menor
+
+            # Funcion de intensidad
+            intensidad = min(self.amplification * valor_central / (np.pi * r_actual ** 2), valor_central)
+
+            # Delimitación del área
+            lim_inf_i = max(x - r_actual - 1, 0)
+            lim_sup_i = min(x + r_actual + 1, matrix.shape[0])
+            lim_inf_j = max(y - r_actual - 1, 0)
+            lim_sup_j = min(y + r_actual + 1, matrix.shape[1])
+
+            # Colocación de valores
+            for i in range(lim_inf_i, lim_sup_i):
+                for j in range(lim_inf_j, lim_sup_j):
+                    if ((x - i) ** 2 + (y - j) ** 2 <= r_actual ** 2):
+                        if (matrix[i, j] == 0):
+                            matrix[i, j] = intensidad
+                        elif (x != i and y != j):  # Sobreposición
+                            if (self.option == 'mean'):
+                                matrix[i, j] = (matrix[i, j] + intensidad) / 2
+                            elif (self.option == 'maximum'):
+                                matrix[i, j] = max(matrix[i, j], intensidad)
+        return matrix
+
 
     def __saveSupervised(self, y, i, matrix_a):
         extension = 'png'  # eps o pdf
@@ -272,7 +317,7 @@ class TINTO:
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __imageSampleFilter(self, X, Y, coord, matrix, folder):
+    def __imageSampleFilterSubmatrix(self, X, Y, coord, matrix):
         """
         This function creates the samples, i.e., the images. This function has the following specifications:
         - The first conditional performs the pre-processing of the images by creating the matrices.
@@ -288,6 +333,7 @@ class TINTO:
         steps = self.steps
         option = self.option
         imagesRoutesArr=[]
+
         # Generate the filter
         if distance * steps * amplification != 0:  # The function is only called if there are no zeros (blurring).
             filter = self.__createFilter()
@@ -297,7 +343,7 @@ class TINTO:
         for i in range(total):
             matrix_a = np.zeros(matrix.shape)
             if distance * steps * amplification != 0:  # The function is only called if there are no zeros (blurring).
-                matrix_a = self.__blurringFilter(matrix_a, filter, X[i], coord)
+                matrix_a = self.__blurringFilterSubmatrix(matrix_a, filter, X[i], coord)
             else:  # (no blurring)
                 iter_values_X = iter(X[i])
                 for eje_x, eje_y in coord:
@@ -311,6 +357,70 @@ class TINTO:
                 imagesRoutesArr.append(route)
             else:
                 print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+
+            #Verbose
+            if self.verbose:
+                print("Created ", str(i + 1), "/", int(total))
+
+        if self.problem == "supervised":
+            data = {'images': imagesRoutesArr, 'class': Y}
+            supervisedCSV = pd.DataFrame(data=data)
+            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
+        elif self.problem == "unsupervised":
+            data = {'images': imagesRoutesArr}
+            unsupervisedCSV = pd.DataFrame(data=data)
+            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
+        elif self.problem == "regression":
+            data = {'images': imagesRoutesArr, 'values': Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+
+        return matrix
+
+    def __imageSampleFilter(self, X, Y, coord, matrix):
+        """
+        This function creates the samples, i.e., the images. This function has the following specifications:
+        - The first conditional performs the pre-processing of the images by creating the matrices.
+        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
+          account in this step:
+            - The samples will be created according to the number of targets. Therefore, each folder that is
+              created will contain the images created for each target.
+            - In the code, the images are exported in PNG format; this can be changed to any other format.
+        """
+        imagesRoutesArr = []
+        total = X.shape[0]
+        # Aquí es donde se realiza el preprocesamiento siendo 'matriz' = 'm'
+        if self.train_m:
+
+            matrix_a = np.zeros(matrix.shape)
+
+            for i in range(X.shape[0]):
+                for j in range(X.shape[1]):
+                    matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
+                    matrix_a = self.__blurringFilter(matrix_a, coord[j] )
+
+            matriz = np.copy(matrix_a)
+        if self.verbose:
+            print("Generating images......")
+        # En esta parte se generan las imágenes por cada muestra
+        for i in range(total):
+            matrix_a = np.copy(matriz)
+
+            for j in range(X.shape[1]):
+                matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
+                matrix_a = self.__blurringFilter(matrix_a, coord[j])
+
+            for j in range(X.shape[1]):
+                matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
+
+            if self.problem == "supervised":
+                    route=self.__saveSupervised(Y[i],i,matrix)
+                    imagesRoutesArr.append(route)
+            elif self.problem == "unsupervised" or self.problem == "regression":
+                    route = self.__saveRegressionOrUnsupervised( i, matrix_a)
+                    imagesRoutesArr.append(route)
+            else:
+                    print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
 
             #Verbose
             if self.verbose:
@@ -379,7 +489,7 @@ class TINTO:
         """
         self.pos_pixel_caract, self.m, self.error_pos = self.__m_imagen(self.initial_coordinates, self.vertices)
 
-    def __createImage(self, X, Y, folder='prueba/', train_m=False):
+    def __createImage(self, X, Y, folder='prueba/'):
         """
         This function creates the images that will be processed by CNN.
         """
@@ -394,7 +504,10 @@ class TINTO:
             if self.verbose:
                 print("The folder " + folder + " is already created...")
 
-        self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder)
+        if self.submatrix:
+            self.m = self.__imageSampleFilterSubmatrix(X_scaled, Y, self.pos_pixel_caract, self.m)
+        else:
+            self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m)
 
     def __trainingAlg(self, X, Y, folder='img_train/'):
         """
@@ -404,7 +517,7 @@ class TINTO:
         self.__areaDelimitation()
         self.__matrixPositions()
 
-        self.__createImage(X, Y, folder, train_m=True)
+        self.__createImage(X, Y, folder)
 
     def __testAlg(self, X, Y=None, folder='img_test/'):
         """
