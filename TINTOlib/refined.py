@@ -16,9 +16,9 @@ import datetime
 import pandas as pd
 import pickle
 
-import utils.Toolbox
-import utils.paraHill
-from utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
+from TINTOlib import utils
+import TINTOlib.utils.paraHill
+from TINTOlib.utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False  # Verbose: if it's true, show the compilation text
@@ -117,7 +117,7 @@ class REFINED:
         plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
         plt.axis('off')
         plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-
+        plt.close()
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
@@ -137,7 +137,7 @@ class REFINED:
         plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
         plt.axis('off')
         plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-
+        plt.close()
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
@@ -148,6 +148,7 @@ class REFINED:
         imagesRoutesArr=[]
         total = Y.shape[0]
         #print(X_REFINED_MDS.shape)
+        print("SAVING")
         for i in range(len(X_REFINED_MDS)):
             if self.problem == "supervised":
                 route=self.__saveSupervised(Y[i], i, self.folder, X_REFINED_MDS[i])
