@@ -103,7 +103,7 @@ class Combination:
             imgI1 = np.repeat(np.repeat(image_norm, expand, axis=0), expand, axis=1)
 
             """LEVEL - 2 (BARS)"""
-            barI = np.floor(max_bar_height * X[i, :]).astype(int)
+            barI = np.floor(max_bar_height * X[ins, :]).astype(int)
             k = 0
             imgage = np.zeros([img_sz[0], img_sz[1], 1])
 
