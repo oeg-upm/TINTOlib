@@ -1,3 +1,0 @@
-SuperTML tiene un bug al generar las imágenes en Colab --> image_model.generateImages(df.iloc[:,:-1], images_folder)
-
-Refined --> tiene un bug al generar las imágenes en Colab --> name 'utils' is not defined
