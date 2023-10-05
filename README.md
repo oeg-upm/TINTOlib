@@ -59,7 +59,7 @@ To generate the synthetic images use ``.genereateImages(data,folder)`` method.
 
 ## License
 
-Data2Image is available under the **[Apache License 2.0](https://github.com/BorjaRei/Data2Image/blob/main/LICENSE)**.
+TINTOlib is available under the **[Apache License 2.0](https://github.com/BorjaRei/Data2Image/blob/main/LICENSE)**.
 
 ## Authors
 - **[Borja Reinoso](https://github.com/borjarei) - [borjareinoso@gmail.com](borjareinoso@gmail.com)**
