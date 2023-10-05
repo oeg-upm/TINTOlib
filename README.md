@@ -5,6 +5,13 @@
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)]()
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/)
 
+
+<div>
+<p align = "center">
+<img src="imgs/logo.svg" alt="TINTO Logo" width="150">
+</p>
+</div>
+
 **TINTOlib** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from [Sorted Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
 
 ## Features
