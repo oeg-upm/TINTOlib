@@ -12,30 +12,41 @@ import  pickle
 class IGTD:
     #Default hyperparameters
     default_scale = [6,6]
-    default_fea_dist_method = "Pearson" #'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
-                                        #'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
-                                        #'set' uses Jaccard index to evaluate similarity between features that are binary variables.
+    default_fea_dist_method = "Pearson" # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
+                                        # 'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
+                                        # 'set' uses Jaccard index to evaluate similarity between features that are binary variables.
+                                        # NOTE: there is also Euclidean
 
-    default_image_dist_method = "Euclidean" #method: method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_save_image_size = 20
-    default_max_step = 1000                 #the maximum steps that the algorithm should run if never converges.
-    default_val_step = 50                   #number of steps for checking gain on the objective function to determine convergence
+    default_image_dist_method = "Euclidean" # method: method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
+    default_save_image_size = 20            # Size in inches to save the image
+    default_max_step = 1000                 # the maximum steps that the algorithm should run if never converges.
+    default_val_step = 50                   # number of steps for checking gain on the objective function to determine convergence
     default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
-    default_switch_t = 0                    #the threshold to determine whether switch should happen
+    default_switch_t = 0                    # the threshold to determine whether switch should happen
     default_min_gain = 0.00001              # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
-    default_seed = 1                        #for setting random seed.
-
+    default_seed = 1                        # for setting random seed.
     default_verbose = False
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    def __init__(self,problem=default_problem,scale=default_scale, fea_dist_method=default_fea_dist_method,
-                 image_dist_method=default_save_image_size, save_image_size=default_save_image_size,
-                 max_step=default_max_step, val_step=default_val_step,error=default_error, switch_t=default_switch_t,
-                 min_gain=default_min_gain, seed=default_seed,verbose=default_verbose):
+    default_problem = "supervised"          # Define the type of dataset [supervised, unsupervised, regression]
+    
+    def __init__(self,
+                 problem=default_problem,
+                 scale=default_scale,
+                 fea_dist_method=default_fea_dist_method,
+                 image_dist_method=default_image_dist_method,
+                 save_image_size=default_save_image_size,
+                 max_step=default_max_step,
+                 val_step=default_val_step,
+                 error=default_error,
+                 switch_t=default_switch_t,
+                 min_gain=default_min_gain,
+                 seed=default_seed,
+                 verbose=default_verbose
+    ):
 
         self.scale = scale
         self.fea_dist_method = fea_dist_method
         self.image_dist_method = image_dist_method
-        self.save_image_size = save_image_size
+        self.save_image_size = save_image_size              # NOTE: Unused parameter
         self.max_step = max_step
         self.val_step = val_step
         self.error = error
@@ -138,8 +149,7 @@ class IGTD:
 
         return ranking, corr
 
-
-    def __generate_matrix_distance_ranking(self, num_r, num_c):
+    def __generate_matrix_distance_ranking(self, num_r, num_c, num):
         '''
         This function calculates the ranking of distances between all pairs of entries in a matrix of size num_r by num_c.
 
@@ -160,9 +170,9 @@ class IGTD:
                 coordinate = np.transpose(np.vstack((np.zeros(num_c), range(num_c))))
             else:
                 coordinate = np.vstack((coordinate, np.transpose(np.vstack((np.ones(num_c) * r, range(num_c))))))
+        coordinate = coordinate[:num, :]
 
         # calculate the closeness of the elements
-        num = num_r * num_c
         cord_dist = np.zeros((num, num))
         if self.image_dist_method == 'Euclidean':
             for i in range(num):
@@ -183,8 +193,7 @@ class IGTD:
         coordinate = np.int64(coordinate)
         return (coordinate[:, 0], coordinate[:, 1]), ranking
 
-
-    def __IGTD_absolute_error(self, source, target, file_name=''):
+    def __IGTD_absolute_error(self, source, target):
         '''
         This function switches the order of rows (columns) in the source ranking matrix to make it similar to the target
         ranking matrix. In each step, the algorithm randomly picks a row that has not been switched with others for
@@ -196,7 +205,6 @@ class IGTD:
         source: a symmetric ranking matrix with zero diagonal elements.
         target: a symmetric ranking matrix with zero diagonal elements. 'source' and 'target' should have the same size.
         save_folder: a path to save the picture of source ranking matrix in the optimization process.
-        file_name: a string as part of the file names for saving results
 
         Return:
         index_record: indices to rearrange the rows(columns) in source obtained the optimization process
@@ -204,10 +212,10 @@ class IGTD:
         run_time: the time at which each step is completed in the optimization process
         '''
 
-        np.random.RandomState(seed=self.seed)
-        if os.path.exists(save_folder):
-            shutil.rmtree(save_folder)
-        os.mkdir(save_folder)
+        r = np.random.RandomState(seed=self.seed)
+        if os.path.exists(self.folder):
+            shutil.rmtree(self.folder)
+        os.mkdir(self.folder)
 
         source = source.copy()
         num = source.shape[0]
@@ -235,7 +243,7 @@ class IGTD:
 
             # randomly pick a row that has not been considered for the longest time
             idr = np.where(step_record == np.min(step_record))[0]
-            ii = idr[np.random.permutation(len(idr))[0]]
+            ii = idr[r.permutation(len(idr))[0]]
 
             for jj in range(num):
                 if jj == ii:
@@ -337,7 +345,7 @@ class IGTD:
         return index_record, err_record, run_time
 
 
-    def __IGTD_square_error(self, source, target,  file_name=''):
+    def __IGTD_square_error(self, source, target):
         '''
         This function switches the order of rows (columns) in the source ranking matrix to make it similar to the target
         ranking matrix. In each step, the algorithm randomly picks a row that has not been switched with others for
@@ -349,7 +357,6 @@ class IGTD:
         source: a symmetric ranking matrix with zero diagonal elements.
         target: a symmetric ranking matrix with zero diagonal elements. 'source' and 'target' should have the same size.
         save_folder: a path to save the picture of source ranking matrix in the optimization process.
-        file_name: a string as part of the file names for saving results
 
         Return:
         index_record: ordering index to rearrange the rows(columns) in 'source' in the optimization process
@@ -357,7 +364,7 @@ class IGTD:
         run_time: the time at which each step is finished in the optimization process
         '''
 
-        np.random.RandomState(seed=self.seed)
+        r = np.random.RandomState(seed=self.seed)
         if os.path.exists(self.folder):
             shutil.rmtree(self.folder)
         os.mkdir(self.folder)
@@ -388,7 +395,7 @@ class IGTD:
 
             # randomly pick a row that has not been considered for the longest time
             idr = np.where(step_record == np.min(step_record))[0]
-            ii = idr[np.random.permutation(len(idr))[0]]
+            ii = idr[r.permutation(len(idr))[0]]
 
             for jj in range(num):
                 if jj == ii:
@@ -501,13 +508,13 @@ class IGTD:
         '''
 
         if self.error  == 'abs':
-            index_record, err_record, run_time = self.__IGTD_absolute_error(source=source, target=target )
+            index_record, err_record, run_time = self.__IGTD_absolute_error(source=source, target=target)
         if self.error == 'squared':
-            index_record, err_record, run_time = self.__IGTD_square_error(source=source,target=target)
+            index_record, err_record, run_time = self.__IGTD_square_error(source=source, target=target)
 
         return index_record, err_record, run_time
 
-    def __saveSupervised(self, y, i, image):
+    def __saveSupervised(self, y, i, data_i):
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
         name_image = str(i).zfill(6)
@@ -520,12 +527,12 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        image.savefig(fname=route_complete, bbox_inches='tight',pad_inches=0)
+        plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
-    def __saveRegressionOrUnsupervised(self, i, image):
+    def __saveRegressionOrUnsupervised(self, i, data_i):
         extension = 'png'  # eps o pdf
         subfolder = "images"
         name_image = str(i).zfill(6) + '.' + extension
@@ -537,10 +544,11 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        image.savefig(fname=route_complete, bbox_inches='tight',pad_inches=0)
+        plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
 
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
+    
     def __generate_image_data(self, data, index, num_row, num_column, coord, labels):
         '''
         This function generates the data in image format according to rearrangement indices. It saves the data
@@ -586,17 +594,18 @@ class IGTD:
             data_i = np.empty((num_row, num_column))
             data_i.fill(np.nan)
             data_i[coord] = data_2[i, :]
-            image_data[:, :, i] = data_i
-            if image_folder is not None:
-                fig = plt.figure()
-                plt.imshow(data_i, cmap='gray', vmin=0, vmax=255)
-                plt.axis('off')
+            
+            iid = np.where(np.isnan(data_i))
+            data_i[iid] = 255
 
+            image_data[:, :, i] = data_i
+            image_data[:, :, i] = 255 - image_data[:, :, i]
+            if image_folder is not None:
                 if self.problem == "supervised":
-                    route = self.__saveSupervised(labels[i], i, plt)
+                    route = self.__saveSupervised(labels[i], i, data_i)
                     imagesRoutesArr.append(route)
                 elif self.problem == "unsupervised" or self.problem == "regression":
-                    route = self.__saveRegressionOrUnsupervised(i, plt)
+                    route = self.__saveRegressionOrUnsupervised(i, data_i)
                     imagesRoutesArr.append(route)
                 else:
                     print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
@@ -604,7 +613,6 @@ class IGTD:
                 # Verbose
                 if self.verbose:
                     print("Created ", str(i + 1), "/", int(total))
-                plt.close(fig)
 
         if self.problem == "supervised":
             data = {'images': imagesRoutesArr, 'class': labels}
@@ -628,10 +636,9 @@ class IGTD:
         if self.verbose: print("End")
 
         ranking_feature, corr = self.__generate_feature_distance_ranking(data=X)
-        coordinate, ranking_image = self.__generate_matrix_distance_ranking(num_r=self.scale[0], num_c=self.scale[1])
+        coordinate, ranking_image = self.__generate_matrix_distance_ranking(num_r=self.scale[0], num_c=self.scale[1], num=X.shape[1])
 
-
-        index, err, time = self.__training(source=ranking_feature, target=ranking_image,file_name='')
+        index, err, time = self.__training(source=ranking_feature, target=ranking_image, file_name='')
 
         min_id = np.argmin(err)
         #ranking_feature_random = ranking_feature[index[min_id, :], :]
@@ -642,6 +649,7 @@ class IGTD:
                                                 coord=coordinate,labels=Y)
 
     def generateImages(self, data, folder="/igtd_files"):
+        # FIXME: the documentation is not correct (this are not parameters of this function)
         '''
         This function converts tabular data into images using the IGTD algorithm.
 
@@ -701,7 +709,7 @@ class IGTD:
         elif isinstance(data, pd.DataFrame):
             array = data.values
 
-        X = self.__min_max_transform(array[:, :-2])
+        X = self.__min_max_transform(array[:, :-1])     # Remove the last column
         Y = array[:, -1]
 
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
@@ -712,12 +720,11 @@ class IGTD:
             print("Error: All the attributes can't be wrapped in [",self.scale," scale."
                                                                                "Please user higher scale")
         else:
+            # NOTE: why? original code doesn't do this, works perfectly without this piece
             #Add padding to fit numPixels = numAttributes
-            padding = numPixels - numAttributes
-            padding_matrix = np.zeros((X.shape[0],padding))
-            X = np.concatenate((X,padding_matrix),axis=1)
+            # padding = numPixels - numAttributes
+            # padding_matrix = np.zeros((X.shape[0],padding))
+            # X = np.concatenate((X,padding_matrix),axis=1)
+            pass
 
         self.__trainingAlg(X, Y)
-
-
-
