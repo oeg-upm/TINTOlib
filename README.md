@@ -155,6 +155,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[Manuel Castillo-Cara](https://github.com/manwestc)**
 - **[Raúl García-Castro](https://github.com/rgcmme)**
 - **[Borja Reinoso](https://github.com/borjarei) - [borjareinoso@gmail.com](borjareinoso@gmail.com)**
+- **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
 
 
 ## Contributors
