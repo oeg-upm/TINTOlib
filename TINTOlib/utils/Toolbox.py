@@ -145,13 +145,13 @@ def Assign_features_to_pixels(xy,nn,verbose = False):
                     feature_assigned[best_feature] = True
         if verbose:
             print(">> Assign features to pixels:", feature_assigned.sum(),"/",Nn)
-    result_table = result_table.astype(int)
-    
+    result_table[np.isnan(result_table[:, 2]), 2] = -1
+
     img = np.full((nn,nn),'NaN').astype(object)
     for each_pixel in range(nn*nn):
-        xx = result_table[each_pixel,0]
-        yy = result_table[each_pixel,1]
-        ft = 'F' + str(result_table[each_pixel,2])
+        xx = int(result_table[each_pixel,0])
+        yy = int(result_table[each_pixel,1])
+        ft = 'F' + str(int(result_table[each_pixel,2]))
         img[xx,yy] = ft
     return img.astype(object)
 
