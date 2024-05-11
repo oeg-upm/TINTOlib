@@ -230,7 +230,10 @@ class REFINED:
 
         mapping_pickle_file = "Mapping_REFINED_subprocess.pickle"
         evolution_csv_file = "REFINED_Evolve_subprocess.csv"
-        script_path = os.path.join("utils", "mpiHill_UF.py")
+        script_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "utils","mpiHill_UF.py"
+        )
         
         if 'Windows' == platform.system():
             command = f'mpiexec -np 40 python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
