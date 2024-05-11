@@ -1,32 +1,38 @@
 import os
 import matplotlib.pyplot as plt
-import scipy.misc
-
-
+import subprocess
 from sklearn.manifold import MDS
 from sklearn.metrics.pairwise import euclidean_distances
 import math
-from mpi4py import MPI
-
 import pickle
 import numpy as np
-from itertools import product
-import time
-import datetime
 import pandas as pd
 import pickle
-
 from TINTOlib import utils
-import TINTOlib.utils.paraHill
 from TINTOlib.utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
+import platform
+import os
+
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False  # Verbose: if it's true, show the compilation text
-    default_hc_iterations = 5 #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    def __init__(self, problem=default_problem,verbose=default_verbose, hcIterations=default_hc_iterations):
+    default_verbose = False     # Verbose: if it's true, show the compilation text
+    default_hc_iterations = 5   #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
+    default_random_seed = 1     # Default seed to generate the embeddings using MDS
+    default_scale_up = True
+    def __init__(
+            self,
+            problem=default_problem,
+            verbose=default_verbose,
+            hcIterations=default_hc_iterations,
+            random_seed=default_random_seed,
+            scale_up = default_scale_up
+        ):
         self.verbose = verbose
         self.problem = problem
         self.hcIterations = hcIterations
+        self.random_seed = random_seed
+        self.scale_up = scale_up # TODO: implement
+
     def saveHyperparameters(self, filename='objs'):
         """
         This function allows SAVING the transformation options to images in a Pickle object.
@@ -89,7 +95,6 @@ class REFINED:
         """
         This function creates the images that will be processed by CNN.
         """
-
         X_scaled = self.min_max_scaler.transform(X)
         Y = np.array(Y)
         try:
@@ -114,10 +119,13 @@ class REFINED:
                 print("Error: Could not create subfolder")
 
         shape = int(math.sqrt(matrix_a.shape[0]))
-        plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
-        plt.axis('off')
-        plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-        plt.close()
+        if self.scale_up:
+            plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
+            plt.axis('off')
+            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            plt.close()
+        else:
+            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
@@ -134,10 +142,13 @@ class REFINED:
             except:
                 print("Error: Could not create subfolder")
         shape = int(math.sqrt(matrix_a.shape[0]))
-        plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
-        plt.axis('off')
-        plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-        plt.close()
+        if self.scale_up:
+            plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
+            plt.axis('off')
+            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            plt.close()
+        else:
+            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
@@ -176,92 +187,6 @@ class REFINED:
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
 
-
-
-
-    def __hillClimbing(self,desc, dist, img):
-        """
-        Desc: genes names
-        dist: distance matrix
-        img: init map
-        """
-
-        comm = MPI.COMM_WORLD
-        my_rank = comm.Get_rank()
-        n_processors = comm.Get_size()
-        if self.verbose:
-            print("Processors found: ", n_processors)
-        # print("My Rank: ", comm.Get_info().items())
-        current_time = datetime.datetime.now()
-        if self.verbose:
-            print("Time now at the beginning is: ", current_time)
-        gene_names, dist_matr, init_map= (desc,dist,img)
-        Nn = len(gene_names)
-
-        if init_map.shape[0] != init_map.shape[1]:
-            raise ValueError("For now only square images are considered.")
-        nn = init_map.shape[0]
-        # Convert from 'F34' to int 34
-        init_map = np.char.strip(init_map.astype(str), 'F').astype(int)
-        map_in_int = init_map
-        # %%
-        corr_evol = []
-        if my_rank == 0:
-            if self.verbose:
-                print("Initial corr: >>>", utils.paraHill.universial_corr(dist_matr, map_in_int))
-            for n_iter in range(self.hcIterations):
-                # 9 initial coordinates.
-                init_coords = [x for x in product([0, 1, 2], repeat=2)]
-                for init_coord in init_coords:
-                    # Update the mapping.
-                    broadcast_msg = map_in_int
-                    comm.bcast(broadcast_msg, root=0)
-                    # generate the centroids
-                    xxx = [init_coord[0] + i * 3 for i in range(int(nn / 3) + 1) if (init_coord[0] + i * 3) < nn]
-                    yyy = [init_coord[1] + i * 3 for i in range(int(nn / 3) + 1) if (init_coord[1] + i * 3) < nn]
-                    centr_list = [x for x in product(xxx, yyy)]
-                    # Master send and recv
-                    self.scatter_list_to_processors(comm, centr_list, n_processors)
-                    swap_dict = self.receive_from_processors_to_dict(comm, n_processors)
-                    #print(swap_dict)
-                    map_in_int = utils.paraHill.execute_dict_swap(swap_dict, map_in_int)
-
-
-
-                corr_evol.append(utils.paraHill.universial_corr(dist_matr, map_in_int))
-
-            coords = np.array([[item[0] for item in np.where(map_in_int == ii)] for ii in range(Nn)])
-            """with open(mapping, 'wb') as file:
-                pickle.dump([gene_names, coords, map_in_int], file)
-            # print("Consumed time:",start - time.time())"""
-
-            Endtime = datetime.datetime.now()
-            if self.verbose:
-                print("Time now at the end: ", Endtime)
-
-            return (gene_names, coords, map_in_int)
-
-        else:
-            # other processors
-            for n_iter in range(self.hcIterations):
-                broadcast_msg = init_map  # just for a size
-
-                # 9 initial Centroids
-                for ii in range(9):
-                    # Update the mapping
-                    map_in_int = comm.bcast(broadcast_msg, root=0)
-
-                    centr_list = comm.recv(source=0)
-                    each_swap_dict = utils.paraHill.evaluate_centroids_in_list(centr_list, dist_matr, map_in_int)
-                    comm.send(each_swap_dict, dest=0)
-            # result = dict()
-            # for each in data:
-            #    result.update({each: -each})
-            # comm.send(result,dest = 0)
-
-        MPI.Finalize
-
-
     def __trainingAlg(self, X, Y,Desc):
         """
         This function uses the above functions for the training.
@@ -286,7 +211,7 @@ class REFINED:
         Euc_Dist = euclidean_distances(transposed_input)  # Euclidean distance
         Euc_Dist = np.maximum(Euc_Dist, Euc_Dist.transpose())  # Making the Euclidean distance matrix symmetric
 
-        embedding = MDS(n_components=2)  # Reduce the dimensionality by MDS into 2 components
+        embedding = MDS(n_components=2, random_state=self.random_seed)  # Reduce the dimensionality by MDS into 2 components
         mds_xy = embedding.fit_transform(transposed_input)  # Apply MDS
 
         if self.verbose:
@@ -295,13 +220,39 @@ class REFINED:
         eq_xy = utils.Toolbox.two_d_eq(mds_xy, Nn)
         Img = utils.Toolbox.Assign_features_to_pixels(eq_xy, nn,verbose=self.verbose)  # Img is the none-overlapping coordinates generated by MDS
 
-        #Desc=Feat_DF.columns[:-1].tolist()
-        # Generating a distance matrix which includes the Euclidean distance between each and every descriptor
+        Desc = original_input.columns.tolist()                              # Drug descriptors name
+        Dist = pd.DataFrame(data = Euc_Dist, columns = Desc, index = Desc)	# Generating a distance matrix which includes the Euclidean distance between each and every descriptor
+        data = (Desc, Dist, Img	)  											# Preparing the hill climbing inputs
 
-        Dist = pd.DataFrame(data=Euc_Dist)
-        gene_names, coords, map_in_int=self.__hillClimbing(Desc, Dist, Img)
+        init_pickle_file = "Init_MDS_Euc.pickle"
+        with open(init_pickle_file, 'wb') as f:					# The hill climbing input is a pickle, therefore everything is saved as a pickle to be loaded by the hill climbing
+            pickle.dump(data, f)
 
-        self.__saveImages(gene_names, coords, map_in_int,X,Y,nn)
+        mapping_pickle_file = "Mapping_REFINED_subprocess.pickle"
+        evolution_csv_file = "REFINED_Evolve_subprocess.csv"
+        script_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "utils","mpiHill_UF.py"
+        )
+        
+        if 'Windows' == platform.system():
+            command = f'mpiexec -np 40 python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            result = subprocess.run(command, shell=True, text=True, capture_output=True)
+        else:
+            command = f"mpirun -np 40 python3 -u {script_path} --init {init_pickle_file} --mapping 'Mapping_REFINED.pickle'  --evolution {mapping_pickle_file}.csv --num {self.hcIterations}"
+            result = subprocess.run(command, shell=True, text=True, capture_output=True)
+
+        if result.returncode != 0:
+            raise Exception(result.stderr)
+
+        with open(mapping_pickle_file,'rb') as file:
+            gene_names_MDS,coords_MDS,map_in_int_MDS = pickle.load(file)
+
+        self.__saveImages(gene_names_MDS, coords_MDS, map_in_int_MDS, X, Y, nn)
+
+        os.remove(init_pickle_file)
+        os.remove(mapping_pickle_file)
+        os.remove(evolution_csv_file)
 
     def generateImages(self,data, folder="/refinedData"):
         """

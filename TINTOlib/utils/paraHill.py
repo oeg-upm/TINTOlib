@@ -51,7 +51,7 @@ def evaluate_swap(coord1,coord2,dist_matr,mapping_in_int,original_corr = -2):
         the_map[coord1[0],coord1[1]] = the_map[coord2[0],coord2[1]]
         the_map[coord2[0],coord2[1]] = temp
         changed_corr = universial_corr(dist_matr,the_map)
-        return(changed_corr - original_corr)
+        return float(changed_corr - original_corr)
     except IndexError:
         raise Warning ("Swap index:", coord1,coord2,"Index error. Check the coordnation.")
         return np.nan
