@@ -69,6 +69,7 @@ class REFINED:
         if self.verbose:
             print("It has been successfully saved in " + filename)
 
+
     def loadHyperparameters(self, filename='objs.pkl'):
         """
         This function allows LOADING the transformation options to images in a Pickle object.
@@ -84,56 +85,6 @@ class REFINED:
         if self.verbose:
             print("It has been successfully loaded in " + filename)
 
-
-    def __imageSampleFilter(self, X, Y, coord, matrix, folder):
-        """
-        This function creates the samples, i.e., the images. This function has the following specifications:
-        - The first conditional performs the pre-processing of the images by creating the matrices.
-        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
-          account in this step:
-            - The samples will be created according to the number of targets. Therefore, each folder that is
-              created will contain the images created for each target.
-            - In the code, the images are exported in PNG format; this can be changed to any other format.
-        """
-
-
-    def scatter_list_to_processors(self,comm, data_list, n_processors):
-        import math
-        data_amount = len(data_list)
-        heap_size = math.ceil(data_amount / (n_processors))
-
-        for pidx in range(1, n_processors):
-            try:
-                heap = data_list[heap_size * (pidx - 1):heap_size * pidx]
-            except:
-                heap = data_list[heap_size * (pidx - 1):]
-            comm.send(heap, dest=pidx)
-
-        return True
-
-    def receive_from_processors_to_dict(self,comm, n_processors):
-        # receives dicts, combine them and return
-        feedback = dict()
-        for pidx in range(1, n_processors):
-            receved = comm.recv(source=pidx)
-            feedback.update(receved)
-        return feedback
-
-    def __createImage(self, X, Y, folder='prueba/', train_m=False):
-        """
-        This function creates the images that will be processed by CNN.
-        """
-        X_scaled = self.min_max_scaler.transform(X)
-        Y = np.array(Y)
-        try:
-            os.mkdir(folder)
-            if self.verbose:
-                print("The folder was created " + folder + "...")
-        except:
-            if self.verbose:
-                print("The folder " + folder + " is already created...")
-
-        self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder)
     def __saveSupervised(self,classValue,i,folder,matrix_a):
         extension = 'png'  # eps o pdf
         subfolder = str(int(classValue)).zfill(2)  # subfolder for grouping the results of each class
@@ -244,7 +195,6 @@ class REFINED:
         if self.verbose:
             print(">>>> Data  is loaded")
 
-        # %% MDS
         nn = math.ceil(np.sqrt(len(feature_names_list)))  # Image dimension
         Nn = original_input.shape[1]  # Number of features
 
@@ -301,8 +251,6 @@ class REFINED:
                 - data : data CSV or pandas Dataframe
                 - folder : the folder where the images are created
         """
-        # Blurring verification
-
         # Read the CSV
         self.folder = folder
         if type(data) == str:
