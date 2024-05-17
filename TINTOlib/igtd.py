@@ -615,13 +615,12 @@ class IGTD:
         if self.save_image_size is None:
             plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
         else:
-            fig = plt.figure(
-                figsize=(self.save_image_size, self.save_image_size),
-                dpi=1,
-            )
-            plt.imshow(data_i, cmap='gray', vmin=0, vmax=255)
-            plt.axis('off')
-            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
+            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+            ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+            ax.axis('off')
+            fig.canvas.draw()
+            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0, dpi=1)
             plt.close(fig)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
@@ -652,13 +651,12 @@ class IGTD:
         if self.save_image_size is None:
             plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
         else:
-            fig = plt.figure(
-                figsize=(self.save_image_size, self.save_image_size),
-                dpi=1,
-            )
-            plt.imshow(data_i, cmap='gray', vmin=0, vmax=255)
-            plt.axis('off')
-            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
+            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+            ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+            ax.axis('off')
+            fig.canvas.draw()
+            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0, dpi=1)
             plt.close(fig)
 
         route_relative = os.path.join(subfolder, name_image)
