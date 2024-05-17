@@ -18,17 +18,33 @@ class REFINED:
     default_verbose = False         # Verbose: if it's true, show the compilation text
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
     default_random_seed = 1         # Default seed for reproducibility
-    default_scale_up = True         # TODO: check if this can be removed
+    default_save_image_size = None  # TODO: document
     default_n_processors = 8        # Default number of processors
     def __init__(
-            self,
-            problem: str = default_problem,
-            verbose: bool = default_verbose,
-            hcIterations: int = default_hc_iterations,
-            random_seed: int = default_random_seed,
-            scale_up: bool = default_scale_up,
-            n_processors: int = default_n_processors
-        ):
+        self,
+        problem: str = default_problem,
+        verbose: bool = default_verbose,
+        hcIterations: int = default_hc_iterations,
+        random_seed: int = default_random_seed,
+        save_image_size: int = default_save_image_size,
+        n_processors: int = default_n_processors
+    ):
+        """
+        Arguments
+        ---------
+        problem: str
+            The type of dataset
+        verbose: bool
+            If set to True, shows progress messages
+        hcIterations: int
+            The number of iterations of hill climbing goes
+        random_seed: int
+            The seed for reproduciblitity
+        save_image_size: int
+
+        n_processors: int
+            The number of processors to use
+        """
         if n_processors <= 1:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
@@ -36,7 +52,7 @@ class REFINED:
         self.problem = problem
         self.hcIterations = hcIterations
         self.random_seed = random_seed
-        self.scale_up = scale_up # TODO: implement
+        self.save_image_size = save_image_size  # TODO: change to represent pixels
         self.n_processors = n_processors
 
     def saveHyperparameters(self, filename='objs'):
@@ -125,7 +141,7 @@ class REFINED:
                 print("Error: Could not create subfolder")
 
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.scale_up:
+        if self.save_image_size is not None:
             plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
@@ -148,7 +164,7 @@ class REFINED:
             except:
                 print("Error: Could not create subfolder")
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.scale_up:
+        if self.save_image_size is not None:
             plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
