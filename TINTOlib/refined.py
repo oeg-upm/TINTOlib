@@ -18,20 +18,26 @@ class REFINED:
     default_verbose = False         # Verbose: if it's true, show the compilation text
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
     default_random_seed = 1         # Default seed for reproducibility
-    default_scale_up = True
+    default_scale_up = True         # TODO: check if this can be removed
+    default_n_processors = 8        # Default number of processors
     def __init__(
             self,
-            problem=default_problem,
-            verbose=default_verbose,
-            hcIterations=default_hc_iterations,
-            random_seed=default_random_seed,
-            scale_up = default_scale_up
+            problem: str = default_problem,
+            verbose: bool = default_verbose,
+            hcIterations: int = default_hc_iterations,
+            random_seed: int = default_random_seed,
+            scale_up: bool = default_scale_up,
+            n_processors: int = default_n_processors
         ):
+        if n_processors <= 1:
+            raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
+        
         self.verbose = verbose
         self.problem = problem
         self.hcIterations = hcIterations
         self.random_seed = random_seed
         self.scale_up = scale_up # TODO: implement
+        self.n_processors = n_processors
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -236,10 +242,10 @@ class REFINED:
         )
         
         if 'Windows' == platform.system():
-            command = f'mpiexec -np 40 python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpiexec -np {self.n_processors} python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
         else:
-            command = f'mpirun -np 40 python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpirun -np {self.n_processors} python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
 
         if result.returncode != 0:
