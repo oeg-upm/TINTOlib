@@ -7,7 +7,7 @@ import pandas as pd
 import shutil
 import time
 import pickle
-from typing import List
+from typing import List, Optional
 
 class IGTD:
     #Default hyperparameters
@@ -17,7 +17,7 @@ class IGTD:
                                         # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
                                         # 'Euclidean' calculates pairwise euclidean distances between features.
     default_image_dist_method = "Euclidean" # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_save_image_size = None            # Size in inches to save the image
+    default_save_image_size = None          # Size in pixels to save the image
     default_max_step = 1000                 # the maximum steps that the algorithm should run if never converges.
     default_val_step = 50                   # number of steps for checking gain on the objective function to determine convergence
     default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
@@ -28,61 +28,62 @@ class IGTD:
     default_problem = "supervised"          # Define the type of dataset [supervised, unsupervised, regression]
     
     def __init__(self,
-                 problem: str = default_problem,
-                 scale: List[int] = default_scale,
-                 fea_dist_method: str = default_fea_dist_method,
-                 image_dist_method: str = default_image_dist_method,
-                 save_image_size: int = default_save_image_size,    # TODO: change to represent pixels
-                 max_step: int = default_max_step,
-                 val_step: int = default_val_step,
-                 error: str = default_error,
-                 switch_t: int =default_switch_t,
-                 min_gain: float =default_min_gain,
-                 random_seed = default_random_seed,
-                 verbose: bool = default_verbose
+        problem: Optional[str] = default_problem,
+        scale: Optional[List[int]] = default_scale,
+        fea_dist_method: Optional[str] = default_fea_dist_method,
+        image_dist_method: Optional[str] = default_image_dist_method,
+        save_image_size: Optional[int] = default_save_image_size,
+        max_step: Optional[int] = default_max_step,
+        val_step: Optional[int] = default_val_step,
+        error: Optional[str] = default_error,
+        switch_t: Optional[int] = default_switch_t,
+        min_gain: Optional[float] = default_min_gain,
+        random_seed: Optional[int] = default_random_seed,
+        verbose: Optional[bool] = default_verbose
     ):
-        '''
+        """
         Input
         -----
-        problem:
-        scale: List[int]
+        problem: (optional) str
+            The tyoe of dataset
+        scale: (optional) List[int]
             a list of two positive integers. The number of pixel rows and columns in the image representations,
             into which the tabular data will be converted.
-        fea_dist_method: str
+        fea_dist_method: (optional) str
             a string indicating the method used for calculating the pairwise distances between features,
             for which there are three options.
             'Pearson' uses the Pearson correlation coefficient to evaluate the similarity between features.
             'Spearman' uses the Spearman correlation coefficient to evaluate the similarity between features.
             'Euclidean' calculates pairwise euclidean distances between features.
             'set' uses the Jaccard index to evaluate the similarity between features that are binary variables.
-        image_dist_method: str
+        image_dist_method: (optional) str
             a string indicating the method used for calculating the distances between pixels in image.
             It can be either 'Euclidean' or 'Manhattan'.
         save_image_size: (optional) int
-            Defaults to None. The size in inches for saving the visual results. If save_image_size is None,
-            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, save_image_size represents
-            the size in inches of the resulting images.
-        max_step: int
+            Defaults to None. The size in pixels for saving the visual results. If save_image_size is None,
+            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, the size of the image will be
+            save_image_size*save_image_size.
+        max_step: (optional) int
             the maximum number of iterations that the IGTD algorithm will run if never converges.
-        val_step: int
+        val_step: (optional) int
             the number of iterations for determining algorithm convergence. If the error reduction rate is smaller than
             min_gain for val_step iterations, the algorithm converges.
-        error: str
+        error: (optional) str
             name of the function to evaluate the difference between feature distance ranking and pixel
             distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
-        switch_t: 
+        switch_t: (optional) int
             the threshold on error change rate. Error change rate is
             (error after feature swapping - error before feature swapping) / error before feature swapping.
             In each iteration, if the smallest error change rate resulted from all possible feature swappings
             is not larger than switch_t, the feature swapping resulting in the smallest error change rate will
             be performed. If switch_t <= 0, the IGTD algorithm monotonically reduces the error during optimization.
-        min_gain: 
+        min_gain: (optional) float
             if the error reduction rate is not larger than min_gain for val_step iterations, the algorithm converges.
-        random_seed: int
+        random_seed: (optional) int
             random seed to make results reproducible
-        verbose: bool
+        verbose: (optional) bool
             whether to print progress on the terminal
-        '''
+        """
         self.scale: List[int] = scale
         self.fea_dist_method: str = fea_dist_method
         self.image_dist_method: str = image_dist_method
@@ -614,7 +615,10 @@ class IGTD:
         if self.save_image_size is None:
             plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
         else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size))
+            fig = plt.figure(
+                figsize=(self.save_image_size, self.save_image_size),
+                dpi=1,
+            )
             plt.imshow(data_i, cmap='gray', vmin=0, vmax=255)
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
@@ -648,7 +652,10 @@ class IGTD:
         if self.save_image_size is None:
             plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
         else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size))
+            fig = plt.figure(
+                figsize=(self.save_image_size, self.save_image_size),
+                dpi=1,
+            )
             plt.imshow(data_i, cmap='gray', vmin=0, vmax=255)
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)

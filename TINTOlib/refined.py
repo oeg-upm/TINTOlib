@@ -9,40 +9,43 @@ import numpy as np
 import pandas as pd
 import pickle
 from TINTOlib import utils
-from TINTOlib.utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
 import platform
 import os
+from typing import Optional
 
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False         # Verbose: if it's true, show the compilation text
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
     default_random_seed = 1         # Default seed for reproducibility
-    default_save_image_size = None  # TODO: document
+    default_save_image_size = None  # The size in pixels to save the image
     default_n_processors = 8        # Default number of processors
+
     def __init__(
         self,
-        problem: str = default_problem,
-        verbose: bool = default_verbose,
-        hcIterations: int = default_hc_iterations,
-        random_seed: int = default_random_seed,
-        save_image_size: int = default_save_image_size,
-        n_processors: int = default_n_processors
+        problem: Optional[str] = default_problem,
+        verbose: Optional[bool] = default_verbose,
+        hcIterations: Optional[int] = default_hc_iterations,
+        random_seed: Optional[int] = default_random_seed,
+        save_image_size: Optional[int] = default_save_image_size,
+        n_processors: Optional[int] = default_n_processors
     ):
         """
         Arguments
         ---------
-        problem: str
+        problem: (optional) str
             The type of dataset
-        verbose: bool
+        verbose: (optional) bool
             If set to True, shows progress messages
-        hcIterations: int
+        hcIterations: (optional) int
             The number of iterations of hill climbing goes
-        random_seed: int
+        random_seed: (optional) int
             The seed for reproduciblitity
-        save_image_size: int
-
-        n_processors: int
+        save_image_size: (optional) int
+            Defaults to None. The size in pixels for saving the visual results. If save_image_size is None,
+            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, the size of the image will be
+            save_image_size*save_image_size.
+        n_processors: (optional) int
             The number of processors to use
         """
         if n_processors <= 1:
@@ -52,7 +55,7 @@ class REFINED:
         self.problem = problem
         self.hcIterations = hcIterations
         self.random_seed = random_seed
-        self.save_image_size = save_image_size  # TODO: change to represent pixels
+        self.save_image_size = save_image_size
         self.n_processors = n_processors
 
     def saveHyperparameters(self, filename='objs'):
@@ -74,6 +77,9 @@ class REFINED:
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
             print("It has been successfully loaded in " + filename)
@@ -141,13 +147,19 @@ class REFINED:
                 print("Error: Could not create subfolder")
 
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.save_image_size is not None:
-            plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
+        data = matrix_a.reshape(shape, shape)
+
+        if self.save_image_size is None:
+            plt.imsave(route_complete, data, cmap='viridis')
+        else:
+            fig = plt.figure(
+                figsize=(self.save_image_size, self.save_image_size),
+                dpi=1,
+            )
+            plt.imshow(data, cmap='viridis')
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close()
-        else:
-            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
+            plt.close(fig)
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
@@ -163,14 +175,21 @@ class REFINED:
                 os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
+
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.save_image_size is not None:
-            plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
+        data = matrix_a.reshape(shape,shape)
+
+        if self.save_image_size is None:
+            plt.imsave(route_complete, data, cmap='viridis')
+        else:
+            fig = plt.figure(
+                figsize=(self.save_image_size, self.save_image_size),
+                dpi=1,
+            )
+            plt.imshow(data, cmap='viridis')
             plt.axis('off')
             plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close()
-        else:
-            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
+            plt.close(fig)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
