@@ -15,9 +15,9 @@ import os
 
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False     # Verbose: if it's true, show the compilation text
-    default_hc_iterations = 5   #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    default_random_seed = 1     # Default seed for reproducibility
+    default_verbose = False         # Verbose: if it's true, show the compilation text
+    default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
+    default_random_seed = 1         # Default seed for reproducibility
     default_scale_up = True
     def __init__(
             self,
@@ -239,7 +239,7 @@ class REFINED:
             command = f'mpiexec -np 40 python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
         else:
-            command = f"mpirun -np 40 python3 -u {script_path} --init {init_pickle_file} --mapping 'Mapping_REFINED.pickle'  --evolution {mapping_pickle_file}.csv --num {self.hcIterations}"
+            command = f'mpirun -np 40 python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
 
         if result.returncode != 0:
