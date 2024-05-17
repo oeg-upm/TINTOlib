@@ -8,30 +8,55 @@ import pickle
 import numpy as np
 import pandas as pd
 import pickle
-from TINTOlib import utils
-from TINTOlib.utils.Toolbox import two_d_eq, Assign_features_to_pixels,REFINED_Im_Gen
+from TINTOlib.utils import Toolbox
 import platform
 import os
+from typing import Optional
 
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False     # Verbose: if it's true, show the compilation text
-    default_hc_iterations = 5   #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    default_random_seed = 1     # Default seed to generate the embeddings using MDS
-    default_scale_up = True
+    default_verbose = False         # Verbose: if it's true, show the compilation text
+    default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
+    default_random_seed = 1         # Default seed for reproducibility
+    default_save_image_size = None  # The size in pixels to save the image
+    default_n_processors = 8        # Default number of processors
+
     def __init__(
-            self,
-            problem=default_problem,
-            verbose=default_verbose,
-            hcIterations=default_hc_iterations,
-            random_seed=default_random_seed,
-            scale_up = default_scale_up
-        ):
+        self,
+        problem: Optional[str] = default_problem,
+        verbose: Optional[bool] = default_verbose,
+        hcIterations: Optional[int] = default_hc_iterations,
+        random_seed: Optional[int] = default_random_seed,
+        save_image_size: Optional[int] = default_save_image_size,
+        n_processors: Optional[int] = default_n_processors
+    ):
+        """
+        Arguments
+        ---------
+        problem: (optional) str
+            The type of dataset
+        verbose: (optional) bool
+            If set to True, shows progress messages
+        hcIterations: (optional) int
+            The number of iterations of hill climbing goes
+        random_seed: (optional) int
+            The seed for reproduciblitity
+        save_image_size: (optional) int
+            Defaults to None. The size in pixels for saving the visual results. If save_image_size is None,
+            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, the size of the image will be
+            save_image_size*save_image_size.
+        n_processors: (optional) int
+            The number of processors to use
+        """
+        if n_processors <= 1:
+            raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
+        
         self.verbose = verbose
         self.problem = problem
         self.hcIterations = hcIterations
         self.random_seed = random_seed
-        self.scale_up = scale_up # TODO: implement
+        self.save_image_size = save_image_size
+        self.n_processors = n_processors
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -44,6 +69,7 @@ class REFINED:
         if self.verbose:
             print("It has been successfully saved in " + filename)
 
+
     def loadHyperparameters(self, filename='objs.pkl'):
         """
         This function allows LOADING the transformation options to images in a Pickle object.
@@ -52,60 +78,13 @@ class REFINED:
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
             print("It has been successfully loaded in " + filename)
 
-
-    def __imageSampleFilter(self, X, Y, coord, matrix, folder):
-        """
-        This function creates the samples, i.e., the images. This function has the following specifications:
-        - The first conditional performs the pre-processing of the images by creating the matrices.
-        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
-          account in this step:
-            - The samples will be created according to the number of targets. Therefore, each folder that is
-              created will contain the images created for each target.
-            - In the code, the images are exported in PNG format; this can be changed to any other format.
-        """
-
-
-    def scatter_list_to_processors(self,comm, data_list, n_processors):
-        import math
-        data_amount = len(data_list)
-        heap_size = math.ceil(data_amount / (n_processors))
-
-        for pidx in range(1, n_processors):
-            try:
-                heap = data_list[heap_size * (pidx - 1):heap_size * pidx]
-            except:
-                heap = data_list[heap_size * (pidx - 1):]
-            comm.send(heap, dest=pidx)
-
-        return True
-
-    def receive_from_processors_to_dict(self,comm, n_processors):
-        # receives dicts, combine them and return
-        feedback = dict()
-        for pidx in range(1, n_processors):
-            receved = comm.recv(source=pidx)
-            feedback.update(receved)
-        return feedback
-
-    def __createImage(self, X, Y, folder='prueba/', train_m=False):
-        """
-        This function creates the images that will be processed by CNN.
-        """
-        X_scaled = self.min_max_scaler.transform(X)
-        Y = np.array(Y)
-        try:
-            os.mkdir(folder)
-            if self.verbose:
-                print("The folder was created " + folder + "...")
-        except:
-            if self.verbose:
-                print("The folder " + folder + " is already created...")
-
-        self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m, folder)
     def __saveSupervised(self,classValue,i,folder,matrix_a):
         extension = 'png'  # eps o pdf
         subfolder = str(int(classValue)).zfill(2)  # subfolder for grouping the results of each class
@@ -119,13 +98,18 @@ class REFINED:
                 print("Error: Could not create subfolder")
 
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.scale_up:
-            plt.imshow(matrix_a.reshape(shape, shape), cmap='viridis')
-            plt.axis('off')
-            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close()
+        data = matrix_a.reshape(shape, shape)
+
+        if self.save_image_size is None:
+            plt.imsave(route_complete, data, cmap='viridis')
         else:
-            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
+            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
+            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+            ax.imshow(data, cmap='viridis')
+            ax.axis('off')
+            fig.canvas.draw()
+            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            plt.close(fig)
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
@@ -141,21 +125,27 @@ class REFINED:
                 os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
+
         shape = int(math.sqrt(matrix_a.shape[0]))
-        if self.scale_up:
-            plt.imshow(matrix_a.reshape(shape,shape), cmap='viridis')
-            plt.axis('off')
-            plt.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close()
+        data = matrix_a.reshape(shape,shape)
+
+        if self.save_image_size is None:
+            plt.imsave(route_complete, data, cmap='viridis')
         else:
-            plt.imsave(route_complete, matrix_a.reshape(shape,shape), cmap='viridis')
+            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
+            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+            ax.imshow(data, cmap='viridis')
+            ax.axis('off')
+            fig.canvas.draw()
+            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
+            plt.close(fig)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __saveImages(self,gene_names,coords,map_in_int, X, Y, nn):
 
         gene_names_MDS, coords_MDS, map_in_int_MDS=(gene_names,coords,map_in_int)
-        X_REFINED_MDS = utils.Toolbox.REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
+        X_REFINED_MDS = Toolbox.REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
         imagesRoutesArr=[]
         total = Y.shape[0]
         #print(X_REFINED_MDS.shape)
@@ -203,7 +193,6 @@ class REFINED:
         if self.verbose:
             print(">>>> Data  is loaded")
 
-        # %% MDS
         nn = math.ceil(np.sqrt(len(feature_names_list)))  # Image dimension
         Nn = original_input.shape[1]  # Number of features
 
@@ -217,8 +206,8 @@ class REFINED:
         if self.verbose:
             print(">>>> MDS dimensionality reduction is done")
 
-        eq_xy = utils.Toolbox.two_d_eq(mds_xy, Nn)
-        Img = utils.Toolbox.Assign_features_to_pixels(eq_xy, nn,verbose=self.verbose)  # Img is the none-overlapping coordinates generated by MDS
+        eq_xy = Toolbox.two_d_eq(mds_xy, Nn)
+        Img = Toolbox.Assign_features_to_pixels(eq_xy, nn,verbose=self.verbose)  # Img is the none-overlapping coordinates generated by MDS
 
         Desc = original_input.columns.tolist()                              # Drug descriptors name
         Dist = pd.DataFrame(data = Euc_Dist, columns = Desc, index = Desc)	# Generating a distance matrix which includes the Euclidean distance between each and every descriptor
@@ -236,10 +225,10 @@ class REFINED:
         )
         
         if 'Windows' == platform.system():
-            command = f'mpiexec -np 40 python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpiexec -np {self.n_processors} python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
         else:
-            command = f"mpirun -np 40 python3 -u {script_path} --init {init_pickle_file} --mapping 'Mapping_REFINED.pickle'  --evolution {mapping_pickle_file}.csv --num {self.hcIterations}"
+            command = f'mpirun -np {self.n_processors} python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
 
         if result.returncode != 0:
@@ -260,8 +249,6 @@ class REFINED:
                 - data : data CSV or pandas Dataframe
                 - folder : the folder where the images are created
         """
-        # Blurring verification
-
         # Read the CSV
         self.folder = folder
         if type(data) == str:

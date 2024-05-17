@@ -39,7 +39,7 @@ class TINTO:
     default_option = 'mean'  # Option in blurring (mean and maximum)
 
     default_train_m = True
-    default_seed = 20  # Seed
+    default_random_seed = 20  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
     default_verbose = False  # Verbose: if it's true, show the compilation text
 
@@ -49,7 +49,7 @@ class TINTO:
 
     def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles,submatrix=default_submatrix, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
-                 seed=default_seed, times=default_times, train_m=default_train_m, verbose=default_verbose):
+                 random_seed=default_random_seed, times=default_times, train_m=default_train_m, verbose=default_verbose):
         self.problem = problem
         self.algorithm = algorithm
         self.pixels = pixels
@@ -62,7 +62,7 @@ class TINTO:
         self.option = option
 
         self.train_m = train_m
-        self.seed = seed
+        self.random_seed = random_seed
         self.times = times
         self.verbose = verbose
 
@@ -100,7 +100,7 @@ class TINTO:
             self.steps = variables["steps"]
             self.option = variables["option"]
 
-            self.seed = variables["seed"]
+            self.random_seed = variables["random_seed"]
             self.times = variables["times"]
             self.verbose = variables["verbose"]
 
@@ -460,12 +460,12 @@ class TINTO:
             print("Selected algorithm: " + self.algorithm)
 
         if self.algorithm == 'PCA':
-            X_embedded = PCA(n_components=2, random_state=self.seed).fit(X_trans).transform(X_trans)
+            X_embedded = PCA(n_components=2, random_state=self.random_seed).fit(X_trans).transform(X_trans)
         elif self.algorithm == 't-SNE':
             for i in range(self.times):
                 X_trans = np.append(X_trans, X_trans, axis=0)
                 labels = np.append(labels, labels, axis=0)
-            X_embedded = TSNE(n_components=2, random_state=self.seed, perplexity=50).fit_transform(X_trans)
+            X_embedded = TSNE(n_components=2, random_state=self.random_seed, perplexity=50).fit_transform(X_trans)
         else:
             print("Error: Incorrect algorithm")
             X_embedded = np.random.rand(X.shape[1], 2)

@@ -42,7 +42,7 @@ parser.add_argument("-oB",  "--option_blurr", dest="option", default='mean', cho
 parser.add_argument("-sC",  "--save", dest="save_configuration", help="Save configurations (to reuse)")
 parser.add_argument("-lC",  "--load", dest="load_configuration", help="Load configurations (.pkl)")
 
-parser.add_argument("-sd",  "--seed", dest="seed", default=20, help="seed", type=int)
+parser.add_argument("-sd",  "--random_seed", dest="random_seed", default=20, help="seed for reproducibility", type=int)
 parser.add_argument("-tt",  "--times_tsne", dest="times_tsne", default=4, help="Times replication in t-SNE", type=int)
 
 parser.add_argument("src_data", help="Source location (tidy data in csv without head)")
@@ -187,11 +187,11 @@ def cargar_variable(filename='objs.pkl',verbose=False):
 #Clase para crear imágenes
 class DataImg:
     
-    def __init__(self, algoritmo='PCA', pixeles=20, seed=20, veces=4, amp=np.pi, distancia=0.1, pasos=4, opcion='maximo'):
-        self.algoritmo = algoritmo  # algoritmo de reduccion dimensional
-        self.p = pixeles            # pixeles de la imagen
-        self.seed = seed            # semilla
-        self.veces = veces  #solo para t-sne
+    def __init__(self, algoritmo='PCA', pixeles=20, random_seed=20, veces=4, amp=np.pi, distancia=0.1, pasos=4, opcion='maximo'):
+        self.algoritmo = algoritmo      # algoritmo de reduccion dimensional
+        self.p = pixeles                # pixeles de la imagen
+        self.random_seed = random_seed  # semilla
+        self.veces = veces              # solo para t-sne
         
         self.amp = amp              # amplitud (difuminacion)
         self.distancia = distancia  # distancia (difuminacion)
@@ -214,14 +214,14 @@ class DataImg:
             print("Algoritmo seleccionado: "+self.algoritmo)
             
         if(self.algoritmo=='PCA'):
-            X_embedded = PCA(n_components=2,random_state=self.seed).fit(X_trans).transform(X_trans)
+            X_embedded = PCA(n_components=2,random_state=self.random_seed).fit(X_trans).transform(X_trans)
         elif(self.algoritmo=='t-SNE'):
             #print("inicio_iter")
             for i in range(self.veces):
                 X_trans = np.append(X_trans,X_trans,axis=0)
                 labels = np.append(labels,labels,axis=0)
             #print("inicio_tsne")
-            X_embedded = TSNE(n_components=2,random_state=self.seed,perplexity=50).fit_transform(X_trans)
+            X_embedded = TSNE(n_components=2,random_state=self.random_seed,perplexity=50).fit_transform(X_trans)
             #X_embedded = TSNE(n_components=2,perplexity=50).fit_transform(X_trans)
             #print("termino tsne")
         else:
@@ -326,7 +326,7 @@ else:
                         distancia=args.distance,
                         pasos=args.steps,
                         opcion=args.option,
-                        seed=args.seed,
+                        random_seed=args.random_seed,
                         veces=args.times_tsne
                         )
 
