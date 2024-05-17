@@ -17,7 +17,7 @@ class IGTD:
                                         # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
                                         # 'Euclidean' calculates pairwise euclidean distances between features.
     default_image_dist_method = "Euclidean" # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_save_image_size = 20            # Size in inches to save the image
+    default_save_image_size = None            # Size in inches to save the image
     default_max_step = 1000                 # the maximum steps that the algorithm should run if never converges.
     default_val_step = 50                   # number of steps for checking gain on the objective function to determine convergence
     default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
@@ -32,7 +32,7 @@ class IGTD:
                  scale: List[int] = default_scale,
                  fea_dist_method: str = default_fea_dist_method,
                  image_dist_method: str = default_image_dist_method,
-                 save_image_size: int = default_save_image_size,
+                 save_image_size: int = default_save_image_size,    # TODO: change to represent pixels
                  max_step: int = default_max_step,
                  val_step: int = default_val_step,
                  error: str = default_error,
