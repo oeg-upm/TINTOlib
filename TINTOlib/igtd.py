@@ -23,7 +23,7 @@ class IGTD:
     default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
     default_switch_t = 0                    # the threshold to determine whether switch should happen
     default_min_gain = 0.00001              # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
-    default_seed = 1                        # for setting random seed.
+    default_random_seed = 1                 # default seed for reproducibility
     default_verbose = False
     default_problem = "supervised"          # Define the type of dataset [supervised, unsupervised, regression]
     
@@ -38,7 +38,7 @@ class IGTD:
                  error: str = default_error,
                  switch_t: int =default_switch_t,
                  min_gain: float =default_min_gain,
-                 seed = default_seed,
+                 random_seed = default_random_seed,
                  verbose: bool = default_verbose
     ):
         '''
@@ -78,8 +78,8 @@ class IGTD:
             be performed. If switch_t <= 0, the IGTD algorithm monotonically reduces the error during optimization.
         min_gain: 
             if the error reduction rate is not larger than min_gain for val_step iterations, the algorithm converges.
-        seed: int
-            seed to make results reproducible
+        random_seed: int
+            random seed to make results reproducible
         verbose: bool
             whether to print progress on the terminal
         '''
@@ -92,7 +92,7 @@ class IGTD:
         self.error: str = error
         self.switch_t: int = switch_t
         self.min_gain: float = min_gain
-        self.seed: int = seed
+        self.random_seed: int = random_seed
         self.verbose: bool = verbose
         self.problem: str = problem
 
@@ -134,7 +134,7 @@ class IGTD:
             self.error = variables["error"]
             self.switch_t = variables["switch_t"]
             self.min_gain = variables["min_gain"]
-            self.seed = variables["seed"]
+            self.random_seed = variables["random_seed"]
             self.verbose = variables["verbose"]
 
         if self.verbose:
@@ -283,7 +283,7 @@ class IGTD:
             the time at which each step is completed in the optimization process
         '''
 
-        r = np.random.RandomState(seed=self.seed)
+        r = np.random.RandomState(seed=self.random_seed)
         if os.path.exists(self.folder):
             shutil.rmtree(self.folder)
         os.mkdir(self.folder)
@@ -438,7 +438,7 @@ class IGTD:
             the time at which each step is finished in the optimization process
         '''
 
-        r = np.random.RandomState(seed=self.seed)
+        r = np.random.RandomState(seed=self.random_seed)
         if os.path.exists(self.folder):
             shutil.rmtree(self.folder)
         os.mkdir(self.folder)

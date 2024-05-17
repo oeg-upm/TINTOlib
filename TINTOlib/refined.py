@@ -17,7 +17,7 @@ class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False     # Verbose: if it's true, show the compilation text
     default_hc_iterations = 5   #Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    default_random_seed = 1     # Default seed to generate the embeddings using MDS
+    default_random_seed = 1     # Default seed for reproducibility
     default_scale_up = True
     def __init__(
             self,
