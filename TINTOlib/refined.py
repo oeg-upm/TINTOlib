@@ -18,7 +18,7 @@ class REFINED:
     default_verbose = False         # Verbose: if it's true, show the compilation text
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
     default_random_seed = 1         # Default seed for reproducibility
-    default_save_image_size = None  # The size in pixels to save the image
+    default_zoom = 1                # The default multiplication value to save the image
     default_n_processors = 8        # Default number of processors
 
     def __init__(
@@ -27,7 +27,7 @@ class REFINED:
         verbose: Optional[bool] = default_verbose,
         hcIterations: Optional[int] = default_hc_iterations,
         random_seed: Optional[int] = default_random_seed,
-        save_image_size: Optional[int] = default_save_image_size,
+        zoom: Optional[int] = default_zoom,
         n_processors: Optional[int] = default_n_processors
     ):
         """
@@ -41,10 +41,9 @@ class REFINED:
             The number of iterations of hill climbing goes
         random_seed: (optional) int
             The seed for reproduciblitity
-        save_image_size: (optional) int
-            Defaults to None. The size in pixels for saving the visual results. If save_image_size is None,
-            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, the size of the image will be
-            save_image_size*save_image_size.
+        zoom: (optional) int
+            Defaults to 1. The rescale factor to save the image. size in pixels for saving the visual results. The resulting image will
+            shape a size of scale[0]*zoom,scale[1]*zoom pixels.
         n_processors: (optional) int
             The number of processors to use
         """
@@ -55,7 +54,7 @@ class REFINED:
         self.problem = problem
         self.hcIterations = hcIterations
         self.random_seed = random_seed
-        self.save_image_size = save_image_size
+        self.zoom = zoom
         self.n_processors = n_processors
 
     def saveHyperparameters(self, filename='objs'):
@@ -100,16 +99,13 @@ class REFINED:
         shape = int(math.sqrt(matrix_a.shape[0]))
         data = matrix_a.reshape(shape, shape)
 
-        if self.save_image_size is None:
-            plt.imsave(route_complete, data, cmap='viridis')
-        else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
-            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-            ax.imshow(data, cmap='viridis')
-            ax.axis('off')
-            fig.canvas.draw()
-            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close(fig)
+        fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
+        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        ax.imshow(data, cmap='viridis')
+        ax.axis('off')
+        fig.canvas.draw()
+        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
+        plt.close(fig)
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
@@ -129,16 +125,13 @@ class REFINED:
         shape = int(math.sqrt(matrix_a.shape[0]))
         data = matrix_a.reshape(shape,shape)
 
-        if self.save_image_size is None:
-            plt.imsave(route_complete, data, cmap='viridis')
-        else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
-            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-            ax.imshow(data, cmap='viridis')
-            ax.axis('off')
-            fig.canvas.draw()
-            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0)
-            plt.close(fig)
+        fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
+        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        ax.imshow(data, cmap='viridis')
+        ax.axis('off')
+        fig.canvas.draw()
+        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
+        plt.close(fig)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 

@@ -17,7 +17,7 @@ class IGTD:
                                         # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
                                         # 'Euclidean' calculates pairwise euclidean distances between features.
     default_image_dist_method = "Euclidean" # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_save_image_size = None          # Size in pixels to save the image
+    default_zoom = 1                        # The default multiplication value to save the image
     default_max_step = 1000                 # the maximum steps that the algorithm should run if never converges.
     default_val_step = 50                   # number of steps for checking gain on the objective function to determine convergence
     default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
@@ -32,7 +32,7 @@ class IGTD:
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
         image_dist_method: Optional[str] = default_image_dist_method,
-        save_image_size: Optional[int] = default_save_image_size,
+        zoom: Optional[int] = default_zoom,
         max_step: Optional[int] = default_max_step,
         val_step: Optional[int] = default_val_step,
         error: Optional[str] = default_error,
@@ -59,10 +59,9 @@ class IGTD:
         image_dist_method: (optional) str
             a string indicating the method used for calculating the distances between pixels in image.
             It can be either 'Euclidean' or 'Manhattan'.
-        save_image_size: (optional) int
-            Defaults to None. The size in pixels for saving the visual results. If save_image_size is None,
-            the resulting images will have a size of scale[0]*scale[1] pixels. Otherwise, the size of the image will be
-            save_image_size*save_image_size.
+        zoom: (optional) int
+            Defaults to 1. The rescale factor to save the image. size in pixels for saving the visual results. The resulting image will
+            shape a size of scale[0]*zoom,scale[1]*zoom pixels.
         max_step: (optional) int
             the maximum number of iterations that the IGTD algorithm will run if never converges.
         val_step: (optional) int
@@ -87,7 +86,7 @@ class IGTD:
         self.scale: List[int] = scale
         self.fea_dist_method: str = fea_dist_method
         self.image_dist_method: str = image_dist_method
-        self.save_image_size: int = save_image_size
+        self.zoom: int = zoom
         self.max_step: int = max_step
         self.val_step: int = val_step
         self.error: str = error
@@ -129,7 +128,7 @@ class IGTD:
             self.scale = variables["scale"]
             self.fea_dist_method = variables["fea_dist_method"]
             self.image_dist_method = variables["image_dist_method"]
-            self.save_image_size = variables["save_image_size"]
+            self.zoom = variables["zoom"]
             self.max_step = variables["max_step"]
             self.val_step = variables["val_step"]
             self.error = variables["error"]
@@ -612,16 +611,13 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        if self.save_image_size is None:
-            plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
-        else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
-            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-            ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
-            ax.axis('off')
-            fig.canvas.draw()
-            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0, dpi=1)
-            plt.close(fig)
+        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+        ax.axis('off')
+        fig.canvas.draw()
+        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
+        plt.close(fig)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
@@ -648,16 +644,13 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        if self.save_image_size is None:
-            plt.imsave(route_complete, data_i, cmap='gray', vmin=0, vmax=255)
-        else:
-            fig = plt.figure(figsize=(self.save_image_size, self.save_image_size), dpi=1,)
-            ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-            ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
-            ax.axis('off')
-            fig.canvas.draw()
-            fig.savefig(fname=route_complete, bbox_inches='tight', pad_inches=0, dpi=1)
-            plt.close(fig)
+        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+        ax.axis('off')
+        fig.canvas.draw()
+        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
+        plt.close(fig)
 
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
