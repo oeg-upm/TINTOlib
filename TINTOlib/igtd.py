@@ -613,7 +613,7 @@ class IGTD:
 
         fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
@@ -646,7 +646,7 @@ class IGTD:
 
         fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255)
+        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
