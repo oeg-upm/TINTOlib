@@ -13,6 +13,8 @@ import platform
 import os
 from typing import Optional
 
+print("OK")
+
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False         # Verbose: if it's true, show the compilation text
@@ -101,7 +103,7 @@ class REFINED:
 
         fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-        ax.imshow(data, cmap='viridis')
+        ax.imshow(data, cmap='viridis', interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
@@ -127,7 +129,7 @@ class REFINED:
 
         fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
-        ax.imshow(data, cmap='viridis')
+        ax.imshow(data, cmap='viridis', interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
