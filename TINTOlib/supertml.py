@@ -4,6 +4,8 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import pickle
+import math 
+
 class SuperTML:
     ###### default values ###############
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
@@ -19,7 +21,6 @@ class SuperTML:
         self.columns = columns
         self.image_size = size
         self.font_size = font_size
-
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -66,6 +67,7 @@ class SuperTML:
         image.save(route_complete)
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
+    
     def __saveRegressionOrUnsupervised(self, i, image):
         extension = 'png'  # eps o pdf
         subfolder = "images"
@@ -83,16 +85,35 @@ class SuperTML:
         return route_relative
 
     def __event2img(self,event: np.ndarray):
-        #font = ImageFont.truetype('Arial.ttf', 13)
+        cell_width = self.image_size // self.columns
+        rows = math.ceil(len(event) / self.columns)
+        cell_height = self.image_size // rows
+
         font = ImageFont.truetype("arial.ttf", self.font_size)
-        #font = ImageFont.load_default()
         img = Image.fromarray(np.zeros([self.image_size, self.image_size, 3]), 'RGB')
+        draw = ImageDraw.Draw(img)
+
         for i, f in enumerate(event):
-            ImageDraw.Draw(img).text(((0.25 + (i % self.columns)) * self.image_size // self.columns,
-                                      (i // self.columns) * self.columns * self.image_size // len(event))
-                                     , f'{f:.3f}',
-                                     fill=(255, 255, 255), font=font)
+            x = ((i % self.columns)) * cell_width
+            y = (i // self.columns) * cell_height
+
+            text = f'{f:.3f}'
+            
+            bbox = draw.textbbox((0, 0), text, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+
+            text_x = x + (cell_width - text_width) / 2
+            text_y = y + (cell_height - text_height) / 2
+
+            draw.text(
+                (text_x, text_y),
+                text,
+                fill=(255, 255, 255),
+                font=font,
+            )
         return img
+    
     def __trainingAlg(self, X, Y):
         """
                 This function creates the images that will be processed by CNN.
@@ -138,6 +159,8 @@ class SuperTML:
 
             X = array[:, :-1]
             Y = array[:, -1]
+            
             # Training
             self.__trainingAlg(X, Y)
-            if self.verbose: print("End")
+            if self.verbose:
+                print("End")
