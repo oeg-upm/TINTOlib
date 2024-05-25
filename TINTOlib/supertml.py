@@ -9,7 +9,6 @@ import math
 class SuperTML:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False         # Verbose: if it's true, show the compilation text
-    default_columns = 4             # Number of columns
     default_pixels = 224
     default_font_size = 10
     default_feature_importance = False  # False to produce SuperTML-EF, True to produce SuperTML-VF
@@ -19,7 +18,6 @@ class SuperTML:
         self,
         problem=default_problem,
         verbose=default_verbose,
-        columns=default_columns,
         pixels=default_pixels,
         font_size = default_font_size,
         feature_importance: bool = default_feature_importance,
@@ -27,7 +25,6 @@ class SuperTML:
     ):
         self.problem: str = problem
         self.verbose: bool = verbose
-        self.columns: int = columns
         self.image_pixels: int = pixels
         self.font_size: int = font_size
         self.feature_importance: bool = feature_importance
@@ -52,10 +49,8 @@ class SuperTML:
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-
             self.problem = variables["problem"]
             self.verbose = variables["verbose"]
-            self.columns = variables["columns"]
             self.image_pixels = variables["image_pixels"]
             self.font_size = variables["font_size"]
 
@@ -218,6 +213,9 @@ class SuperTML:
         if self.feature_importance:
             # Calculate the feature importance for SuperTML-VF
             self.calculate_feature_importances(X, Y)
+        else:
+            # Calculate the number of columns
+            self.columns = math.ceil(math.sqrt(X.shape[0]))
 
         try:
             os.mkdir(self.folder)
