@@ -126,7 +126,7 @@ class BarGraph:
             for i_bar,val_bar in enumerate(bar_heights):
                 image[
                     top_padding : (top_padding + val_bar),                                         # The height of the column
-                    (self.gap + ((step_column)*i_bar)) : (self.gap + ((step_column)*(i_bar+1)))    # The width of the column
+                    (self.gap+(step_column*i_bar)) : (self.gap+(step_column*i_bar)) + self.pixel_width # The width of the column
                 ] = 1
                 
             if self.problem == "supervised":
