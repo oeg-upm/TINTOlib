@@ -178,5 +178,7 @@ class BarGraph:
         max_vals = np.max(X, axis=0)
         X = (X - min_vals) / (max_vals - min_vals)
 
+        # TODO: reorder columns
+
         # Training
         self.__trainingAlg(X, Y)

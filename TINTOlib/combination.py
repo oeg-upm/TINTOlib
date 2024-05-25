@@ -116,6 +116,7 @@ class Combination:
             imgI1 = np.repeat(np.repeat(image_norm, self.zoom, axis=0), self.zoom, axis=1)
 
             """LEVEL - 2 (BARS)"""
+            # TODO: reorder the columns
             bar_heights = np.floor(X_normalized[ins] * max_bar_height).astype(np.int64)
             for i_bar,val_bar in enumerate(bar_heights):
                 imgage[
