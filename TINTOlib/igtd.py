@@ -588,9 +588,9 @@ class IGTD:
         '''
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
+        name_image = str(i).zfill(6) + '.' + extension
         route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
+        route_complete = os.path.join(route, name_image)
         # Subfolder check
         if not os.path.isdir(route):
             try:
@@ -598,7 +598,7 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
@@ -606,7 +606,7 @@ class IGTD:
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
         plt.close(fig)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __saveRegressionOrUnsupervised(self, i, data_i):
@@ -631,7 +631,7 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
