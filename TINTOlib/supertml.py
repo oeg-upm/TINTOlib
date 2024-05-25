@@ -214,7 +214,7 @@ class SuperTML:
             self.calculate_feature_importances(X, Y)
         else:
             # Calculate the number of columns
-            self.columns = math.ceil(math.sqrt(X.shape[0]))
+            self.columns = math.ceil(math.sqrt(X.shape[1]))
 
         try:
             os.mkdir(self.folder)
