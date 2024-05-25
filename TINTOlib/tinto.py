@@ -85,31 +85,18 @@ class TINTO:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-            self.algorithm = variables["algorithm"]
-            self.pixels = variables["pixels"]
-
-            self.blur = variables["blur"]
-            self.amplification = variables["amplification"]
-            self.distance = variables["distance"]
-            self.steps = variables["steps"]
-            self.option = variables["option"]
-
-            self.random_seed = variables["random_seed"]
-            self.times = variables["times"]
-            self.verbose = variables["verbose"]
-
-            #self.src_data = variables["src_data"]  # Source location (tidy data in csv without head)
-            #self.dest_folder = variables["dest_folder"]  # Destination location (folder)
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
-
+            print("It has been successfully loaded from " + filename)
 
     def __square(self, coord):
         """

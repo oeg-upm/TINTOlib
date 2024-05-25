@@ -9,28 +9,25 @@ import math
 class SuperTML:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False         # Verbose: if it's true, show the compilation text
-    default_columns = 4             # Number of columns
-    default_size = 224
+    default_pixels = 224
     default_font_size = 10
-    default_variable_font_size = False  # False to produce SuperTML-EF, True to produce SuperTML-VF
+    default_feature_importance = False  # False to produce SuperTML-EF, True to produce SuperTML-VF
     default_random_seed = 1
     
     def __init__(
         self,
         problem=default_problem,
         verbose=default_verbose,
-        columns=default_columns,
-        size=default_size,
+        pixels=default_pixels,
         font_size = default_font_size,
-        variable_font_size: bool = default_variable_font_size,
+        feature_importance: bool = default_feature_importance,
         random_seed: int = default_random_seed
     ):
         self.problem: str = problem
         self.verbose: bool = verbose
-        self.columns: int = columns
-        self.image_size: int = size
+        self.image_pixels: int = pixels
         self.font_size: int = font_size
-        self.variable_font_size: bool = variable_font_size
+        self.feature_importance: bool = feature_importance
         self.random_seed = random_seed
 
     def saveHyperparameters(self, filename='objs'):
@@ -46,21 +43,18 @@ class SuperTML:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-
-            self.problem = variables["problem"]
-            self.verbose = variables["verbose"]
-            self.columns = variables["columns"]
-            self.image_size = variables["image_size"]
-            self.font_size = variables["font_size"]
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
+            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf
@@ -108,28 +102,22 @@ class SuperTML:
 
     def __event2img(self,event: np.ndarray):
         # SuperTML-VF
-        if self.variable_font_size:
+        if self.feature_importance:
             padding = 5     # Padding around the texts
 
-            # Calculate the font sizes
-            current_number = self.font_size
-            min_font_size = 1
-            step_decrease = 2
-            font_sizes = []
-            while len(font_sizes) < len(event):
-                font_sizes.append(max(current_number, min_font_size))
-                current_number -= step_decrease
             feature_importances = self.feature_importances
             max_feature_importances = max(feature_importances.tolist())
 
-            img = Image.fromarray(np.zeros([self.image_size, self.image_size, 3]), 'RGB')
+            img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3]), 'RGB')
             draw = ImageDraw.Draw(img)
 
             sorted_features = sorted(zip(event, feature_importances), key=lambda x: x[1], reverse=True)
             positions = []
 
             for i,(feature,importance) in enumerate(sorted_features):
-                font_size = max(int(self.font_size * (importance / max_feature_importances)), 1)
+                # The font size of this feature is relative to the ratio of this importante vs the most important feature
+                ratio = (importance / max_feature_importances)
+                font_size = max(int(self.font_size * ratio), 1)
                 font = ImageFont.truetype("arial.ttf", font_size)
 
                 text = f'{feature:.3f}'
@@ -139,10 +127,10 @@ class SuperTML:
                 text_height = bbox[3] - bbox[1]
 
                 placed = False
-                for y in range(0, self.image_size - text_height, 1):
+                for y in range(0, self.image_pixels - text_height, 1):
                     if placed:
                         break
-                    for x in range(0, self.image_size - text_width, 1):
+                    for x in range(0, self.image_pixels - text_width, 1):
                         if not self.check_overlap(x, y, text_width, text_height, positions):
                             positions.append((x, y, text_width+padding, text_height+padding))
                             draw.text((x, y), text, fill=(255, 255, 255), font=font)
@@ -153,12 +141,12 @@ class SuperTML:
 
         # SuperTML-EF
         else:
-            cell_width = self.image_size // self.columns
+            cell_width = self.image_pixels // self.columns
             rows = math.ceil(len(event) / self.columns)
-            cell_height = self.image_size // rows
+            cell_height = self.image_pixels // rows
 
             font = ImageFont.truetype("arial.ttf", self.font_size)
-            img = Image.fromarray(np.zeros([self.image_size, self.image_size, 3]), 'RGB')
+            img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3]), 'RGB')
             draw = ImageDraw.Draw(img)
 
             for i, f in enumerate(event):
@@ -183,19 +171,16 @@ class SuperTML:
 
             return img
         
-    def calculate_feature_importances(self, X, y, test_size=0.2):
+    def calculate_feature_importances(self, X: np.ndarray, y: np.ndarray) -> None:
         """
-        Calculate feature importances using a Random Forest model.
+        Calculates feature importances using a Random Forest model.
 
-        Parameters:
-        X (pd.DataFrame or np.ndarray): Feature matrix.
-        y (pd.Series or np.ndarray): Target variable.
-        model_type (str): 'classifier' for classification tasks, 'regressor' for regression tasks.
-        test_size (float): Proportion of the dataset to include in the test split.
-        random_state (int): Random seed.
-
-        Returns:
-        np.ndarray: Feature importances.
+        Arguments
+        ---------
+        X: np.ndarray
+            Feature array
+        y: np.ndarray
+            Targets array
         """
         from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
@@ -213,21 +198,23 @@ class SuperTML:
         # Fit the model
         model.fit(X[indices][:max_selection], y[indices][:max_selection])
 
-        # Get feature importances
-        feature_importances = model.feature_importances_
-        self.feature_importances = feature_importances
+        # Update the feature importances
+        self.feature_importances = model.feature_importances_
+        
         
     def __trainingAlg(self, X, Y):
-        """
-                This function creates the images that will be processed by CNN.
-        """
+        """This function creates the images that will be processed by CNN."""
         # Variable for regression problem
         imagesRoutesArr = []
 
         Y = np.array(Y)
 
-        if self.variable_font_size:
-            self.calculate_feature_importances(X, Y, test_size=0.2)
+        if self.feature_importance:
+            # Calculate the feature importance for SuperTML-VF
+            self.calculate_feature_importances(X, Y)
+        else:
+            # Calculate the number of columns
+            self.columns = math.ceil(math.sqrt(X.shape[1]))
 
         try:
             os.mkdir(self.folder)
@@ -248,13 +235,31 @@ class SuperTML:
                 imagesRoutesArr.append(route)
             else:
                 print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+        
+        if self.problem == "supervised" :
+            data={'images':imagesRoutesArr,'class':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
+        elif self.problem == "unsupervised":
+            data = {'images': imagesRoutesArr}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
+        elif self.problem == "regression":
+            data = {'images': imagesRoutesArr,'values':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
 
     def generateImages(self,data, folder="prueba/"):
             """
-                This function generate and save the synthetic images in folders.
-                    - data : data CSV or pandas Dataframe
-                    - folder : the folder where the images are created
+            This function generate and save the synthetic images in folders.
+
+            Arguments
+            --------
+            data: CSV or pd.Dataframe
+                Constains the data. The targets must be in the last column.
+            folder: str
+                the folder where the images are created
             """
             # Read the CSV
             self.folder = folder

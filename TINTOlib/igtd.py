@@ -114,28 +114,15 @@ class IGTD:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
-
-        Input
-        -----
-        filename: str
-            Name of the pickle file.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-            self.scale = variables["scale"]
-            self.fea_dist_method = variables["fea_dist_method"]
-            self.image_dist_method = variables["image_dist_method"]
-            self.zoom = variables["zoom"]
-            self.max_step = variables["max_step"]
-            self.val_step = variables["val_step"]
-            self.error = variables["error"]
-            self.switch_t = variables["switch_t"]
-            self.min_gain = variables["min_gain"]
-            self.random_seed = variables["random_seed"]
-            self.verbose = variables["verbose"]
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
             print("It has been successfully loaded from " + filename)
@@ -601,9 +588,9 @@ class IGTD:
         '''
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
+        name_image = str(i).zfill(6) + '.' + extension
         route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
+        route_complete = os.path.join(route, name_image)
         # Subfolder check
         if not os.path.isdir(route):
             try:
@@ -611,7 +598,7 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
@@ -619,7 +606,7 @@ class IGTD:
         fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
         plt.close(fig)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
     def __saveRegressionOrUnsupervised(self, i, data_i):
@@ -644,7 +631,7 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
+        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
         ax = fig.add_axes([0, 0, 1, 1], frameon=False)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')

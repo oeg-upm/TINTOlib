@@ -7,7 +7,6 @@
 [![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1dv8QYxPsh-HA7TFlmFfQHGE5oMb5VHk4/view?usp=sharing)
 [![Open In Colab-CNN+MLP-reg](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1uQRNgfgi3G2-T4j0VsCnSLLSqzWykPM-/view?usp=sharing)
 
-
 <div>
 <p align = "center">
 <img src="./imgs/logo.svg" alt="TINTO Logo" width="150">
@@ -61,13 +60,13 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 
 |                              Model                               |    Class     | Features |                                                                Hyperparameters                                                                 |
 |:----------------------------------------------------------------:|:------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
-|            [TINTO](https://github.com/oeg-upm/TINTO)             |  `TINTO()`   |  `blur`  |                   `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose`                   |
-| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` |          |                                             `problem` `columns` `font_size` `image_size` `verbose`                                             |
-|             [IGTD](https://github.com/zhuyitan/igtd)             |   `IGTD()`   |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
-|       [REFINED](https://github.com/omidbazgirTTU/REFINED)        | `REFINED()`  |          |                                                      `problem` `hcIterations`  `verbose`                                                       |
-|                           [BarGraph]()                           | `BarGraph()`  |          |                                                    `problem` `pixel_width` `gap`  `verbose`                                                    |
-|                        [DistanceMatrix]()                        | `DistanceMatrix()`  |          |                                                          `problem` `scale`  `verbose`                                                          |
-|                         [Combination]()                          | `Combination()`  |          |                                                             `problem` `pixel_width` `gap`  `verbose`                                                              |
+|       [TINTO](https://github.com/oeg-upm/TINTO)                                                 | `TINTO()`           |  `blur`  | `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose` |
+|       [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)                          | `SuperTML()`        |          | `problem` `columns` `font_size` `image_size` `verbose` |
+|       [IGTD](https://github.com/zhuyitan/igtd)                                                  | `IGTD()`            |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
+|       [REFINED](https://github.com/omidbazgirTTU/REFINED)                                       | `REFINED()`         |          | `problem` `hcIterations`  `verbose` |
+|       [BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)       | `BarGraph()`        |          | `problem` `pixel_width` `gap`  `verbose`|
+|       [DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()`  |          | `problem` `scale`  `verbose` |
+|       [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)    | `Combination()`     |          | `problem` `pixel_width` `gap`  `verbose` |
 
 ## Documentation
 
@@ -83,18 +82,18 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 
 
 To import a specific model use 
-```
+``` python
     from TINTOlib.tinto import TINTO
 ```
 
 Create the model. If you don't set any hyperparameter, the model will use the default values ([read documentation](https://tintolib.readthedocs.io/en/latest/)).
-````
+``` python
     model = TINTO(blur=True)
-````
+```
 To generate the synthetic images use ``.generateImages(data,folder)`` method.
-````
+``` python
     model.generateImages(data, resultsFolderPath)
-````
+```
 
 ## How to use TINTOlib - Google Colab crash course
 Once the images have been created by TINTO, they can be imported into any project using CNNs. 
