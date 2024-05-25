@@ -238,6 +238,19 @@ class SuperTML:
                 imagesRoutesArr.append(route)
             else:
                 print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+        
+        if self.problem == "supervised" :
+            data={'images':imagesRoutesArr,'class':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
+        elif self.problem == "unsupervised":
+            data = {'images': imagesRoutesArr}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
+        elif self.problem == "regression":
+            data = {'images': imagesRoutesArr,'values':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
 
     def generateImages(self,data, folder="prueba/"):
