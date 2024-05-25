@@ -7,8 +7,8 @@ from PIL import Image
 class BarGraph:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False     # Verbose: if it's true, show the compilation text
-    default_pixel_width = 3     # Width of the bars pixels
-    default_gap = 2            # Gap between graph bars
+    default_pixel_width = 1     # Width of the bars pixels
+    default_gap = 0             # Gap between graph bars
 
     def __init__(
             self,
