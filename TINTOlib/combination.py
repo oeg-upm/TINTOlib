@@ -5,16 +5,18 @@ import numpy as np
 from PIL import Image
 class Combination:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False  # Verbose: if it's true, show the compilation text
-    default_pixel_width = 1  # Width of the bars pixels
-    default_gap = 0  # Gap between graph bars
+    default_verbose = False         # Verbose: if it's true, show the compilation text
+    default_zoom = 1
 
-    def __init__(self, verbose=default_verbose, pixel_width=default_pixel_width, gap=default_gap,
-                 problem=default_problem):
+    def __init__(
+        self,
+        verbose=default_verbose,
+        problem=default_problem,
+        zoom=default_zoom
+    ):
         self.problem = problem
         self.verbose = verbose
-        self.pixel_width = pixel_width
-        self.gap = gap
+        self.zoom = zoom
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -77,62 +79,61 @@ class Combination:
 
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
-    def __trainingAlg(self, X, Y, folder='img_train/'):
-        """
-        This function uses the above functions for the training.
-        """
+    
+    def __trainingAlg(self, X, Y):
         imagesRoutesArr = []
-        px = self.pixel_width
-        gap = self.gap
-        expand=px+gap
-        N, d = X.shape
-        img_sz = [(px * d + gap * (d)), (px * d + gap * (d))]
-        max_bar_height = img_sz[0]   # leave some space (padding) for bottom and up.
+
+        n_columns = X.shape[1]
+        # Matrix for level 1 calculations
+        imgI = np.empty((n_columns, n_columns))
+
+        pixel_width, gap = 1, 0
+        assert (pixel_width*n_columns + (n_columns+1)*gap) == n_columns
+        top_padding, bottom_padding = 0, 0
+        max_bar_height = n_columns - (bottom_padding + top_padding)
+        step_column = gap + pixel_width
+
+        # Matrix for level 2 calculations
+        imgage = np.zeros([n_columns, n_columns, 1])
+
+        # Matrix for level 3 calculations
+        lvl3img = np.empty((n_columns, n_columns))
+
+        # Normalize X
+        min_vals = np.min(X, axis=0)
+        max_vals = np.max(X, axis=0)
+        X_normalized = (X - min_vals) / (max_vals - min_vals)
 
         # for each instance
-        for ins in range(N):
+        for ins,dataInstance in enumerate(X):
             """LEVEL - 1 (MATRIX)"""
-
-            dataInstance = X[ins]
-            # Create matrix
-            imgI = np.zeros((d, d))
-            for i in range(d):
-                for j in range(d):
+            for i in range(n_columns):
+                for j in range(n_columns):
                     imgI[i][j] = dataInstance[i] - dataInstance[j]
-
             # Normalize matrix
             image_norm = (imgI - np.min(imgI)) / (np.max(imgI) - np.min(imgI))
-            # Scale matrix
-            imgI1 = np.repeat(np.repeat(image_norm, expand, axis=0), expand, axis=1)
+            # Apply zoom
+            imgI1 = np.repeat(np.repeat(image_norm, self.zoom, axis=0), self.zoom, axis=1)
 
             """LEVEL - 2 (BARS)"""
-            barI = np.floor(max_bar_height * X[ins, :]).astype(int)
-            k = 0
-            imgage = np.zeros([img_sz[0], img_sz[1], 1])
-
-            # upside down images will be created
-            for j in range(0, img_sz[1] - gap, gap + px):
-                imgage[px:barI[k], j:j + px, :] = 1
-                k = k + 1
-                if k > d:break
-
-            tmp = (imgage - np.min(imgage)) / (np.max(imgage) - np.min(imgage))
-            imgI2 = tmp
-
-            #Expand
-            #imgI2 = np.repeat(np.repeat(imgI2, expand, axis=0), expand, axis=1)
+            bar_heights = np.floor(X_normalized[ins] * max_bar_height).astype(np.int64)
+            for i_bar,val_bar in enumerate(bar_heights):
+                imgage[
+                    top_padding : (top_padding + val_bar),                              # The height of the column
+                    (gap+(step_column*i_bar)) : (gap+(step_column*i_bar)) + pixel_width # The width of the column
+                ] = 1
+            # Apply zoom
+            imgI2 = np.repeat(np.repeat(imgage, self.zoom, axis=0), self.zoom, axis=1)
 
             """LEVEL - 3"""
-            lvl3img=np.zeros((d, d))
-            for m in range(d):
-                for n in range(d):
-                    lvl3img[m][n] = dataInstance[m]
+            # Fill the matrix
+            lvl3img[:, :] = dataInstance[:, np.newaxis]
+            # Normalize the matrix
             lvl3 = (lvl3img - np.min(lvl3img)) / (np.max(lvl3img) - np.min(lvl3img))
+            # Apply zoom
+            imgI3 = np.repeat(np.repeat(lvl3, self.zoom, axis=0), self.zoom, axis=1)
 
-            eImg = np.repeat(np.repeat(lvl3, expand, axis=0), expand, axis=1)
-            imgI3=eImg
-
-            #COMBINE ALL img
+            # Combine ALL img
             imgFinal = np.dstack((imgI1,imgI2,imgI3))
 
             if self.problem == "supervised":
@@ -164,15 +165,17 @@ class Combination:
                 - data : data CSV or pandas Dataframe
                 - folder : the folder where the images are created
         """
-        # Read the CSV
         self.folder = folder
+
+        # Read the CSV
         if type(data) == str:
             dataset = pd.read_csv(data)
             array = dataset.values
-        elif isinstance(data,pd.DataFrame) :
+        elif isinstance(data,pd.DataFrame):
             array = data.values
+        
         X = array[:, :-1]
         Y = array[:, -1]
 
         # Training
-        self.__trainingAlg(X, Y, folder=folder)
+        self.__trainingAlg(X, Y)
