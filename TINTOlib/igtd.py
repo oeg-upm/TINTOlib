@@ -114,28 +114,15 @@ class IGTD:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
-
-        Input
-        -----
-        filename: str
-            Name of the pickle file.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-            self.scale = variables["scale"]
-            self.fea_dist_method = variables["fea_dist_method"]
-            self.image_dist_method = variables["image_dist_method"]
-            self.zoom = variables["zoom"]
-            self.max_step = variables["max_step"]
-            self.val_step = variables["val_step"]
-            self.error = variables["error"]
-            self.switch_t = variables["switch_t"]
-            self.min_gain = variables["min_gain"]
-            self.random_seed = variables["random_seed"]
-            self.verbose = variables["verbose"]
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
             print("It has been successfully loaded from " + filename)

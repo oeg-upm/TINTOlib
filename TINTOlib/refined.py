@@ -73,7 +73,7 @@ class REFINED:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
@@ -84,7 +84,7 @@ class REFINED:
             setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
+            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self,classValue,i,folder,matrix_a):
         extension = 'png'  # eps o pdf

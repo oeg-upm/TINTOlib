@@ -43,19 +43,18 @@ class SuperTML:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
-            self.problem = variables["problem"]
-            self.verbose = variables["verbose"]
-            self.image_pixels = variables["image_pixels"]
-            self.font_size = variables["font_size"]
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
+            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf

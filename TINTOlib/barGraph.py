@@ -3,16 +3,25 @@ import os
 import pandas as pd
 import numpy as np
 from PIL import Image
+
 class BarGraph:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False     # Verbose: if it's true, show the compilation text
     default_pixel_width = 3     # Width of the bars pixels
     default_gap = 2            # Gap between graph bars
-    def __init__(self, verbose=default_verbose, pixel_width=default_pixel_width,gap=default_gap,problem=default_problem):
+
+    def __init__(
+            self,
+            verbose=default_verbose,
+            pixel_width=default_pixel_width,
+            gap=default_gap,
+            problem=default_problem
+        ):
         self.problem=problem
         self.verbose = verbose
         self.pixel_width = pixel_width
         self.gap = gap
+
     def saveHyperparameters(self, filename='objs'):
         """
         This function allows SAVING the transformation options to images in a Pickle object.
@@ -26,15 +35,19 @@ class BarGraph:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
+            print("It has been successfully loaded from " + filename)
+            
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
