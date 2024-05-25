@@ -5,15 +5,13 @@ import numpy as np
 from PIL import Image
 class DistanceMatrix:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False  # Verbose: if it's true, show the compilation text
-    default_scale = 1 # Scale of the image 1:x
+    default_verbose = False         # Verbose: if it's true, show the compilation text
+    default_zoom = 1                # Scale of the image 1:x
 
-
-    def __init__(self, verbose=default_verbose, scale=default_scale, problem=default_problem):
+    def __init__(self, verbose=default_verbose, zoom=default_zoom, problem=default_problem):
         self.problem = problem
         self.verbose = verbose
-
-        self.scale = scale
+        self.zoom = zoom
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -77,7 +75,7 @@ class DistanceMatrix:
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __trainingAlg(self, X, Y, folder='img_train/'):
+    def __trainingAlg(self, X, Y):
         """
         This function uses the above functions for the training.
         """
@@ -85,18 +83,18 @@ class DistanceMatrix:
         imagesRoutesArr = []
         N,d=X.shape
 
-        #for each instance
-        for ins in range(N):
-            dataInstance = X[ins]
-            #Create matrix
-            imgI=np.zeros((d,d))
+        #Create matrix (only once, then reuse it)
+        imgI = np.empty((d,d))
+
+        #For each instance
+        for ins,dataInstance in enumerate(X):
             for i in range(d):
                 for j in range(d):
                     imgI[i][j] = dataInstance[i]-dataInstance[j]
 
             #Normalize matrix
             image_norm = (imgI - np.min(imgI)) / (np.max(imgI) - np.min(imgI))
-            image = np.repeat(np.repeat(image_norm, self.scale, axis=0), self.scale, axis=1)
+            image = np.repeat(np.repeat(image_norm, self.zoom, axis=0), self.zoom, axis=1)
 
             if self.problem == "supervised":
                 route = self.__saveSupervised(Y[ins], ins, image)
@@ -119,11 +117,17 @@ class DistanceMatrix:
             data = {'images': imagesRoutesArr, 'values': Y}
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+
     def generateImages(self,data, folder):
         """
-            This function generate and save the synthetic images in folders.
-                - data : data CSV or pandas Dataframe
-                - folder : the folder where the images are created
+        This function generate and save the synthetic images in folders.
+
+        Arguments
+        ---------
+        data: data CSV or pandas Dataframe
+            The data and targets
+        folder: str
+            The folder where the images are created
         """
         # Read the CSV
         self.folder = folder
@@ -132,6 +136,7 @@ class DistanceMatrix:
             array = dataset.values
         elif isinstance(data, pd.DataFrame):
             array = data.values
+
         X = array[:, :-1]
         Y = array[:, -1]
 
