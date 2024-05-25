@@ -11,12 +11,32 @@ class BarGraph:
     default_gap = 0             # Gap between graph bars
 
     def __init__(
-            self,
-            verbose=default_verbose,
-            pixel_width=default_pixel_width,
-            gap=default_gap,
-            problem=default_problem
-        ):
+        self,
+        verbose: bool = default_verbose,
+        pixel_width: int = default_pixel_width,
+        gap: int = default_gap,
+        problem: str = default_problem
+    ):
+        """
+        Arguments:
+        verbose: bool
+            Whether to display information about the progress
+        pixel_width: int
+            The width (in pixels) for each column
+        gap: int
+            The separation (in pixels) between each column.
+        problem: str
+            String representing the type of dataset
+        """
+
+        if not isinstance(pixel_width, int):
+            raise TypeError(f"pixel_width must be of type int (got {type(pixel_width)})")
+        if pixel_width <= 0:
+            raise ValueError(f"pixel_width must be positive (got {pixel_width})")
+        if not isinstance(gap, int):
+            raise TypeError(f"gap must be of type int (got {type(gap)})")
+        if pixel_width < 0:
+            raise ValueError(f"gap cannot be negative (got {gap})")
         self.problem=problem
         self.verbose = verbose
         self.pixel_width = pixel_width
@@ -85,30 +105,30 @@ class BarGraph:
         return route_relative
 
     def __trainingAlg(self, X, Y):
-        """
-        This function uses the above functions for the training.
-        """
+        imagesRoutesArr = []    # List to store the routes
 
-        imagesRoutesArr = []
         # Image variables
-        px=self.pixel_width
-        gap=self.gap
-        N,d=X.shape
-        img_sz = [(px * d + gap * (d)), (px * d + gap * (d))]
-        max_bar_height = img_sz[0]   # leave some space (padding) for bottom and up.
+        n_columns = X.shape[1]
+        
+        # There is a gap before the first column and after all the columns (n_columns columns & n_colums+1 gaps)
+        image_size = self.pixel_width*n_columns + (n_columns+1)*self.gap
+        # Add a padding on top and bottom
+        top_padding, bottom_padding = self.pixel_width, self.pixel_width
+        max_bar_height = image_size - (bottom_padding + top_padding)
+        # Step of column (width + gap)
+        step_column = self.gap + self.pixel_width
 
-        for i in range(N):
-            barI = np.floor(max_bar_height  * X[i, :]).astype(int)
-            k = 0
-            image = np.zeros([img_sz[0], img_sz[1], 1])
-
-            # upside down images will be created
-            for j in range(0 , img_sz[1] - gap , gap+px):
-                image[px:barI[k], j:j + px, :] = 1
-                k = k + 1
-                if k > d:
-                    break
-
+        for i,sample in enumerate(X):
+            # Create the image (the image is squared)
+            image = np.zeros([image_size, image_size, 1])
+            # Multiply the values in the sample time the height of the bar
+            bar_heights = np.floor(sample * max_bar_height).astype(np.int64)
+            for i_bar,val_bar in enumerate(bar_heights):
+                image[
+                    top_padding : (top_padding + val_bar),                                         # The height of the column
+                    (self.gap + ((step_column)*i_bar)) : (self.gap + ((step_column)*(i_bar+1)))    # The width of the column
+                ] = 1
+                
             if self.problem == "supervised":
                 route = self.__saveSupervised(Y[i], i, image)
                 imagesRoutesArr.append(route)
@@ -133,9 +153,14 @@ class BarGraph:
 
     def generateImages(self,data, folder="img_train/"):
         """
-            This function generate and save the synthetic images in folders.
-                - data : data CSV or pandas Dataframe
-                - folder : the folder where the images are created
+        This function generate and save the synthetic images in folders.
+
+        Arguments
+        ---------
+        data: data CSV or pandas Dataframe
+            The data and targets
+        folder: str
+            The folder where the images are created
         """
         # Read the CSV
         self.folder = folder
@@ -144,8 +169,14 @@ class BarGraph:
             array = dataset.values
         elif isinstance(data,pd.DataFrame) :
             array = data.values
+
         X = array[:, :-1]
         Y = array[:, -1]
+
+        # Normalize the data
+        min_vals = np.min(X, axis=0)
+        max_vals = np.max(X, axis=0)
+        X = (X - min_vals) / (max_vals - min_vals)
 
         # Training
         self.__trainingAlg(X, Y)
