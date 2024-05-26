@@ -13,8 +13,6 @@ import platform
 import os
 from typing import Optional
 
-print("OK")
-
 class REFINED:
     default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_verbose = False         # Verbose: if it's true, show the compilation text
@@ -86,7 +84,7 @@ class REFINED:
         if self.verbose:
             print("It has been successfully loaded from " + filename)
 
-    def __saveSupervised(self,classValue,i,folder,matrix_a):
+    def __saveSupervised(self, classValue, i, folder, matrix_a, fig, ax):
         extension = 'png'  # eps o pdf
         subfolder = str(int(classValue)).zfill(2)  # subfolder for grouping the results of each class
         name_image = str(i).zfill(6)
@@ -101,17 +99,18 @@ class REFINED:
         shape = int(math.sqrt(matrix_a.shape[0]))
         data = matrix_a.reshape(shape, shape)
 
-        fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(shape, shape)
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data, cmap='viridis', interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
-    def __saveRegressionOrUnsupervised(self, i, folder, matrix_a):
+    def __saveRegressionOrUnsupervised(self, i, folder, matrix_a, fig, ax):
         extension = 'png'  # eps o pdf
         subfolder = "images"
         name_image = str(i).zfill(6)  + '.' + extension
@@ -127,13 +126,14 @@ class REFINED:
         shape = int(math.sqrt(matrix_a.shape[0]))
         data = matrix_a.reshape(shape,shape)
 
-        fig = plt.figure(figsize=(shape, shape), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(shape, shape)
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data, cmap='viridis', interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
@@ -143,15 +143,19 @@ class REFINED:
         X_REFINED_MDS = Toolbox.REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
         imagesRoutesArr=[]
         total = Y.shape[0]
-        #print(X_REFINED_MDS.shape)
-        print("SAVING")
+
+        if self.verbose:
+            print("SAVING")
+        
+        fig,ax = plt.subplots()
+
         for i in range(len(X_REFINED_MDS)):
             if self.problem == "supervised":
-                route=self.__saveSupervised(Y[i], i, self.folder, X_REFINED_MDS[i])
+                route=self.__saveSupervised(Y[i], i, self.folder, X_REFINED_MDS[i], fig, ax)
                 imagesRoutesArr.append(route)
 
             elif self.problem == "unsupervised" or self.problem == "regression" :
-                route = self.__saveRegressionOrUnsupervised(i, self.folder, X_REFINED_MDS[i])
+                route = self.__saveRegressionOrUnsupervised(i, self.folder, X_REFINED_MDS[i], fig, ax)
                 imagesRoutesArr.append(route)
             else:
                 print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")

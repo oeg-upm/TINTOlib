@@ -573,7 +573,7 @@ class IGTD:
 
         return index_record, err_record, run_time
 
-    def __saveSupervised(self, y, i, data_i):
+    def __saveSupervised(self, y, i, data_i, fig, ax):
         '''
         Saves the matrix as an image in a supervised dataset.
 
@@ -598,18 +598,18 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(self.scale[1], self.scale[0])
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
-
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __saveRegressionOrUnsupervised(self, i, data_i):
+    def __saveRegressionOrUnsupervised(self, i, data_i, fig, ax):
         '''
         Saves the matrix as an image in a regression or unsupervised dataset.
 
@@ -631,14 +631,14 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[1], self.scale[0]), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(self.scale[1], self.scale[0])
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
-
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
     
@@ -692,6 +692,9 @@ class IGTD:
         image_data = np.empty((num_row, num_column, data_2.shape[0]))
         image_data.fill(np.nan)
         total = data_2.shape[0]
+
+        fig,ax = plt.subplots()
+
         for i in range(data_2.shape[0]):
             data_i = np.empty((num_row, num_column))
             data_i.fill(np.nan)
@@ -704,10 +707,10 @@ class IGTD:
             image_data[:, :, i] = 255 - image_data[:, :, i]
             if image_folder is not None:
                 if self.problem == "supervised":
-                    route = self.__saveSupervised(labels[i], i, data_i)
+                    route = self.__saveSupervised(labels[i], i, data_i, fig, ax)
                     imagesRoutesArr.append(route)
                 elif self.problem == "unsupervised" or self.problem == "regression":
-                    route = self.__saveRegressionOrUnsupervised(i, data_i)
+                    route = self.__saveRegressionOrUnsupervised(i, data_i, fig, ax)
                     imagesRoutesArr.append(route)
                 else:
                     print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
