@@ -9,13 +9,15 @@ class BarGraph:
     default_verbose = False     # Verbose: if it's true, show the compilation text
     default_pixel_width = 1     # Width of the bars pixels
     default_gap = 0             # Gap between graph bars
+    default_zoom = 1
 
     def __init__(
         self,
         verbose: bool = default_verbose,
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
-        problem: str = default_problem
+        problem: str = default_problem,
+        zoom: int = default_zoom
     ):
         """
         Arguments:
@@ -41,6 +43,7 @@ class BarGraph:
         self.verbose = verbose
         self.pixel_width = pixel_width
         self.gap = gap
+        self.zoom = zoom
 
     def saveHyperparameters(self, filename='objs'):
         """
@@ -82,6 +85,7 @@ class BarGraph:
                 print("Error: Could not create subfolder")
 
         img = Image.fromarray(np.uint8(np.squeeze(image) * 255))
+        img = img.resize(size=(img.size[0]*self.zoom, img.size[1]*self.zoom), resample=Image.Resampling.NEAREST)
         img.save(route_complete)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
@@ -98,7 +102,9 @@ class BarGraph:
                 os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
+
         img = Image.fromarray(np.uint8(np.squeeze(image) * 255))
+        img = img.resize(size=(img.size[0]*self.zoom, img.size[1]*self.zoom), resample=Image.Resampling.NEAREST)
         img.save(route_complete)
 
         route_relative = os.path.join(subfolder, name_image)
