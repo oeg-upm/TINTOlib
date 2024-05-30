@@ -39,7 +39,7 @@ class TINTO:
     default_option = 'mean'  # Option in blurring (mean and maximum)
 
     default_train_m = True
-    default_random_seed = 20  # Seed for reproducibility
+    default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
     default_verbose = False  # Verbose: if it's true, show the compilation text
 
