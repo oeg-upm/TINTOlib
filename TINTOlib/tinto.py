@@ -47,9 +47,11 @@ class TINTO:
     default_save = False  # Save configurations (to reuse)
     default_load = False  # Load configurations (.pkl)
 
+    default_zoom: int = 1
+
     def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles,submatrix=default_submatrix, blur=default_blur,
                  amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
-                 random_seed=default_random_seed, times=default_times, train_m=default_train_m, verbose=default_verbose):
+                 random_seed=default_random_seed, times=default_times, train_m=default_train_m, verbose=default_verbose, zoom=default_zoom):
         self.problem = problem
         self.algorithm = algorithm
         self.pixels = pixels
@@ -66,9 +68,7 @@ class TINTO:
         self.times = times
         self.verbose = verbose
 
-        #self.src_data = src_data  # Source location (tidy data in csv without head)
-        #self.dest_folder = dest_folder  # Destination location (folder)
-        #src_data=None, dest_folder=None,
+        self.zoom = zoom
 
         self.error_pos = False  # Indicates the overlap of characteristic pixels.
 
@@ -283,7 +283,9 @@ class TINTO:
             except:
                 print("Error: Could not create subfolder")
 
-        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+        # Repeat matrix to apply zoom
+        matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension, dpi=self.zoom)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
@@ -299,7 +301,10 @@ class TINTO:
                 os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
-        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension)
+    
+        # Repeat matrix to apply zoom
+        matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
+        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension, dpi=self.zoom)
 
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
