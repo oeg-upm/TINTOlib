@@ -271,9 +271,6 @@ class IGTD:
         '''
 
         r = np.random.RandomState(seed=self.random_seed)
-        if os.path.exists(self.folder):
-            shutil.rmtree(self.folder)
-        os.mkdir(self.folder)
 
         source = source.copy()
         num = source.shape[0]
@@ -426,9 +423,6 @@ class IGTD:
         '''
 
         r = np.random.RandomState(seed=self.random_seed)
-        if os.path.exists(self.folder):
-            shutil.rmtree(self.folder)
-        os.mkdir(self.folder)
 
         source = source.copy()
         num = source.shape[0]
@@ -792,11 +786,6 @@ class IGTD:
         folder: str
             The path to save the results
         '''
-
-        if os.path.exists(folder):
-            shutil.rmtree(folder)
-        os.mkdir(folder)
-
         # Read the CSV
         self.folder = folder
         if type(data) == str:
