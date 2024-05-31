@@ -27,7 +27,7 @@ import math
 class TINTO(AbstractImageMethod):
     ###### default values ###############
     default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
-    default_pixeles = 20  # Image's Pixels (one side)
+    default_pixels = 20  # Image's Pixels (one side)
     default_submatrix = True #Use or not use submatrix
 
     default_blur = False  # Active option blurring
@@ -40,10 +40,6 @@ class TINTO(AbstractImageMethod):
     default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
     
-    # A parte funciones
-    default_save = False  # Save configurations (to reuse)
-    default_load = False  # Load configurations (.pkl)
-
     default_zoom: int = 1
 
     def __init__(
@@ -51,7 +47,7 @@ class TINTO(AbstractImageMethod):
         problem = None,
         verbose = None,
         algorithm = default_algorithm,
-        pixels = default_pixeles,
+        pixels = default_pixels,
         submatrix = default_submatrix,
         blur = default_blur,
         amplification = default_amplification,
