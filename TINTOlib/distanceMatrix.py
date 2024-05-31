@@ -1,43 +1,20 @@
-import pickle
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 import os
 import pandas as pd
 import numpy as np
 from PIL import Image
-class DistanceMatrix:
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False         # Verbose: if it's true, show the compilation text
+
+class DistanceMatrix(AbstractImageMethod):
     default_zoom = 1                # Scale of the image 1:x
 
-    def __init__(self, verbose=default_verbose, zoom=default_zoom, problem=default_problem):
-        self.problem = problem
-        self.verbose = verbose
+    def __init__(
+        self,
+        problem = None,
+        verbose = None,
+        zoom=default_zoom,
+    ):
+        super().__init__(problem=problem, verbose=verbose)
         self.zoom = zoom
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename+".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images from a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-        
-        for key, val in variables.items():
-            setattr(self, key, val)
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf
@@ -118,7 +95,7 @@ class DistanceMatrix:
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def generateImages(self,data, folder):
+    def generateImages(self, data, folder):
         """
         This function generate and save the synthetic images in folders.
 

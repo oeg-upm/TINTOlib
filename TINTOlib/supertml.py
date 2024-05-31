@@ -1,14 +1,12 @@
 from __future__ import division
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 import os
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
-import pickle
 import math
 
-class SuperTML:
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False         # Verbose: if it's true, show the compilation text
+class SuperTML(AbstractImageMethod):
     default_pixels = 224
     default_font_size = 10
     default_feature_importance = False  # False to produce SuperTML-EF, True to produce SuperTML-VF
@@ -16,45 +14,19 @@ class SuperTML:
     
     def __init__(
         self,
-        problem=default_problem,
-        verbose=default_verbose,
+        problem = None,
+        verbose = None,
         pixels=default_pixels,
         font_size = default_font_size,
         feature_importance: bool = default_feature_importance,
         random_seed: int = default_random_seed
     ):
-        self.problem: str = problem
-        self.verbose: bool = verbose
+        super().__init__(problem=problem, verbose=verbose)
+
         self.image_pixels: int = pixels
         self.font_size: int = font_size
         self.feature_importance: bool = feature_importance
         self.random_seed = random_seed
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename+".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images from a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-        
-        for key, val in variables.items():
-            setattr(self, key, val)
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf
@@ -250,7 +222,7 @@ class SuperTML:
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
 
-    def generateImages(self,data, folder="prueba/"):
+    def generateImages(self, data, folder):
             """
             This function generate and save the synthetic images in folders.
 

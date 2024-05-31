@@ -1,3 +1,4 @@
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 import os
 import matplotlib.pyplot as plt
 import subprocess
@@ -13,9 +14,7 @@ import platform
 import os
 from typing import Optional
 
-class REFINED:
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False         # Verbose: if it's true, show the compilation text
+class REFINED(AbstractImageMethod):
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
     default_random_seed = 1         # Default seed for reproducibility
     default_zoom = 1                # The default multiplication value to save the image
@@ -23,8 +22,8 @@ class REFINED:
 
     def __init__(
         self,
-        problem: Optional[str] = default_problem,
-        verbose: Optional[bool] = default_verbose,
+        problem: Optional[str] = None,
+        verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         random_seed: Optional[int] = default_random_seed,
         zoom: Optional[int] = default_zoom,
@@ -50,39 +49,12 @@ class REFINED:
         if n_processors <= 1:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
-        self.verbose = verbose
-        self.problem = problem
+        super().__init__(problem=problem, verbose=verbose)
+        
         self.hcIterations = hcIterations
         self.random_seed = random_seed
         self.zoom = zoom
         self.n_processors = n_processors
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename+".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images from a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-        
-        for key, val in variables.items():
-            setattr(self, key, val)
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
 
     def __saveSupervised(self, classValue, i, folder, matrix_a, fig, ax):
         extension = 'png'  # eps o pdf
@@ -242,7 +214,7 @@ class REFINED:
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
 
-    def generateImages(self,data, folder="/refinedData"):
+    def generateImages(self, data, folder):
         """
             This function generate and save the synthetic images in folders.
                 - data : data CSV or pandas Dataframe
@@ -263,4 +235,5 @@ class REFINED:
 
         # Training
         self.__trainingAlg(X, Y,Desc)
-        if self.verbose: print("End")
+        if self.verbose:
+            print("End")

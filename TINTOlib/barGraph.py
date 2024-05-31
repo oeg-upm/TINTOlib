@@ -1,23 +1,22 @@
-import pickle
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 import os
 import pandas as pd
 import numpy as np
 from PIL import Image
+from typing import Optional
 
-class BarGraph:
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-    default_verbose = False     # Verbose: if it's true, show the compilation text
+class BarGraph(AbstractImageMethod):
     default_pixel_width = 1     # Width of the bars pixels
     default_gap = 0             # Gap between graph bars
     default_zoom = 1
 
     def __init__(
         self,
-        verbose: bool = default_verbose,
+        problem: Optional[str] = None,
+        verbose: Optional[bool] = None,
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
-        problem: str = default_problem,
-        zoom: int = default_zoom
+        zoom: int = default_zoom,
     ):
         """
         Arguments:
@@ -30,6 +29,7 @@ class BarGraph:
         problem: str
             String representing the type of dataset
         """
+        super().__init__(problem=problem, verbose=verbose)
 
         if not isinstance(pixel_width, int):
             raise TypeError(f"pixel_width must be of type int (got {type(pixel_width)})")
@@ -39,38 +39,11 @@ class BarGraph:
             raise TypeError(f"gap must be of type int (got {type(gap)})")
         if pixel_width < 0:
             raise ValueError(f"gap cannot be negative (got {gap})")
-        self.problem=problem
-        self.verbose = verbose
+        
         self.pixel_width = pixel_width
         self.gap = gap
         self.zoom = zoom
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename+".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images from a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-        
-        for key, val in variables.items():
-            setattr(self, key, val)
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
-            
+                
     def __saveSupervised(self, y, i, image):
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
@@ -157,7 +130,7 @@ class BarGraph:
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def generateImages(self,data, folder="img_train/"):
+    def generateImages(self, data, folder):
         """
         This function generate and save the synthetic images in folders.
 
@@ -170,6 +143,7 @@ class BarGraph:
         """
         # Read the CSV
         self.folder = folder
+
         if type(data) == str:
             dataset = pd.read_csv(data)
             array = dataset.values

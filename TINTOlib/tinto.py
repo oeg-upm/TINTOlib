@@ -1,3 +1,4 @@
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 import numpy as np
 import pandas as pd
 import os
@@ -17,17 +18,14 @@ import matplotlib.image
 
 # Additional libraries
 import math
-import pickle
 
 ###########################################################
 ################    TINTO EXECUTION    ####################
 ###########################################################
 
 
-
-class TINTO:
+class TINTO(AbstractImageMethod):
     ###### default values ###############
-    default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
     default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA o t-SNE)
     default_pixeles = 20  # Image's Pixels (one side)
     default_submatrix = True #Use or not use submatrix
@@ -41,18 +39,32 @@ class TINTO:
     default_train_m = True
     default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
-    default_verbose = False  # Verbose: if it's true, show the compilation text
-
+    
     # A parte funciones
     default_save = False  # Save configurations (to reuse)
     default_load = False  # Load configurations (.pkl)
 
     default_zoom: int = 1
 
-    def __init__(self, problem=default_problem,algorithm=default_algorithm, pixels=default_pixeles,submatrix=default_submatrix, blur=default_blur,
-                 amplification=default_amplification, distance=default_distance, steps=default_steps, option=default_option,
-                 random_seed=default_random_seed, times=default_times, train_m=default_train_m, verbose=default_verbose, zoom=default_zoom):
-        self.problem = problem
+    def __init__(
+        self,
+        problem = None,
+        verbose = None,
+        algorithm = default_algorithm,
+        pixels = default_pixeles,
+        submatrix = default_submatrix,
+        blur = default_blur,
+        amplification = default_amplification,
+        distance = default_distance,
+        steps = default_steps,
+        option = default_option,
+        random_seed = default_random_seed,
+        times = default_times,
+        train_m = default_train_m,
+        zoom = default_zoom,
+    ):
+        super().__init__(problem=problem, verbose=verbose)
+
         self.algorithm = algorithm
         self.pixels = pixels
         self.submatrix = submatrix
@@ -66,37 +78,10 @@ class TINTO:
         self.train_m = train_m
         self.random_seed = random_seed
         self.times = times
-        self.verbose = verbose
 
         self.zoom = zoom
 
         self.error_pos = False  # Indicates the overlap of characteristic pixels.
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename+".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images from a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-        
-        for key, val in variables.items():
-            setattr(self, key, val)
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
 
     def __square(self, coord):
         """
@@ -521,7 +506,7 @@ class TINTO:
 
     ###########################################################
 
-    def generateImages(self,data, folder="/tintoData"):
+    def generateImages(self, data, folder):
         """
             This function generate and save the synthetic images in folders.
                 - data : data CSV or pandas Dataframe
@@ -549,4 +534,5 @@ class TINTO:
         # Training
         self.__trainingAlg(X, Y, folder=folder)
 
-        if self.verbose: print("End")
+        if self.verbose:
+            print("End")
