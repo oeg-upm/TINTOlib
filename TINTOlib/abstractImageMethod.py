@@ -28,7 +28,7 @@ class AbstractImageMethod(ABC):
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
-        with open(filename+".pkl", 'wb') as f:
+        with open(filename, 'wb') as f:
             pickle.dump(self.__dict__, f)
         if self.verbose:
             print("It has been successfully saved in " + filename)
