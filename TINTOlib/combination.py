@@ -61,7 +61,7 @@ class Combination(AbstractImageMethod):
 
         pixel_width, gap = 1, 0
         assert (pixel_width*n_columns + (n_columns+1)*gap) == n_columns
-        top_padding, bottom_padding = 0, 0
+        top_padding, bottom_padding = pixel_width, pixel_width
         max_bar_height = n_columns - (bottom_padding + top_padding)
         step_column = gap + pixel_width
 
@@ -89,6 +89,7 @@ class Combination(AbstractImageMethod):
 
             """LEVEL - 2 (BARS)"""
             # TODO: reorder the columns
+            imgage = np.zeros([n_columns, n_columns, 1])
             bar_heights = np.floor(X_normalized[ins] * max_bar_height).astype(np.int64)
             for i_bar,val_bar in enumerate(bar_heights):
                 imgage[
