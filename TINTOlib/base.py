@@ -7,6 +7,7 @@ class BaseModel:
     default_verbose = False  # Verbose: if it's true, show the compilation text
     def __init__(self, verbose=default_verbose):
         self.verbose = verbose
+
     def saveHyperparameters(self, filename='objs'):
         """
         This function allows SAVING the transformation options to images in a Pickle object.
@@ -20,15 +21,18 @@ class BaseModel:
 
     def loadHyperparameters(self, filename='objs.pkl'):
         """
-        This function allows LOADING the transformation options to images in a Pickle object.
+        This function allows LOADING the transformation options to images from a Pickle object.
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
         with open(filename, 'rb') as f:
             variables = pickle.load(f)
+        
+        for key, val in variables.items():
+            setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded in " + filename)
+            print("It has been successfully loaded from " + filename)
 
 
     def __imageSampleFilter(self, X, Y, coord, matrix, folder):

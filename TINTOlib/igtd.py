@@ -1,3 +1,4 @@
+from TINTOlib.abstractImageMethod import AbstractImageMethod
 from scipy.stats import spearmanr, rankdata
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
@@ -6,10 +7,9 @@ import os
 import pandas as pd
 import shutil
 import time
-import pickle
 from typing import List, Optional
 
-class IGTD:
+class IGTD(AbstractImageMethod):
     #Default hyperparameters
     default_scale = [6,6]
     default_fea_dist_method = "Pearson" # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
@@ -24,11 +24,11 @@ class IGTD:
     default_switch_t = 0                    # the threshold to determine whether switch should happen
     default_min_gain = 0.00001              # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
     default_random_seed = 1                 # default seed for reproducibility
-    default_verbose = False
-    default_problem = "supervised"          # Define the type of dataset [supervised, unsupervised, regression]
     
-    def __init__(self,
-        problem: Optional[str] = default_problem,
+    def __init__(
+        self,
+        problem: Optional[str] = None,
+        verbose: Optional[bool] = None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
         image_dist_method: Optional[str] = default_image_dist_method,
@@ -39,7 +39,6 @@ class IGTD:
         switch_t: Optional[int] = default_switch_t,
         min_gain: Optional[float] = default_min_gain,
         random_seed: Optional[int] = default_random_seed,
-        verbose: Optional[bool] = default_verbose
     ):
         """
         Input
@@ -83,6 +82,8 @@ class IGTD:
         verbose: (optional) bool
             whether to print progress on the terminal
         """
+        super().__init__(problem=problem, verbose=verbose)
+
         self.scale: List[int] = scale
         self.fea_dist_method: str = fea_dist_method
         self.image_dist_method: str = image_dist_method
@@ -93,52 +94,6 @@ class IGTD:
         self.switch_t: int = switch_t
         self.min_gain: float = min_gain
         self.random_seed: int = random_seed
-        self.verbose: bool = verbose
-        self.problem: str = problem
-
-    def saveHyperparameters(self, filename='objs'):
-        """
-        This function allows SAVING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-
-        Input
-        -----
-        filename: str
-            Name for the pickle file.
-        """
-        with open(filename + ".pkl", 'wb') as f:
-            pickle.dump(self.__dict__, f)
-        if self.verbose:
-            print("It has been successfully saved in " + filename)
-
-    def loadHyperparameters(self, filename='objs.pkl'):
-        """
-        This function allows LOADING the transformation options to images in a Pickle object.
-        This point is basically to be able to reproduce the experiments or reuse the transformation
-        on unlabelled data.
-
-        Input
-        -----
-        filename: str
-            Name of the pickle file.
-        """
-        with open(filename, 'rb') as f:
-            variables = pickle.load(f)
-            self.scale = variables["scale"]
-            self.fea_dist_method = variables["fea_dist_method"]
-            self.image_dist_method = variables["image_dist_method"]
-            self.zoom = variables["zoom"]
-            self.max_step = variables["max_step"]
-            self.val_step = variables["val_step"]
-            self.error = variables["error"]
-            self.switch_t = variables["switch_t"]
-            self.min_gain = variables["min_gain"]
-            self.random_seed = variables["random_seed"]
-            self.verbose = variables["verbose"]
-
-        if self.verbose:
-            print("It has been successfully loaded from " + filename)
 
     def __min_max_transform(self, data: np.ndarray):
         '''
@@ -284,9 +239,6 @@ class IGTD:
         '''
 
         r = np.random.RandomState(seed=self.random_seed)
-        if os.path.exists(self.folder):
-            shutil.rmtree(self.folder)
-        os.mkdir(self.folder)
 
         source = source.copy()
         num = source.shape[0]
@@ -439,9 +391,6 @@ class IGTD:
         '''
 
         r = np.random.RandomState(seed=self.random_seed)
-        if os.path.exists(self.folder):
-            shutil.rmtree(self.folder)
-        os.mkdir(self.folder)
 
         source = source.copy()
         num = source.shape[0]
@@ -586,7 +535,7 @@ class IGTD:
 
         return index_record, err_record, run_time
 
-    def __saveSupervised(self, y, i, data_i):
+    def __saveSupervised(self, y, i, data_i, fig, ax):
         '''
         Saves the matrix as an image in a supervised dataset.
 
@@ -601,9 +550,9 @@ class IGTD:
         '''
         extension = 'png'  # eps o pdf
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
+        name_image = str(i).zfill(6) + '.' + extension
         route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
+        route_complete = os.path.join(route, name_image)
         # Subfolder check
         if not os.path.isdir(route):
             try:
@@ -611,18 +560,18 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(self.scale[1], self.scale[0])
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
-
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
+        route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __saveRegressionOrUnsupervised(self, i, data_i):
+    def __saveRegressionOrUnsupervised(self, i, data_i, fig, ax):
         '''
         Saves the matrix as an image in a regression or unsupervised dataset.
 
@@ -644,14 +593,14 @@ class IGTD:
             except:
                 print("Error: Could not create subfolder")
 
-        fig = plt.figure(figsize=(self.scale[0], self.scale[1]), dpi=self.zoom)
-        ax = fig.add_axes([0, 0, 1, 1], frameon=False)
+        fig.set_size_inches(self.scale[1], self.scale[0])
+        fig.set_dpi(self.zoom)
+        ax.clear()
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
         ax.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, dpi=self.zoom)
-        plt.close(fig)
-
+        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
     
@@ -705,6 +654,9 @@ class IGTD:
         image_data = np.empty((num_row, num_column, data_2.shape[0]))
         image_data.fill(np.nan)
         total = data_2.shape[0]
+
+        fig,ax = plt.subplots()
+
         for i in range(data_2.shape[0]):
             data_i = np.empty((num_row, num_column))
             data_i.fill(np.nan)
@@ -717,10 +669,10 @@ class IGTD:
             image_data[:, :, i] = 255 - image_data[:, :, i]
             if image_folder is not None:
                 if self.problem == "supervised":
-                    route = self.__saveSupervised(labels[i], i, data_i)
+                    route = self.__saveSupervised(labels[i], i, data_i, fig, ax)
                     imagesRoutesArr.append(route)
                 elif self.problem == "unsupervised" or self.problem == "regression":
-                    route = self.__saveRegressionOrUnsupervised(i, data_i)
+                    route = self.__saveRegressionOrUnsupervised(i, data_i, fig, ax)
                     imagesRoutesArr.append(route)
                 else:
                     print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
@@ -775,7 +727,7 @@ class IGTD:
         if self.verbose:
             print("End")
 
-    def generateImages(self, data, folder="/igtd_files"):
+    def generateImages(self, data, folder):
         '''
         This function converts tabular data into images using the IGTD algorithm.
         This function does not return any variable, but saves multiple result files, which are the following
@@ -802,11 +754,6 @@ class IGTD:
         folder: str
             The path to save the results
         '''
-
-        if os.path.exists(folder):
-            shutil.rmtree(folder)
-        os.mkdir(folder)
-
         # Read the CSV
         self.folder = folder
         if type(data) == str:
