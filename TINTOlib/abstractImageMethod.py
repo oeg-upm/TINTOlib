@@ -16,8 +16,16 @@ class AbstractImageMethod(ABC):
     ):
         if problem is None:
             problem = default_problem
+        if not isinstance(problem, str):
+            raise TypeError(f"problem must be of type str (got {type(problem)})")
+        allowed_values_for_problem = ["supervised", "unsupervised", "regression"]
+        if problem not in allowed_values_for_problem:
+            raise ValueError(f"Allowed values for problem {allowed_values_for_problem}. Instead got {problem}")
+        
         if verbose is None:
             verbose = default_verbose
+        if not isinstance(verbose, bool):
+            raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
 
         self.problem = problem
         self.verbose = verbose
