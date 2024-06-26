@@ -1,13 +1,12 @@
 from TINTOlib.abstractImageMethod import AbstractImageMethod
-from joblib import Parallel, delayed
 import numpy as np
 import bitstring
 import pandas as pd
 import os
 import shutil
-
 import matplotlib
 import matplotlib.image
+from typing import Iterator, List
 
 default_precision = 32
 default_zoom = 1
@@ -37,18 +36,12 @@ class BIE(AbstractImageMethod):
         self.zoom = zoom
         self.ones, self.zeros = 255, 0
 
-    def __process_sample(self, sample):
-        return [
-            [
-                self.ones if b == '1' else self.zeros
-                for b in bitstring.BitArray(float=feature, length=self.precision).bin
-            ] for feature in sample
-        ]
-
-    def __convert_samples_to_binary(self, data: np.ndarray) -> np.ndarray:
-        return map(self.__process_sample, data)
+    def __convert_samples_to_binary(self, data: np.ndarray) -> Iterator[List[List[int]]]:
+        def process_sample(sample):
+            return [[self.ones if b=='1' else self.zeros for b in bitstring.BitArray(float=feat, length=self.precision).bin] for feat in sample]
+        return map(process_sample, data)
     
-    def __saveSupervised(self, matrix, i, y):
+    def __saveSupervised(self, matrix: np.ndarray, i: int, y):
         extension = 'png'
         subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
         name_image = str(i).zfill(6)
@@ -58,12 +51,12 @@ class BIE(AbstractImageMethod):
         if not os.path.exists(route):
             os.makedirs(route)
 
-        matplotlib.image.imsave(route_complete, matrix, cmap='gray', format=extension, dpi=self.zoom)
+        matplotlib.image.imsave(route_complete, matrix, cmap='gray', format=extension, dpi=self.zoom, vmin=0, vmax=1)
 
         route_relative = os.path.join(subfolder, name_image+ '.' + extension)
         return route_relative
 
-    def __saveRegressionOrUnsupervised(self, matrix, i):
+    def __saveRegressionOrUnsupervised(self, matrix: np.ndarray, i: int):
         extension = 'png'  # eps o pdf
         subfolder = "images"
         name_image = str(i).zfill(6) + '.' + extension
@@ -73,12 +66,12 @@ class BIE(AbstractImageMethod):
         if not os.path.exists(route):
             os.makedirs(route)
 
-        matplotlib.image.imsave(route_complete, matrix, cmap='gray', format=extension, dpi=self.zoom)
+        matplotlib.image.imsave(route_complete, matrix, cmap='gray', format=extension, dpi=self.zoom, vmin=0, vmax=1)
 
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __save_images(self, matrices, y, num_elems):
+    def __save_images(self, matrices: Iterator[List[List[int]]], y, num_elems):
         imagesRoutesArr=[]
 
         if os.path.exists(self.folder):
@@ -112,19 +105,17 @@ class BIE(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-
-    def __trainingAlg(self, X, y):
+    def __trainingAlg(self, X: np.ndarray, y: np.ndarray):
         matrices = self.__convert_samples_to_binary(X)
         self.__save_images(matrices, y, num_elems=X.shape[0])
-
 
     def generateImages(self, data, folder):
         if type(data)==str:
             dataset = pd.read_csv(data)
-            array = dataset.values
         elif isinstance(data, pd.DataFrame):
-            array = data.values
+            dataset = data
 
+        array = dataset.values
         self.folder = folder
         
         X = array[:, :-1]
