@@ -5,7 +5,7 @@ import os
 import shutil
 import matplotlib.image
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, KBinsDiscretizer
-from typing import List
+from typing import List, Union
 
 default_size = (8,8)
 default_bins = 10
@@ -165,23 +165,7 @@ class FeatureWrap(AbstractImageMethod):
         matrices = map(self.__binary_vector_to_matrix, binary_vectors)
         return matrices
 
-    def __trainingAlg(self, X: np.ndarray, y: np.ndarray, is_categorical: List[bool]):
-        matrices = self.__preprocess_samples(X, is_categorical)
-        self.__save_images(matrices, y, num_elems=X.shape[0])
-
-    def generateImages(self, data, folder):
-        if type(data)==str:
-            dataset = pd.read_csv(data)
-        elif isinstance(data, pd.DataFrame):
-            dataset = data
-
-        is_categorical = [pd.api.types.is_string_dtype(data[col]) for col in dataset]
-        self.folder = folder
-        
-        X = dataset.drop(dataset.columns[-1], axis="columns")
-        y = dataset[dataset.columns[-1]]
-
-        self.__trainingAlg(X, y, is_categorical)
-
-        if self.verbose:
-            print("End")
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        is_categorical = [pd.api.types.is_string_dtype(x[col]) for col in x]
+        matrices = self.__preprocess_samples(x, is_categorical)
+        self.__save_images(matrices, y, num_elems=x.shape[0])

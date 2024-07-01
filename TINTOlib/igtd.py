@@ -7,7 +7,7 @@ import os
 import pandas as pd
 import shutil
 import time
-from typing import List, Optional
+from typing import List, Optional, Union
 
 class IGTD(AbstractImageMethod):
     #Default hyperparameters
@@ -696,24 +696,21 @@ class IGTD(AbstractImageMethod):
 
         return image_data, samples
 
-    def __trainingAlg(self, X: np.ndarray, Y: np.ndarray):
-        '''
-        Function that calls all the auxiliary functions from start to end to calculate and save the images.
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
+        numPixels = self.scale[0] * self.scale[1]
+        numAttributes = x.shape[1]
+        if numAttributes > numPixels:
+            Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
 
-        Input
-        -----
-        X: ndarray
-            ndarray containing the tabular data
-        Y: ndarray
-            ndarray containing the labels for the tabular data
-        '''
+        X = self.__min_max_transform(x.values)  # Normalize
+        Y = y.values if y is not None else None
+
         ranking_feature, corr = self.__generate_feature_distance_ranking(data=X)
         coordinate, ranking_image = self.__generate_matrix_distance_ranking(num_r=self.scale[0], num_c=self.scale[1], num=X.shape[1])
         index, err, time = self.__training(source=ranking_feature, target=ranking_image)
 
         min_id = np.argmin(err)
-        #ranking_feature_random = ranking_feature[index[min_id, :], :]
-        #ranking_feature_random = ranking_feature_random[:, index[min_id, :]]
 
         X, samples = self.__generate_image_data(
             data=X,
@@ -723,54 +720,3 @@ class IGTD(AbstractImageMethod):
             coord=coordinate,
             labels=Y
         )
-        
-        if self.verbose:
-            print("End")
-
-    def generateImages(self, data, folder):
-        '''
-        This function converts tabular data into images using the IGTD algorithm.
-        This function does not return any variable, but saves multiple result files, which are the following
-        1.  Results.pkl stores the original tabular data, the generated image data, and the names of samples. The generated
-            image data is a 3D numpy array. Its size is [number of pixel rows in image, number of pixel columns in image,
-            number of samples]. The range of values is [0, 255]. Small values in the array actually correspond to high
-            values in the tabular data.
-        2.  Results_Auxiliary.pkl stores the ranking matrix of pairwise feature distances before optimization,
-            the ranking matrix of pairwise pixel distances, the coordinates of pixels when concatenating pixels
-            row by row from image to form the pixel distance ranking matrix, error in each iteration,
-            and time (in seconds) when completing each iteration.
-        3.  original_feature_ranking.png shows the feature distance ranking matrix before optimization.
-        4.  image_ranking.png shows the pixel distance ranking matrix.
-        5.  error_and_runtime.png shows the change of error vs. time during the optimization process.
-        6.  error_and_iteration.png shows the change of error vs. iteration during the optimization process.
-        7.  optimized_feature_ranking.png shows the feature distance ranking matrix after optimization.
-        8.  data folder includes two image data files for each sample. The txt file is the image data in matrix format.
-            The png file shows the visualization of image data.
-
-        Input
-        -----
-        data: str or pd.DataFrame
-            The path to a csv, or a data frame contaning the tabular data. Its size is n_samples by n_features.
-        folder: str
-            The path to save the results
-        '''
-        # Read the CSV
-        self.folder = folder
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-        elif isinstance(data, pd.DataFrame):
-            array = data.values
-
-        # Separate X from Y
-        X = self.__min_max_transform(array[:, :-1])     # Remove the last column
-        Y = array[:, -1]
-
-        # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
-        numPixels=self.scale[0]*self.scale[1]
-        numAttributes = X.shape[1]
-        if numAttributes > numPixels:
-            error_text = f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale."
-            raise Exception(error_text)
-
-        self.__trainingAlg(X, Y)

@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 from PIL import Image
+from typing import Union
 
 class DistanceMatrix(AbstractImageMethod):
     default_zoom = 1                # Scale of the image 1:x
@@ -52,10 +53,9 @@ class DistanceMatrix(AbstractImageMethod):
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __trainingAlg(self, X, Y):
-        """
-        This function uses the above functions for the training.
-        """
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        X = x.values
+        Y = y.values if y is not None else None
 
         imagesRoutesArr = []
         N,d=X.shape
@@ -94,28 +94,3 @@ class DistanceMatrix(AbstractImageMethod):
             data = {'images': imagesRoutesArr, 'values': Y}
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
-
-    def generateImages(self, data, folder):
-        """
-        This function generate and save the synthetic images in folders.
-
-        Arguments
-        ---------
-        data: data CSV or pandas Dataframe
-            The data and targets
-        folder: str
-            The folder where the images are created
-        """
-        # Read the CSV
-        self.folder = folder
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-        elif isinstance(data, pd.DataFrame):
-            array = data.values
-
-        X = array[:, :-1]
-        Y = array[:, -1]
-
-        # Training
-        self.__trainingAlg(X, Y)

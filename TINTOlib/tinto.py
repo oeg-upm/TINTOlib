@@ -19,6 +19,8 @@ import matplotlib.image
 # Additional libraries
 import math
 
+from typing import Union
+
 ###########################################################
 ################    TINTO EXECUTION    ####################
 ###########################################################
@@ -482,15 +484,20 @@ class TINTO(AbstractImageMethod):
         else:
             self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m)
 
-    def __trainingAlg(self, X, Y, folder='img_train/'):
-        """
-        This function uses the above functions for the training.
-        """
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        if not self.blur:
+            self.amplification = 0
+            self.distance = 2
+            self.steps = 0
+
+        X = x.values
+        Y = y.values if y is not None else None
+
         self.__obtainCoord(X)
         self.__areaDelimitation()
         self.__matrixPositions()
 
-        self.__createImage(X, Y, folder)
+        self.__createImage(X, Y, self.folder)
 
     def __testAlg(self, X, Y=None, folder='img_test/'):
         """
@@ -499,36 +506,3 @@ class TINTO(AbstractImageMethod):
         if (Y is None):
             Y = np.zeros(X.shape[0])
         self.__createImage(X, Y, folder, train_m=False)
-
-    ###########################################################
-
-    def generateImages(self, data, folder):
-        """
-            This function generate and save the synthetic images in folders.
-                - data : data CSV or pandas Dataframe
-                - folder : the folder where the images are created
-        """
-        # Blurring verification
-
-        if not self.blur:
-            self.amplification = 0
-            self.distance = 2
-            self.steps = 0
-
-        # Read the CSV
-        self.folder = folder
-        if type(data)==str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-        elif isinstance(data, pd.DataFrame):
-            array = data.values
-
-        X = array[:, :-1]
-        Y = array[:, -1]
-
-
-        # Training
-        self.__trainingAlg(X, Y, folder=folder)
-
-        if self.verbose:
-            print("End")

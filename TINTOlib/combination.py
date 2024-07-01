@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 from PIL import Image
+from typing import Union
 
 class Combination(AbstractImageMethod):
     default_zoom = 1
@@ -52,7 +53,10 @@ class Combination(AbstractImageMethod):
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
     
-    def __trainingAlg(self, X, Y):
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        X = x.values
+        Y = y.values if y is not None else None
+
         imagesRoutesArr = []
 
         n_columns = X.shape[1]
@@ -131,25 +135,3 @@ class Combination(AbstractImageMethod):
             data = {'images': imagesRoutesArr, 'values': Y}
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
-
-
-    def generateImages(self, data, folder):
-        """
-            This function generate and save the synthetic images in folders.
-                - data : data CSV or pandas Dataframe
-                - folder : the folder where the images are created
-        """
-        self.folder = folder
-
-        # Read the CSV
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-        elif isinstance(data,pd.DataFrame):
-            array = data.values
-        
-        X = array[:, :-1]
-        Y = array[:, -1]
-
-        # Training
-        self.__trainingAlg(X, Y)

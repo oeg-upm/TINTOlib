@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TINTOlib"
-version = "0.0.25"
+version = "0.0.26"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},

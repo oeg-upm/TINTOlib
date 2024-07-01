@@ -6,7 +6,7 @@ import os
 import shutil
 import matplotlib
 import matplotlib.image
-from typing import Iterator, List
+from typing import Iterator, List, Union
 
 default_precision = 32
 default_zoom = 1
@@ -105,23 +105,9 @@ class BIE(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def __trainingAlg(self, X: np.ndarray, y: np.ndarray):
-        matrices = self.__convert_samples_to_binary(X)
-        self.__save_images(matrices, y, num_elems=X.shape[0])
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        x = x.values
+        y = y.values if y is not None else None
 
-    def generateImages(self, data, folder):
-        if type(data)==str:
-            dataset = pd.read_csv(data)
-        elif isinstance(data, pd.DataFrame):
-            dataset = data
-
-        array = dataset.values
-        self.folder = folder
-        
-        X = array[:, :-1]
-        y = array[:, -1]
-
-        self.__trainingAlg(X, y)
-
-        if self.verbose:
-            print("End")
+        matrices = self.__convert_samples_to_binary(x)
+        self.__save_images(matrices, y, num_elems=x.shape[0])

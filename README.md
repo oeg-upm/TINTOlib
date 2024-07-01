@@ -8,12 +8,12 @@
 [![Open In Colab-CNN+MLP-reg](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1uQRNgfgi3G2-T4j0VsCnSLLSqzWykPM-/view?usp=sharing)
 
 <div>
-<p align = "center">
-<img src="./imgs/logo.svg" alt="TINTO Logo" width="150">
-</p>
+    <p align = "center">
+    <img src="./imgs/logo.svg" alt="TINTO Logo" width="150">
+    </p>
 </div>
 
-**TINTOlib** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from [Tidy Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
+**TINTOlib** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from[Tidy Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
 
 **Citing TINTO**: If you used TINTO in your work, please cite the **[SoftwareX](https://doi.org/10.1016/j.softx.2023.101391)**:
 
@@ -58,15 +58,17 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 
 ## Models
 
-|                              Model                               |    Class     | Features |                                                                Hyperparameters                                                                 |
+| Model | Class | Features | Hyperparameters |
 |:----------------------------------------------------------------:|:------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
-|       [TINTO](https://github.com/oeg-upm/TINTO)                                                 | `TINTO()`           |  `blur`  | `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose` |
-|       [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)                          | `SuperTML()`        |          | `problem` `columns` `font_size` `image_size` `verbose` |
-|       [IGTD](https://github.com/zhuyitan/igtd)                                                  | `IGTD()`            |          | `problem` `scale` `fea_dost_method` `image_dist_method` `save_image_size` `max_step` `val_step` `error` `switch_t` `min_gain` `seed` `verbose` |
-|       [REFINED](https://github.com/omidbazgirTTU/REFINED)                                       | `REFINED()`         |          | `problem` `hcIterations`  `verbose` |
-|       [BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)       | `BarGraph()`        |          | `problem` `pixel_width` `gap`  `verbose`|
-|       [DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()`  |          | `problem` `scale`  `verbose` |
-|       [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)    | `Combination()`     |          | `problem` `pixel_width` `gap`  `verbose` |
+|[BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `BarGraph()` | | `problem` `verbose` `pixel_width` `gap`  `zoom`|
+|[BIE](https://ieeexplore.ieee.org/document/10278393) | `BIE()` | | `problem` `verbose` `precision` `zoom`|
+|[Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `Combination()` | | `problem` `verbose` `zoom` |
+|[DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()` | | `problem` `verbose` `zoom` |
+|[FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87) | `FeatureWrap()` | | `problem` `verbose` `size` `bins` `zoom` |
+|[IGTD](https://github.com/zhuyitan/igtd) | `IGTD()` | | `problem` `verbose` `scale` `fea_dist_method` `image_dist_method` `max_step` `val_step` `error` `switch_t` `min_gain` `random_seed` `zoom` |
+|[REFINED](https://github.com/omidbazgirTTU/REFINED) | `REFINED()` | | `problem` `verbose` `hcIterations` `random_seed` `zoom` `n_processors` |
+|[SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` | | `problem` `columns` `font_size` `image_size` `verbose` |
+|[TINTO](https://github.com/oeg-upm/TINTO) | `TINTO()` | `blur` | `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose` |
 
 ## Documentation
 
@@ -106,14 +108,14 @@ In order to facilitate their use, a Jupyter Notebook has been created in which y
 
 ## Converting Tidy Data into image
 
-For example, the following table shows a classic example of the [IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
+For example, the following table shows a classic example of the[IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
 
 
 | sepal length | sepal width | petal length | petal width | target |
 |--------------|-------------|--------------|-------------|--------|
-| 4.9          | 3.0         | 1.4          | 0.2         | 1      |
-| 7.0          | 3.2         | 4.7          | 1.4         | 2      |
-| 6.3          | 3.3         | 6.0          | 2.5         | 3      |
+| 4.9 | 3.0 | 1.4 | 0.2 | 1 |
+| 7.0 | 3.2 | 4.7 | 1.4 | 2 |
+| 6.3 | 3.3 | 6.0 | 2.5 | 3 |
 
 
 ### Simple example without Blurring
@@ -153,7 +155,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 ## Authors
 - **[Manuel Castillo-Cara](https://github.com/manwestc)**
 - **[Raúl García-Castro](https://github.com/rgcmme)**
-- **[Borja Reinoso](https://github.com/borjarei) - [borjareinoso@gmail.com](borjareinoso@gmail.com)**
+- **[Borja Reinoso](https://github.com/borjarei) -[borjareinoso@gmail.com](borjareinoso@gmail.com)**
 - **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
 
 

@@ -5,6 +5,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import math
+from typing import Union
 
 class SuperTML(AbstractImageMethod):
     default_pixels = 224
@@ -173,13 +174,13 @@ class SuperTML(AbstractImageMethod):
         # Update the feature importances
         self.feature_importances = model.feature_importances_
         
-        
-    def __trainingAlg(self, X, Y):
-        """This function creates the images that will be processed by CNN."""
+    
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        X = x.values
+        Y = y.values if y is not None else None
+
         # Variable for regression problem
         imagesRoutesArr = []
-
-        Y = np.array(Y)
 
         if self.feature_importance:
             # Calculate the feature importance for SuperTML-VF
@@ -220,31 +221,3 @@ class SuperTML(AbstractImageMethod):
             data = {'images': imagesRoutesArr,'values':Y}
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
-
-
-    def generateImages(self, data, folder):
-            """
-            This function generate and save the synthetic images in folders.
-
-            Arguments
-            --------
-            data: CSV or pd.Dataframe
-                Constains the data. The targets must be in the last column.
-            folder: str
-                the folder where the images are created
-            """
-            # Read the CSV
-            self.folder = folder
-            if type(data) == str:
-                dataset = pd.read_csv(data)
-                array = dataset.values
-            elif isinstance(data, pd.DataFrame):
-                array = data.values
-
-            X = array[:, :-1]
-            Y = array[:, -1]
-
-            # Training
-            self.__trainingAlg(X, Y)
-            if self.verbose:
-                print("End")
