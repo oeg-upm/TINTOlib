@@ -12,7 +12,7 @@ import pickle
 from TINTOlib.utils import Toolbox
 import platform
 import os
-from typing import Optional
+from typing import Optional, Union
 
 class REFINED(AbstractImageMethod):
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
@@ -147,17 +147,15 @@ class REFINED(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-
-    def __trainingAlg(self, X, Y,Desc):
-        """
-        This function uses the above functions for the training.
-        """
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    # def __trainingAlg(self, X, Y,Desc):
         #Feat_DF = pd.read_csv(data)
-
         #X = Feat_DF.values;
-
         #X = X[:100, :-1]
 
+        Desc = x.columns.tolist()
+        X = x.values
+        Y = y.values if y is not None else None
 
         original_input = pd.DataFrame(data=X)  # The MDS input should be in a dataframe format with rows as samples and columns as features
         feature_names_list = original_input.columns.tolist()  # Extracting feature_names_list (gene_names or descriptor_names)
@@ -213,27 +211,3 @@ class REFINED(AbstractImageMethod):
         os.remove(init_pickle_file)
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
-
-    def generateImages(self, data, folder):
-        """
-            This function generate and save the synthetic images in folders.
-                - data : data CSV or pandas Dataframe
-                - folder : the folder where the images are created
-        """
-        # Read the CSV
-        self.folder = folder
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-            Desc=dataset.columns[:-1].tolist()
-        elif isinstance(data, pd.DataFrame):
-            array = data.values
-            Desc = data.columns[:-1].tolist()
-
-        X = array[:, :-1]
-        Y = array[:, -1]
-
-        # Training
-        self.__trainingAlg(X, Y,Desc)
-        if self.verbose:
-            print("End")

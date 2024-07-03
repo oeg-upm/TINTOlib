@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pickle
-from typing import Optional
+from typing import Optional, Union
+import pandas as pd
 
 default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
 default_verbose = False         # Verbose: if it's true, show the compilation text
@@ -16,8 +17,16 @@ class AbstractImageMethod(ABC):
     ):
         if problem is None:
             problem = default_problem
+        if not isinstance(problem, str):
+            raise TypeError(f"problem must be of type str (got {type(problem)})")
+        allowed_values_for_problem = ["supervised", "unsupervised", "regression"]
+        if problem not in allowed_values_for_problem:
+            raise ValueError(f"Allowed values for problem {allowed_values_for_problem}. Instead got {problem}")
+        
         if verbose is None:
             verbose = default_verbose
+        if not isinstance(verbose, bool):
+            raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
 
         self.problem = problem
         self.verbose = verbose
@@ -48,6 +57,46 @@ class AbstractImageMethod(ABC):
         if self.verbose:
             print("It has been successfully loaded from " + filename)
         
-    @abstractmethod
     def generateImages(self, data, folder):
-        pass
+        """
+        This function generates and saves the synthetic images in folders.
+
+        Arguments
+        ---------
+        data: str or Dataframe
+            The data and targets
+        folder: str
+            The folder where the images are created
+        """
+        self.folder = folder
+
+        # Get the data
+        if type(data) == str:
+            dataset = pd.read_csv(data)
+        elif isinstance(data,pd.DataFrame) :
+            dataset = data
+
+        if self.verbose:
+            print("Loaded data")
+
+        # Separate targets from data
+        if self.problem=="supervised"  or  self.problem=="regression":
+            # The data includes the targets
+            x = dataset.drop(dataset.columns[-1], axis="columns")
+            y = dataset[dataset.columns[-1]]
+        else:
+            # The data doesn't include the targets
+            x = dataset
+            y = None
+        
+        # Call the training function
+        self._trainingAlg(x, y)
+
+        if self.verbose:
+            print("End")
+
+    @abstractmethod
+    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """This method is not to be called from the outside."""
+        raise NotImplementedError()
+    

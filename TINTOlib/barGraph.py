@@ -83,11 +83,21 @@ class BarGraph(AbstractImageMethod):
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
 
-    def __trainingAlg(self, X, Y):
+    def _trainingAlg(self, x, y):
+        x = x.values
+        Y = y.values if y is not None else None
+
+        # Normalize the data
+        min_vals = np.min(x, axis=0)
+        max_vals = np.max(x, axis=0)
+        x = (x - min_vals) / (max_vals - min_vals)
+
+        # TODO: reorder columns
+
         imagesRoutesArr = []    # List to store the routes
 
         # Image variables
-        n_columns = X.shape[1]
+        n_columns = x.shape[1]
         
         # There is a gap before the first column and after all the columns (n_columns columns & n_colums+1 gaps)
         image_size = self.pixel_width*n_columns + (n_columns+1)*self.gap
@@ -97,7 +107,7 @@ class BarGraph(AbstractImageMethod):
         # Step of column (width + gap)
         step_column = self.gap + self.pixel_width
 
-        for i,sample in enumerate(X):
+        for i,sample in enumerate(x):
             # Create the image (the image is squared)
             image = np.zeros([image_size, image_size, 1])
             # Multiply the values in the sample time the height of the bar
@@ -129,36 +139,3 @@ class BarGraph(AbstractImageMethod):
             data = {'images': imagesRoutesArr, 'values': Y}
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
-
-    def generateImages(self, data, folder):
-        """
-        This function generate and save the synthetic images in folders.
-
-        Arguments
-        ---------
-        data: data CSV or pandas Dataframe
-            The data and targets
-        folder: str
-            The folder where the images are created
-        """
-        # Read the CSV
-        self.folder = folder
-
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-            array = dataset.values
-        elif isinstance(data,pd.DataFrame) :
-            array = data.values
-
-        X = array[:, :-1]
-        Y = array[:, -1]
-
-        # Normalize the data
-        min_vals = np.min(X, axis=0)
-        max_vals = np.max(X, axis=0)
-        X = (X - min_vals) / (max_vals - min_vals)
-
-        # TODO: reorder columns
-
-        # Training
-        self.__trainingAlg(X, Y)
