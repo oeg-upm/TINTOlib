@@ -22,3 +22,5 @@ https://doi.org/10.3390/su141811745
 
 - Vision LSTM: https://github.com/nx-ai/vision-lstm
 - KAN: https://github.com/team-daniel/KAN
+- PyDeepInsight que agrega GradCam: https://github.com/alok-ai-lab/pyDeepInsight
+- Más métodos como la transformada de Fourier: https://doi.org/10.1109/JSEN.2024.3394237
