@@ -24,3 +24,4 @@ https://doi.org/10.3390/su141811745
 - KAN: https://github.com/team-daniel/KAN
 - PyDeepInsight que agrega GradCam: https://github.com/alok-ai-lab/pyDeepInsight
 - Más métodos como la transformada de Fourier: https://doi.org/10.1109/JSEN.2024.3394237
+- Explorar el método self organizing map: https://www.google.com/search?client=firefox-b-d&q=self+organising+maps
