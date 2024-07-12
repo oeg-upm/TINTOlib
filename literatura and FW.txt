@@ -1,0 +1,50 @@
+
+Técnica muy muy rudimentaria, dibuja los valores en una imagen --> https://openaccess.thecvf.com/content_CVPRW_2019/papers/Precognition/Sun_SuperTML_Two-Dimensional_Word_Embedding_for_the_Precognition_on_Structured_Tabular_CVPRW_2019_paper.pdf
+
+Técnica rudimentaria, pero interesante, lo que hace es si tiene 12 características convierte a una imagen de 12x12 en la que cada píxel es representado en una tonalidad según su valor numérico --> https://ieeexplore.ieee.org/document/9237969
+
+Técnica muy interesante --> https://paperswithcode.com/paper/converting-tabular-data-into-images-for-deep
+Deepinsight --> https://www.nature.com/articles/s41598-021-90923-y
+	El código PIP de Deepinsight --> https://github.com/nicomignoni/tab2img
+	
+Este Kaggle es interesante ya que tiene el link de dos técnicas con el código que hay que incorporar --> https://www.kaggle.com/general/199227
+Otro código sacado del ejemplo de Kaggle --> https://gist.github.com/oguiza/26020067f499d48dc52e5bcb8f5f1c57
+
+
+######## Nuevos códigos #################
+
+Lee, Euna, Myungwoo Nam, and Hongchul Lee. "Tab2vox: CNN-Based Multivariate Multilevel Demand Forecasting Framework by Tabular-To-Voxel
+Image Conversion." Sustainability 14.18 (2022): 11745.
+https://doi.org/10.3390/su141811745
+
+
+######## Redes Neuronal Híbridas #################
+
+- Vision LSTM: https://github.com/nx-ai/vision-lstm
+- KAN: https://github.com/team-daniel/KAN
+- PyDeepInsight que agrega GradCam: https://github.com/alok-ai-lab/pyDeepInsight
+- Más métodos como la transformada de Fourier: https://doi.org/10.1109/JSEN.2024.3394237
+- Explorar el método self organizing map: https://www.google.com/search?client=firefox-b-d&q=self+organising+maps
+- GradCam en IGTD: https://arxiv.org/abs/2406.14566
+
+######## Trabajo Futuro de David #################
+- Comprobar si se pueden eliminar los ficheros `base` y `crear_imagenv4`
+- Analizar si tiene más sentido separar las variantes de SuperTML en 2 clases distintas
+- Añadir una barra de progreso a la generación de imágenes
+- Añadir más comentarios de verbose durante la ejecución del código
+- En los constructores añadir comprobación de tipos y de valores.
+- En `SuperTML` comprobar si se puede hacer que el tamaño se calcule automáticamente
+- Mover variables de funciones a constantes de clase (o incluso parámetros del constructor):
+  - `padding = 5` en SuperTML
+- Cambiar las líneas de código de `self.problem == 'supervised'` por un método común en la superclase (puede hacer lo mismo, pero que sea el método el que incluya la condición, es más mantenible). Lo mismo para 'regression' y 'unsupervised'
+- Dentro de lo que se pueda, mover las operaciones dentro de los bucles a fuera de los bucles (no repetir innecesariamente operaciones):
+  - Creación de matrices
+  - sorted_features en SuperTML
+- Implementar la recolocación de columnas en BarGraph y Combination
+- Usar el mismo método de min_max normalization en todas las clases
+- `__IGTD_absolute_error` y `__IGTD_square_error` se pueden unificar en una única función a la que se le pase un parámetro que sea la función de error a aplicar.
+- Mover más métodos y comportamientos comunes a la clase abstracta común
+  - Save supervised
+  - Save regression
+- En SuperTML-VF permitir utilizar otro tipo de modelos para calcular la importancia de las variables
+- Añadir el parámetro zoom a la clase abstracta (ahora mismo la unica clase que no tiene zoom es SuperTML)
