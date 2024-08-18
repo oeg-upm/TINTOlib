@@ -41,7 +41,7 @@ class TINTO(AbstractImageMethod):
     default_train_m = True
     default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
-    
+
     default_zoom: int = 1
 
     def __init__(
@@ -284,7 +284,7 @@ class TINTO(AbstractImageMethod):
                 os.makedirs(route)
             except:
                 print("Error: Could not create subfolder")
-    
+
         # Repeat matrix to apply zoom
         matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
         matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension, dpi=self.zoom)
@@ -499,10 +499,15 @@ class TINTO(AbstractImageMethod):
 
         self.__createImage(X, Y, self.folder)
 
-    def __testAlg(self, X, Y=None, folder='img_test/'):
+    def _testAlg(self, X, Y=None, folder='img_test/'):
         """
         This function uses the above functions for the validation.
         """
+        if not self.blur:
+            self.amplification = 0
+            self.distance = 2
+            self.steps = 0
+
         if (Y is None):
             Y = np.zeros(X.shape[0])
-        self.__createImage(X, Y, folder, train_m=False)
+        self.__createImage(X, Y, folder)
