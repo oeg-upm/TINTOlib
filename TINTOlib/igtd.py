@@ -24,7 +24,7 @@ class IGTD(AbstractImageMethod):
     default_switch_t = 0                    # the threshold to determine whether switch should happen
     default_min_gain = 0.00001              # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
     default_random_seed = 1                 # default seed for reproducibility
-    
+
     def __init__(
         self,
         problem: Optional[str] = None,
@@ -603,7 +603,7 @@ class IGTD(AbstractImageMethod):
         fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
         route_relative = os.path.join(subfolder, name_image)
         return route_relative
-    
+
     def __generate_image_data(self, data, index, num_row, num_column, coord, labels):
         '''
         This function generates the data in image format according to rearrangement indices. It saves the data
@@ -626,7 +626,7 @@ class IGTD(AbstractImageMethod):
             ndarray containing the labels for the tabular data
 
         Return
-        ------ 
+        ------
         image_data:
             the generated data, a 3D numpy array. The third dimension is across samples. The range of values
             is [0, 255]. Small values actually indicate high values in the original data.
@@ -661,7 +661,7 @@ class IGTD(AbstractImageMethod):
             data_i = np.empty((num_row, num_column))
             data_i.fill(np.nan)
             data_i[coord] = data_2[i, :]
-            
+
             iid = np.where(np.isnan(data_i))
             data_i[iid] = 255
 
@@ -707,16 +707,36 @@ class IGTD(AbstractImageMethod):
         Y = y.values if y is not None else None
 
         ranking_feature, corr = self.__generate_feature_distance_ranking(data=X)
-        coordinate, ranking_image = self.__generate_matrix_distance_ranking(num_r=self.scale[0], num_c=self.scale[1], num=X.shape[1])
-        index, err, time = self.__training(source=ranking_feature, target=ranking_image)
+        self.coordinate, ranking_image = self.__generate_matrix_distance_ranking(num_r=self.scale[0], num_c=self.scale[1], num=X.shape[1])
+        self.index, err, time = self.__training(source=ranking_feature, target=ranking_image)
 
-        min_id = np.argmin(err)
+        self.min_id = np.argmin(err)
 
         X, samples = self.__generate_image_data(
             data=X,
-            index=index[min_id, :],
+            index=self.index[self.min_id, :],
             num_row=self.scale[0],
             num_column=self.scale[1],
-            coord=coordinate,
+            coord=self.coordinate,
+            labels=Y
+        )
+
+    def _testAlg(self, x, y=None, folder='img_test/'):
+        # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
+        self.folder = folder
+        numPixels = self.scale[0] * self.scale[1]
+        numAttributes = x.shape[1]
+        if numAttributes > numPixels:
+            Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
+
+        X = self.__min_max_transform(x.values)  # Normalize
+        Y = y.values if y is not None else None
+
+        self.__generate_image_data(
+            data=X,
+            index=self.index[self.min_id, :],
+            num_row=self.scale[0],
+            num_column=self.scale[1],
+            coord=self.coordinate,
             labels=Y
         )

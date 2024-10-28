@@ -57,10 +57,9 @@ class AbstractImageMethod(ABC):
         if self.verbose:
             print("It has been successfully loaded from " + filename)
         
-    def generateImages(self, data, folder):
+    def generateImages_fit(self, data, folder):
         """
         This function generates and saves the synthetic images in folders.
-
         Arguments
         ---------
         data: str or Dataframe
@@ -88,15 +87,48 @@ class AbstractImageMethod(ABC):
             # The data doesn't include the targets
             x = dataset
             y = None
-        
+
         # Call the training function
         self._trainingAlg(x, y)
 
         if self.verbose:
             print("End")
 
+    def generateImages_pred(self, data, folder):
+      """
+      This function generate and save the synthetic images in folders.
+      - data : data CSV or pandas Dataframe
+      - folder : the folder where the images are created
+      """
+      # Read the CSV
+      self.folder = folder
+      if type(data)==str:
+        dataset = pd.read_csv(data)
+      elif isinstance(data, pd.DataFrame):
+        dataset = data
+
+      # Separate targets from data
+      if self.problem=="supervised"  or  self.problem=="regression":
+          # The data includes the targets
+          x = dataset.drop(dataset.columns[-1], axis="columns")
+          y = dataset[dataset.columns[-1]]
+      else:
+          # The data doesn't include the targets
+          x = dataset
+          y = None
+
+      self._testAlg(x, y, folder=folder) # !!!!!
+
+      if self.verbose: print("End")
+
+
     @abstractmethod
     def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """This method is not to be called from the outside."""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _testAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         """This method is not to be called from the outside."""
         raise NotImplementedError()
     
