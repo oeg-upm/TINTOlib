@@ -190,7 +190,47 @@ class SuperTML(AbstractImageMethod):
             self.columns = math.ceil(math.sqrt(X.shape[1]))
 
         try:
-            os.mkdir(self.folder)
+            os.makedirs(self.folder)
+            if self.verbose:
+                print("The folder was created " + self.folder + "...")
+        except:
+            if self.verbose:
+                print("The folder " + self.folder + " is already created...")
+        for i in range(X.shape[0]):
+
+            image = self.__event2img(X[i])
+
+            if self.problem == "supervised":
+                route = self.__saveSupervised(Y[i], i, image)
+                imagesRoutesArr.append(route)
+            elif self.problem == "unsupervised" or self.problem == "regression":
+                route = self.__saveRegressionOrUnsupervised(i, image)
+                imagesRoutesArr.append(route)
+            else:
+                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+        
+        if self.problem == "supervised" :
+            data={'images':imagesRoutesArr,'class':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
+        elif self.problem == "unsupervised":
+            data = {'images': imagesRoutesArr}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
+        elif self.problem == "regression":
+            data = {'images': imagesRoutesArr,'values':Y}
+            regressionCSV = pd.DataFrame(data=data)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+            
+    def _testAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        X = x.values
+        Y = y.values if y is not None else None
+
+        # Variable for regression problem
+        imagesRoutesArr = []
+
+        try:
+            os.makedirs(self.folder)
             if self.verbose:
                 print("The folder was created " + self.folder + "...")
         except:

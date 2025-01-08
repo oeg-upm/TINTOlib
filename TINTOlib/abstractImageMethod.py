@@ -117,7 +117,7 @@ class AbstractImageMethod(ABC):
           x = dataset
           y = None
 
-      self._testAlg(x, y, folder=folder) # !!!!!
+      self._testAlg(x, y)
 
       if self.verbose: print("End")
 

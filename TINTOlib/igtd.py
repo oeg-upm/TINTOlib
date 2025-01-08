@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 
 class IGTD(AbstractImageMethod):
     #Default hyperparameters
-    default_scale = [6,6]
+    default_scale = [6,6]               # Characteristic pixels of the final image (row x col). [row x col] must be equal or greater than the number of features.
     default_fea_dist_method = "Pearson" # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
                                         # 'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
                                         # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
@@ -643,7 +643,7 @@ class IGTD(AbstractImageMethod):
 
         if os.path.exists(image_folder):
             shutil.rmtree(image_folder)
-        os.mkdir(image_folder)
+        os.makedirs(image_folder)
 
         data_2 = data.copy()
         data_2 = data_2[:, index]
@@ -721,9 +721,8 @@ class IGTD(AbstractImageMethod):
             labels=Y
         )
 
-    def _testAlg(self, x, y=None, folder='img_test/'):
+    def _testAlg(self, x, y=None):
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
-        self.folder = folder
         numPixels = self.scale[0] * self.scale[1]
         numAttributes = x.shape[1]
         if numAttributes > numPixels:

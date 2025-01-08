@@ -42,7 +42,7 @@ class TINTO(AbstractImageMethod):
     default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Times replication in t-SNE
 
-    default_zoom: int = 1
+    default_zoom: int = 1 
 
     def __init__(
         self,
@@ -472,7 +472,7 @@ class TINTO(AbstractImageMethod):
         X_scaled = self.min_max_scaler.transform(X)
         Y = np.array(Y)
         try:
-            os.mkdir(folder)
+            os.makedirs(folder)
             if self.verbose:
                 print("The folder was created " + folder + "...")
         except:
@@ -499,7 +499,7 @@ class TINTO(AbstractImageMethod):
 
         self.__createImage(X, Y, self.folder)
 
-    def _testAlg(self, X, Y=None, folder='img_test/'):
+    def _testAlg(self, X, Y=None):
         """
         This function uses the above functions for the validation.
         """
@@ -510,4 +510,4 @@ class TINTO(AbstractImageMethod):
 
         if (Y is None):
             Y = np.zeros(X.shape[0])
-        self.__createImage(X, Y, folder)
+        self.__createImage(X, Y, self.folder)

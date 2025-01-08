@@ -197,23 +197,22 @@ class REFINED(AbstractImageMethod):
             command = f'mpiexec --use-hwthread-cpus -np {self.n_processors} python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
         else:
-            command = f'mpirun --use-hwthread-cpus -np {self.n_processors} python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpirun --allow-run-as-root --use-hwthread-cpus -np {self.n_processors} python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
 
         if result.returncode != 0:
             raise Exception(result.stderr)
 
         with open(mapping_pickle_file,'rb') as file:
-            gene_names_MDS,coords_MDS,map_in_int_MDS = pickle.load(file)
+            self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS = pickle.load(file)
 
-        self.__saveImages(gene_names_MDS, coords_MDS, map_in_int_MDS, X, Y, nn)
+        self.__saveImages(self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS, X, Y, nn)
 
         os.remove(init_pickle_file)
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
 
-    def _testAlg(self, x, y=None, folder='img_test/'):
-        self.folder = folder
+    def _testAlg(self, x, y=None):
         X = x.values
         Y = y.values if y is not None else None
 

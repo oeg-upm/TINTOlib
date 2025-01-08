@@ -7,11 +7,10 @@ import matplotlib.image
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, KBinsDiscretizer
 from typing import List, Union
 
-default_size = (8,8)
-default_bins = 10
-default_zoom = 1
-
 class FeatureWrap(AbstractImageMethod):
+    default_size = (8,8)        # The width and height of the final image, in pixels (rows x columns).
+    default_bins = 10           # The number of bins or intervals used for grouping numeric data
+    default_zoom = 1            
     def __init__(
         self,
         problem = None,
