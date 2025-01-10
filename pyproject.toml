@@ -4,11 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TINTOlib"
-version = "0.0.26"
+version = "1.0.0"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},
-    { name= "DavidGonzalezFernandez", email="david.g.f.2@gmail.com"}
+    { name= "DavidGonzalezFernandez", email="david.g.f.2@gmail.com"},
+    { name= "JiayunLiu", email="jiayun.liu@upm.es"}
 ]
 description = "Converting tabular data into images"
 readme = "README.md"
