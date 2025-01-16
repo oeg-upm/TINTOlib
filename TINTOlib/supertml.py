@@ -1,11 +1,24 @@
-from __future__ import division
-from TINTOlib.abstractImageMethod import AbstractImageMethod
+# Standard library imports
+import math
 import os
+
+# Third-party library imports
+import numpy as np
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
-import numpy as np
-import math
+
+# Typing imports
 from typing import Union
+
+# Future imports
+from __future__ import division
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    SuperTML    ##############################
+###########################################################
 
 class SuperTML(AbstractImageMethod):
     default_pixels = 224

@@ -1,9 +1,23 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
+# Standard library imports
 import os
-import pandas as pd
+import shutil
+
+# Third-party library imports
+import bitstring
+import matplotlib
+import matplotlib.image
 import numpy as np
-from PIL import Image
-from typing import Union
+import pandas as pd
+
+# Typing imports
+from typing import Iterator, List, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    Combination    ########################
+###########################################################
 
 class Combination(AbstractImageMethod):
     default_zoom = 1

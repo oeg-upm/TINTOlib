@@ -1,13 +1,24 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-from scipy.stats import spearmanr, rankdata
-from scipy.spatial.distance import pdist, squareform
-import matplotlib.pyplot as plt
-import numpy as np
+# Standard library imports
 import os
-import pandas as pd
 import shutil
 import time
+
+# Third-party library imports
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.spatial.distance import pdist, squareform
+from scipy.stats import rankdata, spearmanr
+
+# Typing imports
 from typing import List, Optional, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    IGTD    ###############################
+###########################################################
 
 class IGTD(AbstractImageMethod):
     #Default hyperparameters

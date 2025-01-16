@@ -1,18 +1,27 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import os
-import matplotlib.pyplot as plt
-import subprocess
-from sklearn.manifold import MDS
-from sklearn.metrics.pairwise import euclidean_distances
+# Standard library imports
 import math
+import os
 import pickle
+import platform
+import subprocess
+
+# Third-party library imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pickle
-from TINTOlib.utils import Toolbox
-import platform
-import os
+from sklearn.manifold import MDS
+from sklearn.metrics.pairwise import euclidean_distances
+
+# Typing imports
 from typing import Optional, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+from TINTOlib.utils import Toolbox
+
+###########################################################
+################    REFINED    ##############################
+###########################################################
 
 class REFINED(AbstractImageMethod):
     default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost

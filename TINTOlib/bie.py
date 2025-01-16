@@ -1,12 +1,23 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import numpy as np
-import bitstring
-import pandas as pd
+# Standard library imports
 import os
 import shutil
+
+# Third-party library imports
+import bitstring
 import matplotlib
 import matplotlib.image
+import numpy as np
+import pandas as pd
+
+# Typing imports
 from typing import Iterator, List, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    Binary Image Encoding    ##############
+###########################################################
 
 default_precision = 32
 default_zoom = 1

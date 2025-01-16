@@ -1,11 +1,22 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import numpy as np
-import pandas as pd
+# Standard library imports
 import os
 import shutil
+
+# Third-party library imports
 import matplotlib.image
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, KBinsDiscretizer
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import KBinsDiscretizer, MinMaxScaler, OneHotEncoder
+
+# Typing imports
 from typing import List, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    FeatureWrap    ########################
+###########################################################
 
 class FeatureWrap(AbstractImageMethod):
     default_size = (8,8)        # The width and height of the final image, in pixels (rows x columns).

@@ -1,9 +1,20 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
+# Standard library imports
 import os
-import pandas as pd
+
+# Third-party library imports
 import numpy as np
+import pandas as pd
 from PIL import Image
+
+# Typing imports
 from typing import Optional
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    BarGraph    ###########################
+###########################################################
 
 class BarGraph(AbstractImageMethod):
     default_pixel_width = 1     # Width of the bars pixels
