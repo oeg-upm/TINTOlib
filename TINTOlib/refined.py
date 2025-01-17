@@ -24,10 +24,37 @@ from TINTOlib.utils import Toolbox
 ###########################################################
 
 class REFINED(AbstractImageMethod):
-    default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    default_random_seed = 1         # Default seed for reproducibility
-    default_zoom = 1                # The default multiplication value to save the image
-    default_n_processors = 8        # Default number of processors
+    """
+    REFINED: A method to transform high-dimensional feature vectors into 2D images 
+    optimized for CNNs. It uses Bayesian Metric Multidimensional Scaling (BMDS) 
+    and hill climbing to arrange features spatially, preserving neighborhood dependencies.
+    
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    hcIterations : int, optional
+        Number of iterations for the hill climbing algorithm. 
+        Default is 5. Valid values: integer >= 1.
+    random_seed : int, optional
+        Seed for reproducibility. 
+        Default is 1. Valid values: integer.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    n_processors : int, optional    
+        The number of processors to use for the algorithm. 
+        Default is 8. Valid values: integer >= 2.
+    """
+    ###### default values ###############
+    default_hc_iterations = 5  # Number of iterations for the hill climbing algorithm
+    default_random_seed = 1  # Default seed for reproducibility
+    default_zoom = 1  # Default zoom level for saving images
+    default_n_processors = 8  # Default number of processors
 
     def __init__(
         self,
@@ -37,28 +64,10 @@ class REFINED(AbstractImageMethod):
         random_seed: Optional[int] = default_random_seed,
         zoom: Optional[int] = default_zoom,
         n_processors: Optional[int] = default_n_processors
-    ):
-        """
-        Arguments
-        ---------
-        problem: (optional) str
-            The type of dataset
-        verbose: (optional) bool
-            If set to True, shows progress messages
-        hcIterations: (optional) int
-            The number of iterations of hill climbing goes
-        random_seed: (optional) int
-            The seed for reproduciblitity
-        zoom: (optional) int
-            Defaults to 1. The rescale factor to save the image. size in pixels for saving the visual results. The resulting image will
-            shape a size of scale[0]*zoom,scale[1]*zoom pixels.
-        n_processors: (optional) int
-            The number of processors to use
-        """
-        if n_processors <= 1:
-            raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
-        
+    ):   
         super().__init__(problem=problem, verbose=verbose)
+        if n_processors < 2:
+            raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
         self.hcIterations = hcIterations
         self.random_seed = random_seed
@@ -156,12 +165,7 @@ class REFINED(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
-    # def __trainingAlg(self, X, Y,Desc):
-        #Feat_DF = pd.read_csv(data)
-        #X = Feat_DF.values;
-        #X = X[:100, :-1]
-
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()
         X = x.values
         Y = y.values if y is not None else None
@@ -214,14 +218,12 @@ class REFINED(AbstractImageMethod):
 
         with open(mapping_pickle_file,'rb') as file:
             self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS = pickle.load(file)
-
-        self.__saveImages(self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS, X, Y, nn)
-
+    
         os.remove(init_pickle_file)
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
 
-    def _testAlg(self, x, y=None):
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         X = x.values
         Y = y.values if y is not None else None
 

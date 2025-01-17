@@ -1,9 +1,3 @@
-"""
-Reference:
-- Paper: https://doi.org/10.1016/j.inffus.2022.10.011
-- Code Repository: https://github.com/oeg-upm/TINTO
-"""
-
 # Standard library imports
 import gc
 import math
@@ -31,8 +25,9 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 
 class TINTO(AbstractImageMethod):
     """
-    TINTO: A class for transforming tabular data into images using dimensionality reduction techniques.
-
+    TINTO: A class for transforming tabular data into synthetic images by projecting it into a two-dimensional space 
+    and applying visualization techniques.
+    
     Parameters:
     ----------
     problem : str, optional
@@ -101,26 +96,17 @@ class TINTO(AbstractImageMethod):
 
     def __init__(
         self,
-        # General configuration
         problem=None,
         verbose=None,
-
-        # Dimensionality reduction
         algorithm=default_algorithm,
         submatrix=default_submatrix,
-
-        # Image-specific settings
         pixels=default_pixels,
         zoom=default_zoom,
-
-        # Blurring options
         blur=default_blur,
         amplification=default_amplification,
         distance=default_distance,
         steps=default_steps,
         option=default_option,
-
-        # Miscellaneous
         random_seed=default_random_seed,
         times=default_times,
         train_m=default_train_m,
@@ -530,7 +516,7 @@ class TINTO(AbstractImageMethod):
 
     def __createImage(self, X, Y, folder='prueba/'):
         """
-        This function creates the images that will be processed by CNN.
+        This function creates the images.
         """
 
         X_scaled = self.min_max_scaler.transform(X)
@@ -548,7 +534,7 @@ class TINTO(AbstractImageMethod):
         else:
             self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m)
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         if not self.blur:
             self.amplification = 0
             self.distance = 2
@@ -561,17 +547,12 @@ class TINTO(AbstractImageMethod):
         self.__areaDelimitation()
         self.__matrixPositions()
 
-        self.__createImage(X, Y, self.folder)
-
-    def _testAlg(self, X, Y=None):
-        """
-        This function uses the above functions for the validation.
-        """
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         if not self.blur:
             self.amplification = 0
             self.distance = 2
             self.steps = 0
 
-        if (Y is None):
-            Y = np.zeros(X.shape[0])
-        self.__createImage(X, Y, self.folder)
+        if (y is None):
+            y = np.zeros(x.shape[0])
+        self.__createImage(x, y, self.folder)

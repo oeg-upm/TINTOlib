@@ -1,3 +1,6 @@
+# Future imports
+from __future__ import division
+
 # Standard library imports
 import math
 import os
@@ -6,40 +9,69 @@ import os
 import numpy as np
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 # Typing imports
 from typing import Union
-
-# Future imports
-from __future__ import division
 
 # Local application/library imports
 from TINTOlib.abstractImageMethod import AbstractImageMethod
 
 ###########################################################
-################    SuperTML    ##############################
+################    SuperTML    ###########################
 ###########################################################
 
 class SuperTML(AbstractImageMethod):
-    default_pixels = 224
-    default_font_size = 10
-    default_feature_importance = False  # False to produce SuperTML-EF, True to produce SuperTML-VF
-    default_random_seed = 1
+    """
+    SuperTML: A method for transforming tabular data into synthetic images inspired by natural language processing techniques.
+
+    This method draws data values directly onto a 1-channel image where each feature is assigned a region and represented in text.
+    It supports two approaches:
+    - SuperTML_EF: Each feature has an equal-sized region and font size.
+    - SuperTML_VF: Each feature has a region and font size proportional to its relevance, with relevance calculated using Random Forest feature importance.
+
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    image_pixels : int, optional
+        The number of pixels used to create the image (one side). 
+        Total pixels = pixels * pixels. Default is 224. Valid values: integer.
+    font_size : int, optional
+        The size of the font used to render text on the generated images. 
+        Default is 10. Valid values: integer.
+    feature_importance : bool, optional
+        If False, SuperTML-EF is used (Equal Font), where all features are displayed with equal font sizes. 
+        If True, SuperTML-VF is used (Variable Font), where the font size of each feature is proportional to its importance. 
+        Default is False. Valid values: [True, False].
+    random_seed : int, optional
+        Seed for reproducibility. The method uses random forest for feature importance.
+        Default is 1. Valid values: integer.
+    """
+    ###### default values ###############
+    default_pixels = 224  # Default image size (width and height in pixels)
+    default_font_size = 10  # Default font size
+    default_feature_importance = False  # Use feature importance (False = SuperTML-EF, True = SuperTML-VF)
+    default_random_seed = 1  # Default random seed for reproducibility
     
     def __init__(
         self,
-        problem = None,
-        verbose = None,
+        problem=None,
+        verbose=None,
         pixels=default_pixels,
-        font_size = default_font_size,
-        feature_importance: bool = default_feature_importance,
-        random_seed: int = default_random_seed
+        font_size=default_font_size,
+        feature_importance=default_feature_importance,
+        random_seed=default_random_seed,
     ):
         super().__init__(problem=problem, verbose=verbose)
 
-        self.image_pixels: int = pixels
-        self.font_size: int = font_size
-        self.feature_importance: bool = feature_importance
+        self.image_pixels = pixels
+        self.font_size = font_size
+        self.feature_importance = feature_importance
         self.random_seed = random_seed
 
     def __saveSupervised(self, y, i, image):
@@ -168,7 +200,6 @@ class SuperTML(AbstractImageMethod):
         y: np.ndarray
             Targets array
         """
-        from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
         max_selection = 100_000
 
@@ -186,14 +217,10 @@ class SuperTML(AbstractImageMethod):
 
         # Update the feature importances
         self.feature_importances = model.feature_importances_
-        
-    
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         X = x.values
         Y = y.values if y is not None else None
-
-        # Variable for regression problem
-        imagesRoutesArr = []
 
         if self.feature_importance:
             # Calculate the feature importance for SuperTML-VF
@@ -202,40 +229,7 @@ class SuperTML(AbstractImageMethod):
             # Calculate the number of columns
             self.columns = math.ceil(math.sqrt(X.shape[1]))
 
-        try:
-            os.makedirs(self.folder)
-            if self.verbose:
-                print("The folder was created " + self.folder + "...")
-        except:
-            if self.verbose:
-                print("The folder " + self.folder + " is already created...")
-        for i in range(X.shape[0]):
-
-            image = self.__event2img(X[i])
-
-            if self.problem == "supervised":
-                route = self.__saveSupervised(Y[i], i, image)
-                imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                route = self.__saveRegressionOrUnsupervised(i, image)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
-        
-        if self.problem == "supervised" :
-            data={'images':imagesRoutesArr,'class':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr,'values':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
-            
-    def _testAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         X = x.values
         Y = y.values if y is not None else None
 
@@ -273,4 +267,4 @@ class SuperTML(AbstractImageMethod):
         elif self.problem == "regression":
             data = {'images': imagesRoutesArr,'values':Y}
             regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)     

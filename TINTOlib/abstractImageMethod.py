@@ -1,5 +1,6 @@
 # Standard library imports
 import pickle
+from abc import ABC, abstractmethod
 
 # Third-party library imports
 import pandas as pd
@@ -7,29 +8,31 @@ import pandas as pd
 # Typing imports
 from typing import Optional, Union
 
-# Standard library abstract base class imports
-from abc import ABC, abstractmethod
-
-default_problem = "supervised"  # Define the type of dataset [supervised, unsupervised, regression]
-default_verbose = False         # Verbose: if it's true, show the compilation text
+# Default configuration values
+default_problem = "supervised"  # Define the type of task [supervised, unsupervised, regression]
+default_verbose = False         # Verbose: if True, shows the compilation text
 default_hyperparameters_filename = 'objs.pkl'
 
 class AbstractImageMethod(ABC):
-    """Abstract class that all the other classes must inherit from and implement the abstract functions"""
-
+    """
+    Abstract class that other classes must inherit from and implement abstract methods.
+    Provides utility methods for saving/loading hyperparameters and data transformations.
+    """
     def __init__(
         self,
         problem: Optional[str], 
         verbose: Optional[bool],
     ):
+        # Validate `problem`
         if problem is None:
             problem = default_problem
+        allowed_values_for_problem = ["supervised", "unsupervised", "regression"]
         if not isinstance(problem, str):
             raise TypeError(f"problem must be of type str (got {type(problem)})")
-        allowed_values_for_problem = ["supervised", "unsupervised", "regression"]
         if problem not in allowed_values_for_problem:
-            raise ValueError(f"Allowed values for problem {allowed_values_for_problem}. Instead got {problem}")
+            raise ValueError(f"Allowed values for problem are {allowed_values_for_problem}. Instead got {problem}")
         
+        # Validate `verbose`
         if verbose is None:
             verbose = default_verbose
         if not isinstance(verbose, bool):
@@ -47,7 +50,7 @@ class AbstractImageMethod(ABC):
         with open(filename, 'wb') as f:
             pickle.dump(self.__dict__, f)
         if self.verbose:
-            print("It has been successfully saved in " + filename)
+            print(f"Hyperparameters successfully saved in {filename}.")
 
     def loadHyperparameters(self, filename=default_hyperparameters_filename):
         """
@@ -62,80 +65,102 @@ class AbstractImageMethod(ABC):
             setattr(self, key, val)
 
         if self.verbose:
-            print("It has been successfully loaded from " + filename)
+            print(f"Hyperparameters successfully loaded from {filename}.")
         
-    def generateImages_fit(self, data, folder):
+    def fit(self, data):
         """
-        This function generates and saves the synthetic images in folders.
-        Arguments
-        ---------
-        data: str or Dataframe
-            The data and targets
-        folder: str
-            The folder where the images are created
-        """
-        self.folder = folder
+        Fits the model to the tabular data.
 
-        # Get the data
-        if type(data) == str:
-            dataset = pd.read_csv(data)
-        elif isinstance(data,pd.DataFrame) :
-            dataset = data
+        Parameters:
+        - data: Path to CSV file or a pandas DataFrame containing data and targets.
+        """
+
+        dataset = self._load_data(data)
+        x, y = self._split_features_targets(dataset)
+
+        # Call the training function
+        self._fitAlg(x, y)
 
         if self.verbose:
-            print("Loaded data")
+            print("Fit process completed.")
 
-        # Separate targets from data
-        if self.problem=="supervised"  or  self.problem=="regression":
-            # The data includes the targets
-            x = dataset.drop(dataset.columns[-1], axis="columns")
+    def transform(self, data, folder):
+        """
+        Generate and saves the synthetic images in the specified folder.
+        
+        Parameters:
+        - data: Path to CSV file or a pandas DataFrame containing data and targets.
+        - folder: Path to folder where the images will be saved.
+        """
+        dataset = self._load_data(data)
+        x, y = self._split_features_targets(dataset)
+
+        self.folder = folder
+        self._transformAlg(x, y)
+
+        if self.verbose:
+            print("Transform process completed.")
+
+    def fit_transform(self, data, folder):
+        """
+        Fits the model to the tabular data and then generate and saves the synthetic images in the specified folder.
+        
+        Parameters:
+        - data: Path to CSV file or a pandas DataFrame containing data and targets.
+        - folder: Path to folder where the images will be saved.
+        """
+        dataset = self._load_data(data)
+        x, y = self._split_features_targets(dataset)
+
+        self.folder = folder
+        self._fitAlg(x, y)
+        self._transformAlg(x, y)
+    
+        if self.verbose:
+            print("Fit-Transform process completed.")
+
+    def _load_data(self, data: Union[str, pd.DataFrame]) -> pd.DataFrame:
+        """
+        Loads data from a file or returns the DataFrame directly.
+        """
+        if isinstance(data, str):
+            dataset = pd.read_csv(data)
+        elif isinstance(data, pd.DataFrame):
+            dataset = data
+        else:
+            raise TypeError("data must be a string (file path) or a pandas DataFrame.")
+
+        if self.verbose:
+            print("Data successfully loaded.")
+
+        return dataset
+
+    def _split_features_targets(self, dataset: pd.DataFrame):
+        """
+        Splits dataset into features and targets based on the problem type.
+        """
+        if self.problem in ["supervised", "regression"]:
+            x = dataset.drop(columns=dataset.columns[-1])
             y = dataset[dataset.columns[-1]]
         else:
-            # The data doesn't include the targets
             x = dataset
             y = None
 
-        # Call the training function
-        self._trainingAlg(x, y)
-
-        if self.verbose:
-            print("End")
-
-    def generateImages_pred(self, data, folder):
-      """
-      This function generate and save the synthetic images in folders.
-      - data : data CSV or pandas Dataframe
-      - folder : the folder where the images are created
-      """
-      # Read the CSV
-      self.folder = folder
-      if type(data)==str:
-        dataset = pd.read_csv(data)
-      elif isinstance(data, pd.DataFrame):
-        dataset = data
-
-      # Separate targets from data
-      if self.problem=="supervised"  or  self.problem=="regression":
-          # The data includes the targets
-          x = dataset.drop(dataset.columns[-1], axis="columns")
-          y = dataset[dataset.columns[-1]]
-      else:
-          # The data doesn't include the targets
-          x = dataset
-          y = None
-
-      self._testAlg(x, y)
-
-      if self.verbose: print("End")
-
+        return x, y
 
     @abstractmethod
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
-        """This method is not to be called from the outside."""
-        raise NotImplementedError()
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+        Abstract method for fitting the algorithm. Must be implemented by subclasses.
+        This method is not to be called from the outside.
+        """
+        raise NotImplementedError("Subclasses must implement _fit_alg.")
 
     @abstractmethod
-    def _testAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
-        """This method is not to be called from the outside."""
-        raise NotImplementedError()
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+        Abstract method for transforming the data. Must be implemented by subclasses.
+        This method is not to be called from the outside.
+        """
+        raise NotImplementedError("Subclasses must implement _transform_alg.")
     

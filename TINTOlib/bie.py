@@ -23,6 +23,31 @@ default_precision = 32
 default_zoom = 1
 
 class BIE(AbstractImageMethod):
+    """
+    BIE: Generates 1-channel images by encoding the floating-point representation of numeric values.
+
+    Each feature's value is converted to its binary representation, which is then used to create rows in the image. 
+    This method preserves precise numeric information but may not effectively capture relationships between features.
+
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    precision : int, optional
+        Determines the precision of the binary encoding. 
+        Default is 32. Valid values: [32, 64].
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    """
+    ###### Default values ###############
+    default_precision = 32  # Precision for binary encoding
+    default_zoom = 1  # Rescale factor for saving the image
+
     def __init__(
         self,
         problem = None,
@@ -116,7 +141,13 @@ class BIE(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+        Fit method for stateless transformers. Does nothing and returns self.
+        """
+        return self
+    
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         x = x.values
         y = y.values if y is not None else None
 

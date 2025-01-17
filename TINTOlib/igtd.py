@@ -21,20 +21,65 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ###########################################################
 
 class IGTD(AbstractImageMethod):
+    """
+    IGTD: Transforms tabular data into compact 2D images for CNNs by assigning features to pixels 
+    based on similarity. It minimizes feature-pixel ranking differences, preserving neighborhood 
+    structures effectively.
+
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    scale : List[int], optional
+        The number of pixel rows and columns in the image. The product (rows x columns) must 
+        be greater than or equal to the number of features. 
+        Default is [6,6]. Valid values: list of two positive integers.
+    fea_dist_method : str, optional
+        Method to calculate pairwise distances between features.
+        Default is 'Pearson'. Valid values: ['Pearson', 'Spearman', 'set', 'Euclidean'].
+    image_dist_method : str, optional
+        Method to calculate distances between pixels in the image.
+        Default is 'Euclidean'. Valid values: ['Euclidean', 'Manhattan'].
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    max_step : int, optional
+        Maximum number of iterations for the algorithm if it does not converge. 
+        Default is 1000. Valid values: integer.
+    val_step : int, optional
+        Number of steps to check gain on the objective function for convergence. 
+        Default is 50. Valid values: integer.
+    error : str, optional
+        Function to evaluate differences between feature and pixel distance rankings.
+        Default is 'squared'. Valid values: ['squared', 'abs'].
+    switch_t : int, optional
+        Threshold for error change rate to determine if switching features should occur. 
+        Default is 0. Valid values: integer.
+    min_gain : float, optional
+        Minimum improvement in the objective function to continue optimization. 
+        Default is 0.00001. Valid values: float.
+    random_seed : int, optional
+        Seed for reproducibility. 
+        Default is 1. Valid values: integer.    
+    """
     #Default hyperparameters
-    default_scale = [6,6]               # Characteristic pixels of the final image (row x col). [row x col] must be equal or greater than the number of features.
-    default_fea_dist_method = "Pearson" # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
-                                        # 'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
-                                        # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
-                                        # 'Euclidean' calculates pairwise euclidean distances between features.
-    default_image_dist_method = "Euclidean" # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_zoom = 1                        # The default multiplication value to save the image
-    default_max_step = 1000                 # the maximum steps that the algorithm should run if never converges.
-    default_val_step = 50                   # number of steps for checking gain on the objective function to determine convergence
-    default_error = "squared"               # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
-    default_switch_t = 0                    # the threshold to determine whether switch should happen
-    default_min_gain = 0.00001              # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
-    default_random_seed = 1                 # default seed for reproducibility
+    default_scale = [6,6]                       # Characteristic pixels of the final image (row x col). [row x col] must be equal or greater than the number of features.
+    default_fea_dist_method = "Pearson"         # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
+                                                # 'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
+                                                # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
+                                                # 'Euclidean' calculates pairwise euclidean distances between features.
+    default_image_dist_method = "Euclidean"     # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
+    default_zoom = 1                            # The default multiplication value to save the image
+    default_max_step = 1000                     # the maximum steps that the algorithm should run if never converges.
+    default_val_step = 50                       # number of steps for checking gain on the objective function to determine convergence
+    default_error = "squared"                   # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
+    default_switch_t = 0                        # the threshold to determine whether switch should happen
+    default_min_gain = 0.00001                  # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
+    default_random_seed = 1                     # default seed for reproducibility
 
     def __init__(
         self,
@@ -51,60 +96,18 @@ class IGTD(AbstractImageMethod):
         min_gain: Optional[float] = default_min_gain,
         random_seed: Optional[int] = default_random_seed,
     ):
-        """
-        Input
-        -----
-        problem: (optional) str
-            The tyoe of dataset
-        scale: (optional) List[int]
-            a list of two positive integers. The number of pixel rows and columns in the image representations,
-            into which the tabular data will be converted.
-        fea_dist_method: (optional) str
-            a string indicating the method used for calculating the pairwise distances between features,
-            for which there are three options.
-            'Pearson' uses the Pearson correlation coefficient to evaluate the similarity between features.
-            'Spearman' uses the Spearman correlation coefficient to evaluate the similarity between features.
-            'Euclidean' calculates pairwise euclidean distances between features.
-            'set' uses the Jaccard index to evaluate the similarity between features that are binary variables.
-        image_dist_method: (optional) str
-            a string indicating the method used for calculating the distances between pixels in image.
-            It can be either 'Euclidean' or 'Manhattan'.
-        zoom: (optional) int
-            Defaults to 1. The rescale factor to save the image. size in pixels for saving the visual results. The resulting image will
-            shape a size of scale[0]*zoom,scale[1]*zoom pixels.
-        max_step: (optional) int
-            the maximum number of iterations that the IGTD algorithm will run if never converges.
-        val_step: (optional) int
-            the number of iterations for determining algorithm convergence. If the error reduction rate is smaller than
-            min_gain for val_step iterations, the algorithm converges.
-        error: (optional) str
-            name of the function to evaluate the difference between feature distance ranking and pixel
-            distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
-        switch_t: (optional) int
-            the threshold on error change rate. Error change rate is
-            (error after feature swapping - error before feature swapping) / error before feature swapping.
-            In each iteration, if the smallest error change rate resulted from all possible feature swappings
-            is not larger than switch_t, the feature swapping resulting in the smallest error change rate will
-            be performed. If switch_t <= 0, the IGTD algorithm monotonically reduces the error during optimization.
-        min_gain: (optional) float
-            if the error reduction rate is not larger than min_gain for val_step iterations, the algorithm converges.
-        random_seed: (optional) int
-            random seed to make results reproducible
-        verbose: (optional) bool
-            whether to print progress on the terminal
-        """
         super().__init__(problem=problem, verbose=verbose)
 
-        self.scale: List[int] = scale
-        self.fea_dist_method: str = fea_dist_method
-        self.image_dist_method: str = image_dist_method
-        self.zoom: int = zoom
-        self.max_step: int = max_step
-        self.val_step: int = val_step
-        self.error: str = error
-        self.switch_t: int = switch_t
-        self.min_gain: float = min_gain
-        self.random_seed: int = random_seed
+        self.scale = scale
+        self.fea_dist_method = fea_dist_method
+        self.image_dist_method = image_dist_method
+        self.zoom = zoom
+        self.max_step = max_step
+        self.val_step = val_step
+        self.error = error
+        self.switch_t = switch_t
+        self.min_gain = min_gain
+        self.random_seed = random_seed
 
     def __min_max_transform(self, data: np.ndarray):
         '''
@@ -707,7 +710,7 @@ class IGTD(AbstractImageMethod):
 
         return image_data, samples
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
         numPixels = self.scale[0] * self.scale[1]
         numAttributes = x.shape[1]
@@ -723,16 +726,7 @@ class IGTD(AbstractImageMethod):
 
         self.min_id = np.argmin(err)
 
-        X, samples = self.__generate_image_data(
-            data=X,
-            index=self.index[self.min_id, :],
-            num_row=self.scale[0],
-            num_column=self.scale[1],
-            coord=self.coordinate,
-            labels=Y
-        )
-
-    def _testAlg(self, x, y=None):
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
         numPixels = self.scale[0] * self.scale[1]
         numAttributes = x.shape[1]
