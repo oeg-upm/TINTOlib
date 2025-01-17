@@ -85,6 +85,7 @@ class IGTD(AbstractImageMethod):
         self,
         problem: Optional[str] = None,
         verbose: Optional[bool] = None,
+        normalize=None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
         image_dist_method: Optional[str] = default_image_dist_method,
@@ -96,7 +97,7 @@ class IGTD(AbstractImageMethod):
         min_gain: Optional[float] = default_min_gain,
         random_seed: Optional[int] = default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         self.scale = scale
         self.fea_dist_method = fea_dist_method

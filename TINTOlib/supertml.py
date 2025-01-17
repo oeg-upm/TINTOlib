@@ -62,12 +62,13 @@ class SuperTML(AbstractImageMethod):
         self,
         problem=None,
         verbose=None,
+        normalize=None,
         pixels=default_pixels,
         font_size=default_font_size,
         feature_importance=default_feature_importance,
         random_seed=default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         self.image_pixels = pixels
         self.font_size = font_size
@@ -219,6 +220,11 @@ class SuperTML(AbstractImageMethod):
         self.feature_importances = model.feature_importances_
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        # Normalize data if the flag is enabled
+        if self.normalize:
+            self.min_max_scaler = MinMaxScaler()
+            x = pd.DataFrame(self.min_max_scaler.fit_transform(x), columns=x.columns)
+
         X = x.values
         Y = y.values if y is not None else None
 

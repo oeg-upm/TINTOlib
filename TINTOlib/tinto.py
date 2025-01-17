@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-from sklearn.preprocessing import MinMaxScaler
 
 # Typing imports
 from typing import Union
@@ -90,7 +89,6 @@ class TINTO(AbstractImageMethod):
     default_train_m = True  # Use training matrix
     default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Replication times in t-SNE
-    default_normalize = True  # Normalize the data
 
     default_zoom = 1  # Zoom level
 
@@ -98,6 +96,7 @@ class TINTO(AbstractImageMethod):
         self,
         problem=None,
         verbose=None,
+        normalize=None,
         algorithm=default_algorithm,
         submatrix=default_submatrix,
         pixels=default_pixels,
@@ -111,7 +110,7 @@ class TINTO(AbstractImageMethod):
         times=default_times,
         train_m=default_train_m,
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         self.algorithm = algorithm
         self.pixels = pixels

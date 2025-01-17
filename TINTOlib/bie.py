@@ -52,10 +52,11 @@ class BIE(AbstractImageMethod):
         self,
         problem = None,
         verbose = None,
+        normalize=None,
         precision: int = default_precision,
         zoom: int = default_zoom
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         if not isinstance(precision, int):
             raise TypeError(f"precision must be of type int (got {type(precision)})")

@@ -60,12 +60,13 @@ class REFINED(AbstractImageMethod):
         self,
         problem: Optional[str] = None,
         verbose: Optional[bool] = None,
+        normalize=None,
         hcIterations: Optional[int] = default_hc_iterations,
+        n_processors: Optional[int] = default_n_processors,
         random_seed: Optional[int] = default_random_seed,
         zoom: Optional[int] = default_zoom,
-        n_processors: Optional[int] = default_n_processors
     ):   
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
         if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         

@@ -57,11 +57,12 @@ class FeatureWrap(AbstractImageMethod):
         self,
         problem = None,
         verbose = None,
+        normalize=None,
         size: tuple = default_size,
         bins: int = default_bins,
         zoom: int = default_zoom
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         # Validation for `size`
         try:

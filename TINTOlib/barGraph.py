@@ -50,11 +50,12 @@ class BarGraph(AbstractImageMethod):
         self,
         problem = None,
         verbose = None,
+        normalize=None,
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
         zoom: int = default_zoom,
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         if not isinstance(pixel_width, int):
             raise TypeError(f"pixel_width must be of type int (got {type(pixel_width)})")

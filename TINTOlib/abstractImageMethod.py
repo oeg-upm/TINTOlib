@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 # Third-party library imports
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 # Typing imports
 from typing import Optional, Union
@@ -11,6 +12,7 @@ from typing import Optional, Union
 # Default configuration values
 default_problem = "supervised"  # Define the type of task [supervised, unsupervised, regression]
 default_verbose = False         # Verbose: if True, shows the compilation text
+default_normalize = True
 default_hyperparameters_filename = 'objs.pkl'
 
 class AbstractImageMethod(ABC):
@@ -22,6 +24,7 @@ class AbstractImageMethod(ABC):
         self,
         problem: Optional[str], 
         verbose: Optional[bool],
+        normalize: Optional[bool],
     ):
         # Validate `problem`
         if problem is None:
@@ -37,9 +40,21 @@ class AbstractImageMethod(ABC):
             verbose = default_verbose
         if not isinstance(verbose, bool):
             raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
+        
+        # Validate `normalize`
+        if normalize is None:
+            normalize = default_normalize
+        if not isinstance(normalize, bool):
+            raise TypeError(f"verbose must be of type bool (got {type(normalize)})")
 
         self.problem = problem
         self.verbose = verbose
+        self._fitted = False  # Tracks if fit has been called
+
+        # Normalize data
+        self.normalize = normalize  # Whether to normalize data
+        self.scaler = MinMaxScaler() if normalize else None  # Initialize scaler if needed
+
 
     def saveHyperparameters(self, filename=default_hyperparameters_filename):
         """
@@ -78,8 +93,14 @@ class AbstractImageMethod(ABC):
         dataset = self._load_data(data)
         x, y = self._split_features_targets(dataset)
 
+        # Normalize features if required
+        if self.normalize:
+            x = pd.DataFrame(self.scaler.fit_transform(x), columns=x.columns)
+
         # Call the training function
         self._fitAlg(x, y)
+
+        self._fitted = True  # Mark as fitted
 
         if self.verbose:
             print("Fit process completed.")
@@ -92,8 +113,15 @@ class AbstractImageMethod(ABC):
         - data: Path to CSV file or a pandas DataFrame containing data and targets.
         - folder: Path to folder where the images will be saved.
         """
+        if not self._fitted:
+            raise RuntimeError("The model must be fitted before calling 'transform'. Please call 'fit' first.")
+
         dataset = self._load_data(data)
         x, y = self._split_features_targets(dataset)
+
+        # Normalize features if required
+        if self.normalize:
+            x = pd.DataFrame(self.scaler.transform(x), columns=x.columns)
 
         self.folder = folder
         self._transformAlg(x, y)
@@ -112,9 +140,14 @@ class AbstractImageMethod(ABC):
         dataset = self._load_data(data)
         x, y = self._split_features_targets(dataset)
 
+        # Normalize features if required
+        if self.normalize:
+            x = pd.DataFrame(self.scaler.transform(x), columns=x.columns)
+
         self.folder = folder
         self._fitAlg(x, y)
         self._transformAlg(x, y)
+        self._fitted = True  # Mark as fitted after both operations
     
         if self.verbose:
             print("Fit-Transform process completed.")

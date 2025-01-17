@@ -39,9 +39,10 @@ class DistanceMatrix(AbstractImageMethod):
         self,
         problem = None,
         verbose = None,
+        normalize=None,
         zoom: int = default_zoom,
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
         self.zoom = zoom
 
     def __saveSupervised(self, y, i, image):
