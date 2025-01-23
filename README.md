@@ -3,9 +3,10 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pypi.python.org/pypi/)
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
-[![Open In Colab-CNN](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/10iKmFCC_od-P_tqWzA_UQE2ieUhCV-uy/view?usp=sharing)
-[![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1dv8QYxPsh-HA7TFlmFfQHGE5oMb5VHk4/view?usp=sharing)
-[![Open In Colab-CNN+MLP-reg](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1uQRNgfgi3G2-T4j0VsCnSLLSqzWykPM-/view?usp=sharing)
+[![Open In Colab-CNN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN.ipynb)
+[![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN%2BMLP.ipynb)
+[![Open In Colab-ViT](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT.ipynb)
+[![Open In Colab-ViT+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT%2BMLP.ipynb)
 
 <div>
     <p align = "center">
@@ -13,7 +14,7 @@
     </p>
 </div>
 
-**TINTOlib** is a state-of-the-art library that wraps the most important techniques for the construction of **Synthetic Images** from[Tidy Data](https://www.jstatsoft.org/article/view/v059i10) (also known as **Tabular Data**). 
+**TINTOlib** is a state-of-the-art Python library that transforms **tidy data** (also known as tabular data) into **synthetic images**, enabling the application of advanced deep learning techniques, including **Vision Transformers (ViTs)** and **Convolutional Neural Networks (CNNs)**, to traditionally structured data. This transformation bridges the gap between tabular data and powerful vision-based machine learning models, unlocking new possibilities for tackling regression, classification, and other complex tasks.
 
 **Citing TINTO**: If you used TINTO in your work, please cite the **[SoftwareX](https://doi.org/10.1016/j.softx.2023.101391)**:
 
@@ -45,6 +46,8 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 }
 ```
 
+---
+
 ## Features
 - Input data formats (2 options):
     - **Pandas Dataframe** 
@@ -56,23 +59,28 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 - Runs on **Linux**, **Windows** and **macOS** systems.
 - Compatible with **[Python](https://www.python.org/)** 3.7 or higher.
 
-## Models
+---
 
-| Model | Class | Features | Hyperparameters |
-|:----------------------------------------------------------------:|:------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------:|
-|[BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `BarGraph()` | | `problem` `verbose` `pixel_width` `gap`  `zoom`|
-|[BIE](https://ieeexplore.ieee.org/document/10278393) | `BIE()` | | `problem` `verbose` `precision` `zoom`|
-|[Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `Combination()` | | `problem` `verbose` `zoom` |
-|[DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()` | | `problem` `verbose` `zoom` |
-|[FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87) | `FeatureWrap()` | | `problem` `verbose` `size` `bins` `zoom` |
-|[IGTD](https://github.com/zhuyitan/igtd) | `IGTD()` | | `problem` `verbose` `scale` `fea_dist_method` `image_dist_method` `max_step` `val_step` `error` `switch_t` `min_gain` `random_seed` `zoom` |
-|[REFINED](https://github.com/omidbazgirTTU/REFINED) | `REFINED()` | | `problem` `verbose` `hcIterations` `random_seed` `zoom` `n_processors` |
-|[SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` | | `problem` `columns` `font_size` `image_size` `verbose` |
-|[TINTO](https://github.com/oeg-upm/TINTO) | `TINTO()` | `blur` | `problem` `algorithm` `pixels` `blur` `amplification` `distance` `steps` `option` `seed` `times` `verbose` |
+## Models
+TINTOlib includes a variety of models for generating synthetic images. Below is a summary of the supported models and their hyperparameters:
+
+| Models | Class | Hyperparameters |
+|:----------------------------------------------------------------:|:------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| [TINTO](https://github.com/oeg-upm/TINTO) | `TINTO()` | `problem` `normalize` `verbose` `pixels` `algorithm` `blur` `submatrix` `amplification` `distance` `steps` `option` `times` `train_m` `zoom` `random_seed` |
+| [IGTD](https://github.com/zhuyitan/igtd) | `IGTD()` | `problem` `normalize` `verbose` `scale` `fea_dist_method` `image_dist_method` `error` `max_step` `val_step` `switch_t` `min_gain` `zoom` `random_seed` |
+| [REFINED](https://github.com/omidbazgirTTU/REFINED) | `REFINED()` | `problem` `normalize` `verbose` `hcIterations` `n_processors` `zoom` `random_seed` |
+| [BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `BarGraph()` | `problem` `normalize` `verbose` `pixel_width` `gap` `zoom` |
+| [DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()` | `problem` `normalize` `verbose` `zoom` |
+| [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `Combination()` | `problem` `normalize` `verbose` `zoom` |
+| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` | `problem` `normalize` `verbose` `pixels` `feature_importance` `font_size` `random_seed` |
+| [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87) | `FeatureWrap()` | `problem` `normalize` `verbose` `size` `bins` `zoom` |
+| [BIE](https://ieeexplore.ieee.org/document/10278393) | `BIE()` | `problem` `normalize` `verbose` `precision` `zoom` |
+
+---
 
 ## Documentation
 
-**[Read the documentation](https://tintolib.readthedocs.io/en/latest/)**.
+For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
 ## Getting Started
 
@@ -88,7 +96,8 @@ To import a specific model use
     from TINTOlib.tinto import TINTO
 ```
 
-Create the model. If you don't set any hyperparameter, the model will use the default values ([read documentation](https://tintolib.readthedocs.io/en/latest/)).
+Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
+
 ``` python
     model = TINTO(blur=True)
 ```
