@@ -28,6 +28,9 @@ class BarGraph(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -49,8 +52,8 @@ class BarGraph(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        verbose = None,
         normalize=None,
+        verbose = None,
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
         zoom: int = default_zoom,
@@ -68,6 +71,7 @@ class BarGraph(AbstractImageMethod):
         
         self.pixel_width = pixel_width
         self.gap = gap
+
         self.zoom = zoom
                 
     def __saveSupervised(self, y, i, image):
@@ -118,11 +122,6 @@ class BarGraph(AbstractImageMethod):
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         x = x.values
         Y = y.values if y is not None else None
-
-        # Normalize the data
-        min_vals = np.min(x, axis=0)
-        max_vals = np.max(x, axis=0)
-        x = (x - min_vals) / (max_vals - min_vals)
 
         # TODO: reorder columns
 

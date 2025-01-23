@@ -32,25 +32,24 @@ class TINTO(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
-    algorithm : str, optional
-        Select the dimensionality reduction algorithm. 
-        Default is 'PCA'. Valid values: ['PCA', 't-SNE'].
-    submatrix : bool, optional
-        Specifies whether to use a submatrix for blurring. 
-        Default is True. Valid values: [True, False].
     pixels : int, optional
         The number of pixels used to create the image (one side). 
         Total pixels = pixels * pixels. Default is 20. Valid values: integer.
-    zoom : int, optional
-        Multiplication factor determining the size of the saved image relative to the original size. 
-        Values greater than 1 increase the image size proportionally. 
-        Default is 1. Valid values: integer.
+    algorithm : str, optional
+        Select the dimensionality reduction algorithm. 
+        Default is 'PCA'. Valid values: ['PCA', 't-SNE'].
     blur : bool, optional
         Activate or deactivate the blurring option. 
         Default is False. Valid values: [True, False].
+    submatrix : bool, optional
+        Specifies whether to use a submatrix for blurring. 
+        Default is True. Valid values: [True, False].
     amplification : float, optional
         Only used when `blur=True`. Specifies the blurring amplification. 
         Default is `np.pi`. Valid values: float.
@@ -66,6 +65,10 @@ class TINTO(AbstractImageMethod):
     times : int, optional
         Only used when `algorithm='t-SNE'`. Specifies the replication times in t-SNE. 
         Default is 4. Valid values: integer.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Values greater than 1 increase the image size proportionally. 
+        Default is 1. Valid values: integer.
     random_seed : int, optional
         Seed for reproducibility. 
         Default is 1. Valid values: integer.
@@ -76,57 +79,59 @@ class TINTO(AbstractImageMethod):
         Indicates overlap of characteristic pixels during image creation.
     """
     ###### default values ###############
-    default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA or t-SNE)
     default_pixels = 20  # Image's Pixels (one side)
-    default_submatrix = True  # Use or not use submatrix
 
+    default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA or t-SNE)
     default_blur = False  # Activate blurring option
+
+    default_submatrix = True  # Use or not use submatrix
     default_amplification = np.pi  # Amplification factor in blurring
     default_distance = 2  # Distance in blurring (number of pixels)
     default_steps = 4  # Steps in blurring
     default_option = 'mean'  # Option in blurring ('mean' or 'maximum')
 
-    default_train_m = True  # Use training matrix
-    default_random_seed = 1  # Seed for reproducibility
     default_times = 4  # Replication times in t-SNE
+    default_train_m = True  # Use training matrix
 
+    default_random_seed = 1  # Seed for reproducibility
     default_zoom = 1  # Zoom level
 
     def __init__(
         self,
         problem=None,
-        verbose=None,
         normalize=None,
-        algorithm=default_algorithm,
-        submatrix=default_submatrix,
+        verbose=None,
         pixels=default_pixels,
-        zoom=default_zoom,
+        algorithm=default_algorithm,
         blur=default_blur,
+        submatrix=default_submatrix,
         amplification=default_amplification,
         distance=default_distance,
         steps=default_steps,
         option=default_option,
-        random_seed=default_random_seed,
         times=default_times,
         train_m=default_train_m,
+        zoom=default_zoom,
+        random_seed=default_random_seed,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
-        self.algorithm = algorithm
         self.pixels = pixels
-        self.submatrix = submatrix
 
+        self.algorithm = algorithm
         self.blur = blur
+        
+        self.submatrix = submatrix
         self.amplification = amplification
         self.distance = distance
         self.steps = steps
         self.option = option
 
-        self.train_m = train_m
-        self.random_seed = random_seed
         self.times = times
+        self.train_m = train_m
 
         self.zoom = zoom
+        self.random_seed = random_seed
 
         self.error_pos = False  # Indicates the overlap of characteristic pixels.
 
@@ -474,10 +479,8 @@ class TINTO(AbstractImageMethod):
         - Set the dimensionality reduction algorithm, PCA or t-SNE.
         """
 
-        self.min_max_scaler = MinMaxScaler()
-        X = self.min_max_scaler.fit_transform(X)
-
         labels = np.arange(X.shape[1])
+        
         X_trans = X.T
 
         if self.verbose:
@@ -517,8 +520,7 @@ class TINTO(AbstractImageMethod):
         """
         This function creates the images.
         """
-
-        X_scaled = self.min_max_scaler.transform(X)
+        X = X.values
         Y = np.array(Y)
         try:
             os.makedirs(folder)
@@ -529,9 +531,9 @@ class TINTO(AbstractImageMethod):
                 print("The folder " + folder + " is already created...")
 
         if self.submatrix:
-            self.m = self.__imageSampleFilterSubmatrix(X_scaled, Y, self.pos_pixel_caract, self.m)
+            self.m = self.__imageSampleFilterSubmatrix(X, Y, self.pos_pixel_caract, self.m)
         else:
-            self.m = self.__imageSampleFilter(X_scaled, Y, self.pos_pixel_caract, self.m)
+            self.m = self.__imageSampleFilter(X, Y, self.pos_pixel_caract, self.m)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         if not self.blur:

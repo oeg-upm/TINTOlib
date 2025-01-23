@@ -26,6 +26,9 @@ class DistanceMatrix(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -38,11 +41,12 @@ class DistanceMatrix(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        verbose = None,
         normalize=None,
+        verbose = None,
         zoom: int = default_zoom,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+
         self.zoom = zoom
 
     def __saveSupervised(self, y, i, image):

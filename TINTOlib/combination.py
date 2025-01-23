@@ -32,6 +32,9 @@ class Combination(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -50,6 +53,7 @@ class Combination(AbstractImageMethod):
         zoom=default_zoom,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+
         self.zoom = zoom
 
     def __saveSupervised(self, y, i, image):
@@ -116,11 +120,6 @@ class Combination(AbstractImageMethod):
         # Matrix for level 3 calculations
         lvl3img = np.empty((n_columns, n_columns))
 
-        # Normalize X
-        min_vals = np.min(X, axis=0)
-        max_vals = np.max(X, axis=0)
-        X_normalized = (X - min_vals) / (max_vals - min_vals)
-
         # for each instance
         for ins,dataInstance in enumerate(X):
             """LEVEL - 1 (MATRIX)"""
@@ -135,7 +134,7 @@ class Combination(AbstractImageMethod):
             """LEVEL - 2 (BARS)"""
             # TODO: reorder the columns
             imgage = np.zeros([n_columns, n_columns, 1])
-            bar_heights = np.floor(X_normalized[ins] * max_bar_height).astype(np.int64)
+            bar_heights = np.floor(X[ins] * max_bar_height).astype(np.int64)
             for i_bar,val_bar in enumerate(bar_heights):
                 imgage[
                     top_padding : (top_padding + val_bar),                              # The height of the column
