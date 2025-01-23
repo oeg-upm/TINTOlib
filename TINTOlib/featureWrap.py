@@ -30,6 +30,9 @@ class FeatureWrap(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -50,14 +53,16 @@ class FeatureWrap(AbstractImageMethod):
     """
     ###### Default values ###############
     default_size = (8, 8)  # Image dimensions (rows x columns)
+
     default_bins = 10  # Number of bins for grouping numeric data
+
     default_zoom = 1  # Rescale factor for saving the image        
 
     def __init__(
         self,
         problem = None,
-        verbose = None,
         normalize=None,
+        verbose = None,
         size: tuple = default_size,
         bins: int = default_bins,
         zoom: int = default_zoom
@@ -86,9 +91,13 @@ class FeatureWrap(AbstractImageMethod):
         if not isinstance(zoom, int) or zoom <= 0:
             raise ValueError("`zoom` must be a positive integer.")
 
+        self.normalize = False # FeatureWrap has normalization implemented in the method
+
         self.size = tuple(size[::])
+
         self.bins = bins
         self.bits_per_pixel = 8
+
         self.zoom = zoom
     
     def __saveSupervised(self, matrix, i, y):

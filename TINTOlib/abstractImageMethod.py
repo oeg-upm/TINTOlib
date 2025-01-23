@@ -142,7 +142,7 @@ class AbstractImageMethod(ABC):
 
         # Normalize features if required
         if self.normalize:
-            x = pd.DataFrame(self.scaler.transform(x), columns=x.columns)
+            x = pd.DataFrame(self.scaler.fit_transform(x), columns=x.columns)
 
         self.folder = folder
         self._fitAlg(x, y)

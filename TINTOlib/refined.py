@@ -34,33 +34,37 @@ class REFINED(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
     hcIterations : int, optional
         Number of iterations for the hill climbing algorithm. 
         Default is 5. Valid values: integer >= 1.
-    random_seed : int, optional
-        Seed for reproducibility. 
-        Default is 1. Valid values: integer.
-    zoom : int, optional
-        Multiplication factor determining the size of the saved image relative to the original size. 
-        Default is 1. Valid values: integer > 0.
     n_processors : int, optional    
         The number of processors to use for the algorithm. 
         Default is 8. Valid values: integer >= 2.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    random_seed : int, optional
+        Seed for reproducibility. 
+        Default is 1. Valid values: integer.
     """
     ###### default values ###############
     default_hc_iterations = 5  # Number of iterations for the hill climbing algorithm
-    default_random_seed = 1  # Default seed for reproducibility
-    default_zoom = 1  # Default zoom level for saving images
     default_n_processors = 8  # Default number of processors
+
+    default_zoom = 1  # Default zoom level for saving images
+    default_random_seed = 1  # Default seed for reproducibility
 
     def __init__(
         self,
         problem: Optional[str] = None,
+        normalize: Optional[bool] = None,
         verbose: Optional[bool] = None,
-        normalize=None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
         random_seed: Optional[int] = default_random_seed,
@@ -71,9 +75,10 @@ class REFINED(AbstractImageMethod):
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
         self.hcIterations = hcIterations
-        self.random_seed = random_seed
-        self.zoom = zoom
         self.n_processors = n_processors
+
+        self.zoom = zoom
+        self.random_seed = random_seed
 
     def __saveSupervised(self, classValue, i, folder, matrix_a, fig, ax):
         extension = 'png'  # eps o pdf

@@ -31,6 +31,9 @@ class IGTD(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -44,57 +47,60 @@ class IGTD(AbstractImageMethod):
     image_dist_method : str, optional
         Method to calculate distances between pixels in the image.
         Default is 'Euclidean'. Valid values: ['Euclidean', 'Manhattan'].
-    zoom : int, optional
-        Multiplication factor determining the size of the saved image relative to the original size. 
-        Default is 1. Valid values: integer > 0.
+    error : str, optional
+        Function to evaluate differences between feature and pixel distance rankings.
+        Default is 'squared'. Valid values: ['squared', 'abs'].
     max_step : int, optional
         Maximum number of iterations for the algorithm if it does not converge. 
         Default is 1000. Valid values: integer.
     val_step : int, optional
         Number of steps to check gain on the objective function for convergence. 
         Default is 50. Valid values: integer.
-    error : str, optional
-        Function to evaluate differences between feature and pixel distance rankings.
-        Default is 'squared'. Valid values: ['squared', 'abs'].
     switch_t : int, optional
         Threshold for error change rate to determine if switching features should occur. 
         Default is 0. Valid values: integer.
     min_gain : float, optional
         Minimum improvement in the objective function to continue optimization. 
         Default is 0.00001. Valid values: float.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
     random_seed : int, optional
         Seed for reproducibility. 
         Default is 1. Valid values: integer.    
     """
     #Default hyperparameters
     default_scale = [6,6]                       # Characteristic pixels of the final image (row x col). [row x col] must be equal or greater than the number of features.
+    
     default_fea_dist_method = "Pearson"         # 'Pearson' uses Pearson correlation coefficient to evaluate similarity between features;
                                                 # 'Spearman' uses Spearman correlation coefficient to evaluate similarity between features;
                                                 # 'set' uses Jaccard index to evaluate similarity between features that are binary variables;
                                                 # 'Euclidean' calculates pairwise euclidean distances between features.
     default_image_dist_method = "Euclidean"     # method used to calculate distance. Can be 'Euclidean' or 'Manhattan'.
-    default_zoom = 1                            # The default multiplication value to save the image
+    default_error = "squared"                   # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function
+
     default_max_step = 1000                     # the maximum steps that the algorithm should run if never converges.
     default_val_step = 50                       # number of steps for checking gain on the objective function to determine convergence
-    default_error = "squared"                   # a string indicating the function to evaluate the difference between feature distance ranking and pixel distance ranking. 'abs' indicates the absolute function. 'squared' indicates the square function.
     default_switch_t = 0                        # the threshold to determine whether switch should happen
     default_min_gain = 0.00001                  # if the objective function is not improved more than 'min_gain' in 'val_step' steps, the algorithm terminates.
+    
+    default_zoom = 1                            # The default multiplication value to save the image
     default_random_seed = 1                     # default seed for reproducibility
 
     def __init__(
         self,
         problem: Optional[str] = None,
+        normalize: Optional[bool] = None,
         verbose: Optional[bool] = None,
-        normalize=None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
         image_dist_method: Optional[str] = default_image_dist_method,
-        zoom: Optional[int] = default_zoom,
+        error: Optional[str] = default_error,
         max_step: Optional[int] = default_max_step,
         val_step: Optional[int] = default_val_step,
-        error: Optional[str] = default_error,
         switch_t: Optional[int] = default_switch_t,
         min_gain: Optional[float] = default_min_gain,
+        zoom: Optional[int] = default_zoom,
         random_seed: Optional[int] = default_random_seed,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
@@ -718,7 +724,7 @@ class IGTD(AbstractImageMethod):
         if numAttributes > numPixels:
             Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
 
-        X = self.__min_max_transform(x.values)  # Normalize
+        X = x.values
         Y = y.values if y is not None else None
 
         ranking_feature, corr = self.__generate_feature_distance_ranking(data=X)
@@ -734,7 +740,7 @@ class IGTD(AbstractImageMethod):
         if numAttributes > numPixels:
             Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
 
-        X = self.__min_max_transform(x.values)  # Normalize
+        X = x.values 
         Y = y.values if y is not None else None
 
         self.__generate_image_data(

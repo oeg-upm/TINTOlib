@@ -35,44 +35,51 @@ class SuperTML(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
     image_pixels : int, optional
         The number of pixels used to create the image (one side). 
         Total pixels = pixels * pixels. Default is 224. Valid values: integer.
-    font_size : int, optional
-        The size of the font used to render text on the generated images. 
-        Default is 10. Valid values: integer.
     feature_importance : bool, optional
         If False, SuperTML-EF is used (Equal Font), where all features are displayed with equal font sizes. 
         If True, SuperTML-VF is used (Variable Font), where the font size of each feature is proportional to its importance. 
         Default is False. Valid values: [True, False].
+    font_size : int, optional
+        The size of the font used to render text on the generated images. 
+        Default is 10. Valid values: integer.
     random_seed : int, optional
         Seed for reproducibility. The method uses random forest for feature importance.
         Default is 1. Valid values: integer.
     """
     ###### default values ###############
     default_pixels = 224  # Default image size (width and height in pixels)
-    default_font_size = 10  # Default font size
+
     default_feature_importance = False  # Use feature importance (False = SuperTML-EF, True = SuperTML-VF)
+    default_font_size = 10  # Default font size
+
     default_random_seed = 1  # Default random seed for reproducibility
     
     def __init__(
         self,
         problem=None,
-        verbose=None,
         normalize=None,
+        verbose=None,
         pixels=default_pixels,
-        font_size=default_font_size,
         feature_importance=default_feature_importance,
+        font_size=default_font_size,
         random_seed=default_random_seed,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         self.image_pixels = pixels
-        self.font_size = font_size
+
         self.feature_importance = feature_importance
+        self.font_size = font_size
+
         self.random_seed = random_seed
 
     def __saveSupervised(self, y, i, image):
@@ -220,11 +227,6 @@ class SuperTML(AbstractImageMethod):
         self.feature_importances = model.feature_importances_
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
-        # Normalize data if the flag is enabled
-        if self.normalize:
-            self.min_max_scaler = MinMaxScaler()
-            x = pd.DataFrame(self.min_max_scaler.fit_transform(x), columns=x.columns)
-
         X = x.values
         Y = y.values if y is not None else None
 

@@ -34,6 +34,9 @@ class BIE(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -51,8 +54,8 @@ class BIE(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        verbose = None,
         normalize=None,
+        verbose = None,
         precision: int = default_precision,
         zoom: int = default_zoom
     ):
@@ -70,7 +73,9 @@ class BIE(AbstractImageMethod):
             raise ValueError(f"zoom must be positive. Instead, got {zoom}")
         
         self.precision = precision
+
         self.zoom = zoom
+        
         self.ones, self.zeros = 255, 0
 
     def __convert_samples_to_binary(self, data: np.ndarray) -> Iterator[List[List[int]]]:
