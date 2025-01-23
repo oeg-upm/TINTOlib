@@ -1,60 +1,84 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import os
-import matplotlib.pyplot as plt
-import subprocess
-from sklearn.manifold import MDS
-from sklearn.metrics.pairwise import euclidean_distances
+# Standard library imports
 import math
+import os
 import pickle
+import platform
+import subprocess
+
+# Third-party library imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pickle
-from TINTOlib.utils import Toolbox
-import platform
-import os
+from sklearn.manifold import MDS
+from sklearn.metrics.pairwise import euclidean_distances
+
+# Typing imports
 from typing import Optional, Union
 
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+from TINTOlib.utils import Toolbox
+
+###########################################################
+################    REFINED    ##############################
+###########################################################
+
 class REFINED(AbstractImageMethod):
-    default_hc_iterations = 5       # Number of iterations is basically how many times the hill climbing goes over the entire features and check each feature exchange cost
-    default_random_seed = 1         # Default seed for reproducibility
-    default_zoom = 1                # The default multiplication value to save the image
-    default_n_processors = 8        # Default number of processors
+    """
+    REFINED: A method to transform high-dimensional feature vectors into 2D images 
+    optimized for CNNs. It uses Bayesian Metric Multidimensional Scaling (BMDS) 
+    and hill climbing to arrange features spatially, preserving neighborhood dependencies.
+    
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    hcIterations : int, optional
+        Number of iterations for the hill climbing algorithm. 
+        Default is 5. Valid values: integer >= 1.
+    n_processors : int, optional    
+        The number of processors to use for the algorithm. 
+        Default is 8. Valid values: integer >= 2.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    random_seed : int, optional
+        Seed for reproducibility. 
+        Default is 1. Valid values: integer.
+    """
+    ###### default values ###############
+    default_hc_iterations = 5  # Number of iterations for the hill climbing algorithm
+    default_n_processors = 8  # Default number of processors
+
+    default_zoom = 1  # Default zoom level for saving images
+    default_random_seed = 1  # Default seed for reproducibility
 
     def __init__(
         self,
         problem: Optional[str] = None,
+        normalize: Optional[bool] = None,
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
+        n_processors: Optional[int] = default_n_processors,
         random_seed: Optional[int] = default_random_seed,
         zoom: Optional[int] = default_zoom,
-        n_processors: Optional[int] = default_n_processors
-    ):
-        """
-        Arguments
-        ---------
-        problem: (optional) str
-            The type of dataset
-        verbose: (optional) bool
-            If set to True, shows progress messages
-        hcIterations: (optional) int
-            The number of iterations of hill climbing goes
-        random_seed: (optional) int
-            The seed for reproduciblitity
-        zoom: (optional) int
-            Defaults to 1. The rescale factor to save the image. size in pixels for saving the visual results. The resulting image will
-            shape a size of scale[0]*zoom,scale[1]*zoom pixels.
-        n_processors: (optional) int
-            The number of processors to use
-        """
-        if n_processors <= 1:
+    ):   
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
-        super().__init__(problem=problem, verbose=verbose)
-        
         self.hcIterations = hcIterations
-        self.random_seed = random_seed
-        self.zoom = zoom
         self.n_processors = n_processors
+
+        self.zoom = zoom
+        self.random_seed = random_seed
 
     def __saveSupervised(self, classValue, i, folder, matrix_a, fig, ax):
         extension = 'png'  # eps o pdf
@@ -147,12 +171,7 @@ class REFINED(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
-    # def __trainingAlg(self, X, Y,Desc):
-        #Feat_DF = pd.read_csv(data)
-        #X = Feat_DF.values;
-        #X = X[:100, :-1]
-
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()
         X = x.values
         Y = y.values if y is not None else None
@@ -205,14 +224,12 @@ class REFINED(AbstractImageMethod):
 
         with open(mapping_pickle_file,'rb') as file:
             self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS = pickle.load(file)
-
-        self.__saveImages(self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS, X, Y, nn)
-
+    
         os.remove(init_pickle_file)
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
 
-    def _testAlg(self, x, y=None):
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         X = x.values
         Y = y.values if y is not None else None
 

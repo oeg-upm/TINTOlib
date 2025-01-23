@@ -1,26 +1,75 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import numpy as np
-import pandas as pd
+# Standard library imports
 import os
 import shutil
+
+# Third-party library imports
 import matplotlib.image
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, KBinsDiscretizer
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import KBinsDiscretizer, MinMaxScaler, OneHotEncoder
+
+# Typing imports
 from typing import List, Union
 
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    FeatureWrap    ########################
+###########################################################
+
 class FeatureWrap(AbstractImageMethod):
-    default_size = (8,8)        # The width and height of the final image, in pixels (rows x columns).
-    default_bins = 10           # The number of bins or intervals used for grouping numeric data
-    default_zoom = 1            
+    """
+    FeatureWrap: A method that transforms feature values into binary vectors and arranges them into 2D images.
+
+    This method converts features into fixed-length binary strings, representing both numerical and categorical 
+    data, which are then arranged to form a 2D image.
+
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    size : tuple of int, optional
+        The width and height of the final image, in pixels (rows x columns). 
+        Default is (8, 8). Valid values: tuple of two positive integers.
+    bins : int, optional
+        The number of bins or intervals used for grouping numeric data. 
+        Default is 10. Valid values: integer > 1.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+
+    Attributes:
+    ----------
+    bits_per_pixel : int
+        Fixed at 8 bits for binary representation.
+    """
+    ###### Default values ###############
+    default_size = (8, 8)  # Image dimensions (rows x columns)
+
+    default_bins = 10  # Number of bins for grouping numeric data
+
+    default_zoom = 1  # Rescale factor for saving the image        
+
     def __init__(
         self,
         problem = None,
+        normalize=None,
         verbose = None,
         size: tuple = default_size,
         bins: int = default_bins,
         zoom: int = default_zoom
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
+        # Validation for `size`
         try:
             _ = len(size)
             _ = size[0]
@@ -34,19 +83,21 @@ class FeatureWrap(AbstractImageMethod):
             if elem <= 0:
                 raise ValueError(f"The elements in `size` must be positive (got {elem})")
         
-        if not isinstance(bins, int):
-            raise TypeError(f"`bins` must be of type int (got {type(bins)})")
-        if bins <= 1:
-            raise ValueError(f"`bins` must be greater than 1")
+        # Validation for `bins`
+        if not isinstance(bins, int) or bins <= 1:
+            raise ValueError("`bins` must be an integer greater than 1.")
         
-        if not isinstance(zoom, int):
-            raise TypeError(f"`zoom` must be of type int (got {type(zoom)})")
-        if zoom <= 0:
-            raise ValueError(f"`zoom` must be positive. Instead, got {zoom}")
+        # Validation for `zoom`
+        if not isinstance(zoom, int) or zoom <= 0:
+            raise ValueError("`zoom` must be a positive integer.")
+
+        self.normalize = False # FeatureWrap has normalization implemented in the method
 
         self.size = tuple(size[::])
+
         self.bins = bins
         self.bits_per_pixel = 8
+
         self.zoom = zoom
     
     def __saveSupervised(self, matrix, i, y):
@@ -163,8 +214,14 @@ class FeatureWrap(AbstractImageMethod):
         # Turn binary vectors into images
         matrices = map(self.__binary_vector_to_matrix, binary_vectors)
         return matrices
-
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+        Fit method for stateless transformers. Does nothing and returns self.
+        """
+        return self
+    
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         is_categorical = [pd.api.types.is_string_dtype(x[col]) for col in x]
         matrices = self.__preprocess_samples(x, is_categorical)
         self.__save_images(matrices, y, num_elems=x.shape[0])

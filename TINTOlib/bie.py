@@ -1,25 +1,65 @@
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-import numpy as np
-import bitstring
-import pandas as pd
+# Standard library imports
 import os
 import shutil
+
+# Third-party library imports
+import bitstring
 import matplotlib
 import matplotlib.image
+import numpy as np
+import pandas as pd
+
+# Typing imports
 from typing import Iterator, List, Union
+
+# Local application/library imports
+from TINTOlib.abstractImageMethod import AbstractImageMethod
+
+###########################################################
+################    Binary Image Encoding    ##############
+###########################################################
 
 default_precision = 32
 default_zoom = 1
 
 class BIE(AbstractImageMethod):
+    """
+    BIE: Generates 1-channel images by encoding the floating-point representation of numeric values.
+
+    Each feature's value is converted to its binary representation, which is then used to create rows in the image. 
+    This method preserves precise numeric information but may not effectively capture relationships between features.
+
+    Parameters:
+    ----------
+    problem : str, optional
+        The type of problem, defining how the images are grouped. 
+        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+    normalize : bool, optional
+        If True, normalizes input data using MinMaxScaler. 
+        Default is True. Valid values: [True, False].
+    verbose : bool, optional
+        Show execution details in the terminal. 
+        Default is False. Valid values: [True, False].
+    precision : int, optional
+        Determines the precision of the binary encoding. 
+        Default is 32. Valid values: [32, 64].
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size. 
+        Default is 1. Valid values: integer > 0.
+    """
+    ###### Default values ###############
+    default_precision = 32  # Precision for binary encoding
+    default_zoom = 1  # Rescale factor for saving the image
+
     def __init__(
         self,
         problem = None,
+        normalize=None,
         verbose = None,
         precision: int = default_precision,
         zoom: int = default_zoom
     ):
-        super().__init__(problem=problem, verbose=verbose)
+        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
 
         if not isinstance(precision, int):
             raise TypeError(f"precision must be of type int (got {type(precision)})")
@@ -33,7 +73,9 @@ class BIE(AbstractImageMethod):
             raise ValueError(f"zoom must be positive. Instead, got {zoom}")
         
         self.precision = precision
+
         self.zoom = zoom
+        
         self.ones, self.zeros = 255, 0
 
     def __convert_samples_to_binary(self, data: np.ndarray) -> Iterator[List[List[int]]]:
@@ -105,7 +147,13 @@ class BIE(AbstractImageMethod):
             regressionCSV = pd.DataFrame(data=data)
             regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
-    def _trainingAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+    def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+        Fit method for stateless transformers. Does nothing and returns self.
+        """
+        return self
+    
+    def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         x = x.values
         y = y.values if y is not None else None
 
