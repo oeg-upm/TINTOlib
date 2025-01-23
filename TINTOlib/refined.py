@@ -67,8 +67,8 @@ class REFINED(AbstractImageMethod):
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
-        random_seed: Optional[int] = default_random_seed,
         zoom: Optional[int] = default_zoom,
+        random_seed: Optional[int] = default_random_seed,
     ):   
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
         if n_processors < 2:

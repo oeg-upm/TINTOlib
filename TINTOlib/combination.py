@@ -48,8 +48,8 @@ class Combination(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        verbose = None,
         normalize=None,
+        verbose = None,
         zoom=default_zoom,
     ):
         super().__init__(problem=problem, verbose=verbose, normalize=normalize)
