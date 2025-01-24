@@ -10,7 +10,7 @@
 
 <div>
     <p align = "center">
-    <img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
+    <img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
     </p>
 </div>
 
@@ -172,7 +172,7 @@ Also, as no other parameters are indicated, you will choose the following parame
 
 <div>
 <p align = "center">
-<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/characteristic.png" alt="TINTO characteristic pixel" width="250"></kbd>
+<kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/characteristic.png" alt="TINTO characteristic pixel" width="250"></kbd>
 </p>
 </div>
 
@@ -189,7 +189,7 @@ The images are created with the following considerations regarding the parameter
 
 <div>
 <p align = "center">
-<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/blurring.png" alt="TINTO blurring" width="250"></kbd>
+<kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/blurring.png" alt="TINTO blurring" width="250"></kbd>
 </p>
 </div>
 
@@ -211,6 +211,6 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 
 <div>
 <p align = "center">
-<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-oeg.png" alt="Ontology Engineering Group" width="150"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-upm.png" alt="Universidad Politécnica de Madrid" width="150"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-uned-.jpg" alt="Universidad Nacional de Educación a Distancia" width="231"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-uclm.png" alt="Universidad de Castilla-La Mancha" width="115"></kbd> 
+<kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo-oeg.png" alt="Ontology Engineering Group" width="150"></kbd> <kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo-upm.png" alt="Universidad Politécnica de Madrid" width="150"></kbd> <kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo-uned-.jpg" alt="Universidad Nacional de Educación a Distancia" width="231"></kbd> <kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo-uclm.png" alt="Universidad de Castilla-La Mancha" width="115"></kbd> 
 </p>
 </div>
