@@ -10,7 +10,7 @@
 
 <div>
     <p align = "center">
-    <img src="./imgs/logo.svg" alt="TINTO Logo" width="150">
+    <img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
     </p>
 </div>
 
@@ -78,10 +78,6 @@ TINTOlib includes a variety of models for generating synthetic images. Below is 
 
 ---
 
-## Documentation
-
-For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
-
 ## Getting Started
 
 **You can install TINTOlib using [Pypi](https://pypi.org/project/TINTOlib/)**:
@@ -101,23 +97,63 @@ Create the model. If you don't set any hyperparameter, the model will use the de
 ``` python
     model = TINTO(blur=True)
 ```
-To generate the synthetic images use ``.generateImages(data,folder)`` method.
-``` python
-    model.generateImages(data, resultsFolderPath)
+
+### Generating Synthetic Images
+To generate synthetic images, use the following workflow with the `fit`, `transform`, and `fit_transform` methods:
+
+#### **Fitting the Model**
+The `fit` method trains the model on the tabular data and prepares it for image generation.
+```python
+model.fit(data)
 ```
+**Parameters**:
+- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.  
+  - The target column must be the last column.
+
+#### **Generating Synthetic Images**
+The `transform` method generates and saves synthetic images in a specified folder. It requires the model to be fitted first.
+```python
+model.transform(data, folder)
+```
+**Parameters**:
+- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.
+  - The target column must be the last column.
+- **folder**: Path to the folder where the synthetic images will be saved.
+
+#### **Combining Fit and Transform**
+The `fit_transform` method combines the training and image generation steps. It fits the model to the data and generates synthetic images in one step.
+```python
+model.fit_transform(data, folder)
+```
+**Parameters**:
+- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.
+  - The target column must be the last column.
+- **folder**: Path to the folder where the synthetic images will be saved.
+
+#### Notes:
+- **The model must be fitted** before using the `transform` method. If the model isn't fitted, a `RuntimeError` will be raised.
+
+---
+
+## Documentation
+
+For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
 ## How to use TINTOlib - Google Colab crash course
-Once the images have been created by TINTO, they can be imported into any project using CNNs. 
+To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. This repository provides a comprehensive guide to using TINTOlib for transforming tabular data into synthetic images and applying these images to machine learning tasks. It includes:
 
-In order to facilitate their use, a Jupyter Notebook has been created in which you can see how the images are read and how they can be used as input in a CNN.
+- **Slides and Jupyter notebooks** demonstrating how to:
+  - Transform tabular data into images using **TINTOlib**.
+  - Apply state-of-the-art vision models like **Vision Transformers (ViTs)** and **Convolutional Neural Networks (CNNs)** to classification and regression problems.
 
-- **[Click here to TINTOlib crash course using classification ML problems with CNNs in Google Colab](https://drive.google.com/file/d/10iKmFCC_od-P_tqWzA_UQE2ieUhCV-uy/view?usp=sharing)**
-- **[Click here to TINTOlib crash course using classification ML problems with hybrid multimodal CNN+MLP in Google Colab](https://drive.google.com/file/d/1dv8QYxPsh-HA7TFlmFfQHGE5oMb5VHk4/view?usp=sharing)**
-- **[Click here to TINTOlib crash course using regression ML problems with hybrid multimodal CNN+MLP in Google Colab](https://drive.google.com/file/d/1uQRNgfgi3G2-T4j0VsCnSLLSqzWykPM-/view?usp=sharing)**
+- Integration of **Hybrid Neural Networks (HyNNs)**, where:
+  - **One branch** (MLP) processes the original tabular data.
+  - **Another branch** (CNN or ViT) processes synthetic images.
 
+This architecture leverages the strengths of both tabular and image-based data representations, enabling improved performance on complex machine learning tasks. The repository is ideal for those looking to integrate image-based deep learning techniques into tabular data workflows.
 ## Converting Tidy Data into image
 
-For example, the following table shows a classic example of the[IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
+For example, the following table shows a classic example of the [IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
 
 
 | sepal length | sepal width | petal length | petal width | target |
@@ -136,7 +172,7 @@ Also, as no other parameters are indicated, you will choose the following parame
 
 <div>
 <p align = "center">
-<kbd><img src="./imgs/characteristic.png" alt="TINTO characteristic pixel" width="250"></kbd>
+<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/characteristic.png" alt="TINTO characteristic pixel" width="250"></kbd>
 </p>
 </div>
 
@@ -153,9 +189,11 @@ The images are created with the following considerations regarding the parameter
 
 <div>
 <p align = "center">
-<kbd><img src="./imgs/blurring.png" alt="TINTO blurring" width="250"></kbd>
+<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/blurring.png" alt="TINTO blurring" width="250"></kbd>
 </p>
 </div>
+
+---
 
 ## License
 
@@ -166,12 +204,13 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[Raúl García-Castro](https://github.com/rgcmme)**
 - **[Borja Reinoso](https://github.com/borjarei) -[borjareinoso@gmail.com](borjareinoso@gmail.com)**
 - **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
+- **[Jiayun Liu](https://github.com/DCY1117)**
 
 
 ## Contributors
 
 <div>
 <p align = "center">
-<kbd><img src="./imgs/logo-oeg.png" alt="Ontology Engineering Group" width="150"></kbd> <kbd><img src="./imgs/logo-upm.png" alt="Universidad Politécnica de Madrid" width="150"></kbd> <kbd><img src="./imgs/logo-uned-.jpg" alt="Universidad Nacional de Educación a Distancia" width="231"></kbd> <kbd><img src="./imgs/logo-uclm.png" alt="Universidad de Castilla-La Mancha" width="115"></kbd> 
+<kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-oeg.png" alt="Ontology Engineering Group" width="150"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-upm.png" alt="Universidad Politécnica de Madrid" width="150"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-uned-.jpg" alt="Universidad Nacional de Educación a Distancia" width="231"></kbd> <kbd><img src="https://github.com/DCY1117/TEMP-Images/blob/main/TINTOlib-images/logo-uclm.png" alt="Universidad de Castilla-La Mancha" width="115"></kbd> 
 </p>
 </div>
