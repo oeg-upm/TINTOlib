@@ -128,8 +128,8 @@ TINTOlib already includes all necessary dependencies, so there’s no need to in
 
 However, if you prefer manual installation or want to explore the full environment:
 
-- The repository includes a `requirements.txt` file listing the **core dependencies** required to use TINTOlib.
-- For running the **example notebooks**, you can use `requirements-example.txt`, which includes additional libraries needed to execute the provided tutorials.
+- The repository includes a `requirements.txt` file listing the **core dependencies** required to use TINTOlib. You can directly run the **TINTOlib-example.ipynb** notebook located in the examples/ folder using the dependencies listed in `requirements.txt`.
+- **Other notebooks**, which include training deep learning models on the generated images, require additional libraries. To run them, install the extended dependencies from `requirements-example.txt`:
 
 ---
 
