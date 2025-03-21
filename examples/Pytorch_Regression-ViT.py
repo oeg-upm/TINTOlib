@@ -12,7 +12,6 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 from torch.optim.lr_scheduler import OneCycleLR
-from torch_lr_finder import LRFinder
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
@@ -20,10 +19,6 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 import cv2
 import matplotlib.pyplot as plt
-
-# EINOPS library
-from einops import rearrange, reduce, repeat
-from einops.layers.torch import Rearrange, Reduce
 
 # TINTO library imports
 from TINTOlib.tinto import TINTO
@@ -74,18 +69,13 @@ class Model1(nn.Module):
             nn.ReLU(),
             nn.Linear(16, 8),
             nn.ReLU(),
-            nn.Linear(8, 2)
+            nn.Linear(8, 1)
         )
 
     def forward(self, vit_input):
         vit_output = self.vit(vit_input)
         mlp_output = self.mlp(vit_output)
         return mlp_output
-
-    def forward(self, x):
-        cnn_output = self.cnn_branch(x)
-        final_output = self.final_mlp(cnn_output)
-        return final_output
 
 
 class Model2(nn.Module):
@@ -112,7 +102,7 @@ class Model2(nn.Module):
             nn.ReLU(),
             nn.Linear(32, 16),
             nn.ReLU(),
-            nn.Linear(16, 2)
+            nn.Linear(16, 1)
         )
 
     def forward(self, vit_input):
@@ -472,14 +462,18 @@ def safe_compile_and_fit(model, train_loader, val_loader, test_loader,
         gc.collect()
 
 
-def try_create_model(model_class, imgs_shape):
-    """Creates a model instance and runs a test forward pass to ensure it works."""
+import traceback
+
+def try_create_model(model_class, patch_size, imgs_shape):
     try:
-        model = model_class(imgs_shape)
-        # Test the model with a dummy input
+        model = model_class(imgs_shape[1:], patch_size)
+        
+        # Test the model with a sample input
         sample_input = torch.randn(4, *imgs_shape)
-        _ = model(sample_input)
+        output = model(sample_input)
+        
         print(f"Successfully created and tested {model_class.__name__}")
+        
         return model
     except Exception as e:
         print(f"Error creating or testing {model_class.__name__}: {str(e)}")
@@ -495,7 +489,7 @@ def plot_metric(train_metric, val_metric, metric_name, dataset_name, model_name)
     plt.ylabel(metric_name)
     plt.legend()
     plt.title(f'{metric_name} vs. Epoch')
-    plt.savefig(f"models/Regression/{dataset_name}/CNN/{model_name}/{metric_name.lower()}_plot.png")
+    plt.savefig(f"models/Regression/{dataset_name}/ViT/{model_name}/{metric_name.lower()}_plot.png")
     plt.close()
 
 
@@ -599,7 +593,6 @@ def main():
     epochs = 100                 # Default training epochs
 
     # Path for dataset and logs
-    data_path = f"Dataset/Regression/{dataset_name}.csv"
     results_path = f'logs/Regression/{dataset_name}/ViT_Regression'
     
     # ---------------------- SET RANDOM SEEDS ---------------------- #
@@ -608,7 +601,7 @@ def main():
     np.random.seed(SEED)
 
     # ---------------------- LOAD DATA ---------------------- #
-    df = pd.read_csv(data_path)
+    df = pd.read_csv(f"../Dataset/Regression/{dataset_name}.csv")
     print("Dataset shape:", df.shape)
     print(df.head())
 
@@ -628,7 +621,7 @@ def main():
     name = f"TINTO_blur"
 
     #Define the dataset path and the folder where the images will be saved
-    images_folder = f"./HyNNImages/Regression/{dataset_name}/images_{dataset_name}_{name}"
+    images_folder = f"./Synthetic_images/Regression/{dataset_name}/images_{dataset_name}_{name}"
 
     # ---------------------- PREPARE DATA LOADERS ---------------------- #
     train_loader, val_loader, test_loader, attributes, imgs_shape = load_and_preprocess_data(
@@ -645,11 +638,11 @@ def main():
     model1_metrics = safe_compile_and_fit(
         model1, train_loader, val_loader, test_loader, 
         dataset_name, f"{name}_Model1_patch{patch_size}", 
-        min_lr=1e-5, max_lr=1e-2, epochs=epochs
+        min_lr=1e-4, max_lr=1e-2, epochs=epochs
     )
 
     # ---------------------- TRAIN & EVALUATE MODEL2 ---------------------- #
-    model2 = try_create_model(Model2, imgs_shape)
+    model2 = try_create_model(Model2, patch_size, imgs_shape)
     model2_metrics = safe_compile_and_fit(
         model2, train_loader, val_loader, test_loader, 
         dataset_name, f"{name}_Model2_patch{patch_size}", 
