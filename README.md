@@ -78,14 +78,67 @@ TINTOlib includes a variety of models for generating synthetic images. Below is 
 
 ---
 
+## Platform-Specific Requirements for Certain Transformation Methods
+
+Some transformation methods in TINTOlib have specific system requirements or limitations when used on platforms such as Google Colab, Windows, Linux, or macOS.
+
+### REFINED
+
+This method relies on `mpi4py`, which enables parallel computation using MPI (Message Passing Interface). However, `mpi4py` requires administrative permissions to utilize multiple processors, making it incompatible with platforms like Google Colab. 
+
+- **Linux**:
+  Ensure that the MPI environment is set up before installing `mpi4py`. Run the following commands:
+  ```bash
+  sudo apt-get install python3
+  sudo apt install python3-pip
+  sudo apt install python3-mpi4py
+
+Once MPI is installed:
+    ```bash
+    pip install mpi4py
+
+**macOS / Windows:** Direct installation is usually supported:
+    ```bash
+    pip install mpi4py
+
+### SuperTML
+
+The **SuperTML** method generates text-based synthetic images and requires the **MS Sans Serif** font.
+
+- On **Windows**, this font is typically available by default.
+- On **Linux** and **macOS**, it must be installed manually to avoid rendering issues.
+
+#### Font Installation
+
+- **Linux**: Install Microsoft Core Fonts:
+  ```bash
+  sudo apt install ttf-mscorefonts-installer
+
+On **Google Colab**, installing additional fonts is not permitted due to administrative restrictions.
+
 ## Getting Started
 
 **You can install TINTOlib using [Pypi](https://pypi.org/project/TINTOlib/)**:
 
 ```
-    pip install torchmetrics pytorch_lightning TINTOlib imblearn keras_preprocessing mpi4py
+    pip install TINTOlib
 ```
 
+TINTOlib already includes all necessary dependencies, so there’s no need to install them individually.
+
+However, if you prefer manual installation or want to explore the full environment:
+
+- The repository includes a `requirements.txt` file listing the **core dependencies** required to use TINTOlib.
+- For running the **example notebooks**, you can use `requirements-example.txt`, which includes additional libraries needed to execute the provided tutorials.
+
+---
+
+### Importing a Specific Model
+
+To use a specific image transformation model, import it directly. For example, to use **TINTO**:
+
+```python
+from TINTOlib.tinto import TINTO
 
 To import a specific model use 
 ``` python
