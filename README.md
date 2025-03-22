@@ -78,7 +78,7 @@ TINTOlib includes a variety of models for generating synthetic images. Below is 
 
 ---
 
-## Platform-Specific Requirements for Certain Transformation Methods
+## ⚠️ Platform-Specific Requirements for Certain Transformation Methods
 
 Some transformation methods in TINTOlib have specific system requirements or limitations when used on platforms such as Google Colab, Windows, Linux, or macOS.
 
