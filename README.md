@@ -94,12 +94,14 @@ This method relies on `mpi4py`, which enables parallel computation using MPI (Me
   sudo apt install python3-mpi4py
 
 Once MPI is installed:
-    ```bash
+    ```
     pip install mpi4py
+    ```
 
 **macOS / Windows:** Direct installation is usually supported:
-    ```bash
+    ```
     pip install mpi4py
+    ```
 
 ### SuperTML
 
@@ -139,6 +141,7 @@ To use a specific image transformation model, import it directly. For example, t
 
 ```python
 from TINTOlib.tinto import TINTO
+```
 
 To import a specific model use 
 ``` python
