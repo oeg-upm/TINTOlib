@@ -61,6 +61,22 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 
 ---
 
+<div style="border: 1px solid #CFD8DC; padding: 1em; margin-bottom: 2em; border-radius: 8px; background-color: #F5F8FA;">
+  <h2 style="color: #1565C0; text-align: center;">🎉 New Free Course on Udemy! 🎉</h2>
+  <p style="text-align: center; font-size: 1.1em; color: #37474F;">
+    We've just launched a <strong>100% free course on Udemy</strong> about <strong>using TINTOlib</strong> and developing <strong>Hybrid Neural Networks</strong>.<br/>
+    Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and hybrid architectures like a pro.
+  </p>
+  <p style="text-align: center;">
+    <a href="https://www.udemy.com/course/tintolib-deep-learning-tabutar-data-con-imagenes-sinteticas/?referralCode=16B7C59C2E3B0BD249D0"
+       style="background-color: #1976D2; color: white; padding: 0.7em 1.2em; text-decoration: none; font-weight: bold; border-radius: 5px;">
+      👉 Access the Course on Udemy
+    </a>
+  </p>
+</div>
+
+---
+
 ## Models
 TINTOlib includes a variety of models for generating synthetic images. Below is a summary of the supported models and their hyperparameters:
 
