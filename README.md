@@ -131,7 +131,7 @@ The **SuperTML** method generates text-based synthetic images and requires the *
 
 On **Google Colab**, installing additional fonts is not permitted due to administrative restrictions.
 
-## Getting Started
+## 📄 Getting Started
 
 **You can install TINTOlib using [Pypi](https://pypi.org/project/TINTOlib/)**:
 
