@@ -14,6 +14,16 @@
     </p>
 </div>
 
+<p align="center">
+  <a href="https://www.udemy.com/course/tintolib-deep-learning-tabutar-data-con-imagenes-sinteticas/?referralCode=16B7C59C2E3B0BD249D0" target="_blank">
+    <img src="https://img.shields.io/badge/Udemy-Free%20Course-blueviolet?style=for-the-badge&logo=Udemy&logoColor=white" alt="Access the Course on Udemy"/>
+  </a>
+</p>
+
+---
+
+## 🧠 Overview
+
 **TINTOlib** is a state-of-the-art Python library that transforms **tidy data** (also known as tabular data) into **synthetic images**, enabling the application of advanced deep learning techniques, including **Vision Transformers (ViTs)** and **Convolutional Neural Networks (CNNs)**, to traditionally structured data. This transformation bridges the gap between tabular data and powerful vision-based machine learning models, unlocking new possibilities for tackling regression, classification, and other complex tasks.
 
 **Citing TINTO**: If you used TINTO in your work, please cite the **[SoftwareX](https://doi.org/10.1016/j.softx.2023.101391)**:
@@ -48,39 +58,20 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 
 ---
 
-## Features
-- Input data formats (2 options):
-    - **Pandas Dataframe** 
-    - **Files with the following format** 
-        - **Tabular files**: The input data must be in **[CSV](https://en.wikipedia.org/wiki/Comma-separated_values)**, taking into account the **[Tidy Data](https://www.jstatsoft.org/article/view/v059i10)** format.
-        - **Tidy Data**: The **target** (variable to be predicted) should be set as the last column of the dataset. Therefore, the first columns will be the features.
-        - All data must be in numerical form.
-        
-- Runs on **Linux**, **Windows** and **macOS** systems.
-- Compatible with **[Python](https://www.python.org/)** 3.7 or higher.
+## 📚 Features
+- Input formats: **CSV** or Pandas DataFrame
+- Designed for tidy data (**target column last**)
+- Output: grayscale images from reduction and transformation methods
+- Compatible with **Linux, Windows, macOS**
+- Requires **Python 3.7+**
 
 ---
 
-<div style="border: 1px solid #CFD8DC; padding: 1em; margin-bottom: 2em; border-radius: 8px; background-color: #F5F8FA;">
-  <h2 style="color: #1565C0; text-align: center;">🎉 New Free Course on Udemy! 🎉</h2>
-  <p style="text-align: center; font-size: 1.1em; color: #37474F;">
-    We've just launched a <strong>100% free course on Udemy</strong> about <strong>using TINTOlib</strong> and developing <strong>Hybrid Neural Networks</strong>.<br/>
-    Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and hybrid architectures like a pro.
-  </p>
-  <p style="text-align: center;">
-    <a href="https://www.udemy.com/course/tintolib-deep-learning-tabutar-data-con-imagenes-sinteticas/?referralCode=16B7C59C2E3B0BD249D0"
-       style="background-color: #1976D2; color: white; padding: 0.7em 1.2em; text-decoration: none; font-weight: bold; border-radius: 5px;">
-      👉 Access the Course on Udemy
-    </a>
-  </p>
-</div>
 
----
+## 🧪 Methods
+TINTOlib includes a variety of methods for generating synthetic images. Below is a summary of the supported methods and their hyperparameters:
 
-## Models
-TINTOlib includes a variety of models for generating synthetic images. Below is a summary of the supported models and their hyperparameters:
-
-| Models | Class | Hyperparameters |
+| Methods | Class | Hyperparameters |
 |:----------------------------------------------------------------:|:------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | [TINTO](https://github.com/oeg-upm/TINTO) | `TINTO()` | `problem` `normalize` `verbose` `pixels` `algorithm` `blur` `submatrix` `amplification` `distance` `steps` `option` `times` `train_m` `zoom` `random_seed` |
 | [IGTD](https://github.com/zhuyitan/igtd) | `IGTD()` | `problem` `normalize` `verbose` `scale` `fea_dist_method` `image_dist_method` `error` `max_step` `val_step` `switch_t` `min_gain` `zoom` `random_seed` |
@@ -151,7 +142,7 @@ However, if you prefer manual installation or want to explore the full environme
 
 ---
 
-### Importing a Specific Model
+## 🧩 Importing a Specific Model
 
 To use a specific image transformation model, import it directly. For example, to use **TINTO**:
 
@@ -170,7 +161,9 @@ Create the model. If you don't set any hyperparameter, the model will use the de
     model = TINTO(blur=True)
 ```
 
-### Generating Synthetic Images
+---
+
+## 🔧 Generating Synthetic Images
 To generate synthetic images, use the following workflow with the `fit`, `transform`, and `fit_transform` methods:
 
 #### **Fitting the Model**
@@ -207,7 +200,7 @@ model.fit_transform(data, folder)
 
 ---
 
-## Documentation
+## 📚 Documentation
 
 For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
@@ -235,24 +228,8 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 | 6.3 | 3.3 | 6.0 | 2.5 | 3 |
 
 
-### Simple example without Blurring
-The following example shows how to create 20x20 images with characteristic pixels, i.e. without blurring. 
-Also, as no other parameters are indicated, you will choose the following parameters which are set by default:
-- **Image size**: 20x20 pixels
-- **Blurring**: No blurring will be used.
-- **Seed**: with the seed set to 20.
-
-<div>
-<p align = "center">
-<kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/characteristic.png" alt="TINTO characteristic pixel" width="250"></kbd>
-</p>
-</div>
-
-
-### More specific example
-The following example shows how to create with blurring with a more especific parameters.
-
-The images are created with the following considerations regarding the parameters used:
+### Simple example with TINTO Blurring
+The following example shows how to create 30x30 images with characteristic pixels with blurring: 
 - **Blurring (-B)**: Create the images with blurring technique.
 - **Dimensional Reduction Algorithm (-alg)**: t-SNE is used.
 - **Blurring option (-oB)**: Create de images with maximum value of overlaping pixel
@@ -267,11 +244,11 @@ The images are created with the following considerations regarding the parameter
 
 ---
 
-## License
+## 🛡️ License
 
 TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)**.
 
-## Authors
+## 👥 Authors
 - **[Manuel Castillo-Cara](https://github.com/manwestc)**
 - **[Raúl García-Castro](https://github.com/rgcmme)**
 - **[Borja Reinoso](https://github.com/borjarei) -[borjareinoso@gmail.com](borjareinoso@gmail.com)**
@@ -279,7 +256,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[Jiayun Liu](https://github.com/DCY1117)**
 
 
-## Contributors
+## 🏛️ Contributors
 
 <div>
 <p align = "center">
