@@ -222,7 +222,8 @@ To get started with **TINTOlib**, a dedicated **[crash course repository](https:
   - **Another branch** (CNN or ViT) processes synthetic images.
 
 This architecture leverages the strengths of both tabular and image-based data representations, enabling improved performance on complex machine learning tasks. The repository is ideal for those looking to integrate image-based deep learning techniques into tabular data workflows.
-## Converting Tidy Data into image
+
+### An Example to transform Tidy Data into synthetic image
 
 For example, the following table shows a classic example of the [IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
 
