@@ -210,7 +210,7 @@ model.fit_transform(data, folder)
 
 For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
-## How to use TINTOlib - Google Colab crash course
+### How to use TINTOlib - Google Colab crash course
 To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. This repository provides a comprehensive guide to using TINTOlib for transforming tabular data into synthetic images and applying these images to machine learning tasks. It includes:
 
 - **Slides and Jupyter notebooks** demonstrating how to:
