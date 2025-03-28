@@ -169,18 +169,18 @@ However, if you prefer manual installation or want to explore the full environme
 
 ## 🧩 Importing a Specific Model
 
-To use a specific image transformation model, import it directly. For example, to use **TINTO**:
+- To use a specific image transformation model, import it directly. For example, to use **TINTO**:
 
     ```python
       from TINTOlib.tinto import TINTO
     ```
 
-To import a specific model use 
+- To import a specific model use: 
     ```python
       from TINTOlib.tinto import TINTO
     ```
 
-Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
+- Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
     ```python
       model = TINTO(problem="supervised", blur=True)
@@ -249,7 +249,7 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 | 6.3 | 3.3 | 6.0 | 2.5 | 3 |
 
 
-The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
+- The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
 
     ```python
       model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
