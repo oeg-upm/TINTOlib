@@ -14,7 +14,7 @@
     </p>
 </div>
 
-## 🎉 New Free Course on Udemy! 🎉
+## 🎉 New Free Course on Udemy! (Spanish) 🎉
 
 **We’ve just launched a 100% free course on Udemy** about **using TINTOlib** and developing **Hybrid Neural Networks**.
 
