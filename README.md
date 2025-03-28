@@ -216,13 +216,8 @@ To generate synthetic images, use the following workflow with the `fit`, `transf
 #### Notes:
 - **The model must be fitted** before using the `transform` method. If the model isn't fitted, a `RuntimeError` will be raised.
 
----
 
-## 📚 Documentation
-
-For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
-
-### How to use TINTOlib - Google Colab crash course
+### How to use TINTOlib 
 To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. It includes videoturials, slides and Jupyter Notebooks that demonstrate how to apply state-of-the-art vision models like Vision Transformers (ViTs), Convolutional Neural Networks (CNNs) and Hybrid Neural Networks to problems.
 <!--It includes:
 
@@ -236,8 +231,6 @@ To get started with **TINTOlib**, a dedicated **[crash course repository](https:
 
 This architecture leverages the strengths of both tabular and image-based data representations, enabling improved performance on complex machine learning tasks. The repository is ideal for those looking to integrate image-based deep learning techniques into tabular data workflows.
 -->
-
-### An Example to transform Tidy Data into synthetic image
 
 For example, the following table shows a classic example of the [IRIS CSV dataset](https://archive.ics.uci.edu/ml/datasets/iris) as it should look like for the run:
 
