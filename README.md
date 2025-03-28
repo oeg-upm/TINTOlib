@@ -116,14 +116,14 @@ Some transformation methods in TINTOlib have specific system requirements or lim
 This method relies on `mpi4py`, which enables parallel computation using MPI (Message Passing Interface). However, `mpi4py` requires administrative permissions to utilize multiple processors, making it incompatible with platforms like Google Colab. 
 
 - **Linux**:
-  Ensure that the MPI environment is set up before installing `mpi4py`. Run the following commands:
+Ensure that the MPI environment is set up before installing `mpi4py`. Run the following commands:
 
     ```bash
       sudo apt-get install python3
       sudo apt install python3-pip
       sudo apt install python3-mpi4py
     ```
-Once MPI is installed:
+ Once MPI is installed:
 
     ```bash
       pip install mpi4py
@@ -178,13 +178,13 @@ To use a specific image transformation model, import it directly. For example, t
     ```
 
 To import a specific model use 
-    ``` python
-        from TINTOlib.tinto import TINTO
+    ```python
+      from TINTOlib.tinto import TINTO
     ```
 
 Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
-    ``` python
+    ```python
       model = TINTO(problem="supervised", blur=True)
     ```
 
