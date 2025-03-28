@@ -117,19 +117,22 @@ This method relies on `mpi4py`, which enables parallel computation using MPI (Me
 
 - **Linux**:
   Ensure that the MPI environment is set up before installing `mpi4py`. Run the following commands:
-  ```bash
-  sudo apt-get install python3
-  sudo apt install python3-pip
-  sudo apt install python3-mpi4py
 
-Once MPI is installed:
+    ```bash
+      sudo apt-get install python3
+      sudo apt install python3-pip
+      sudo apt install python3-mpi4py
     ```
-    pip install mpi4py
+Once MPI is installed:
+
+    ```bash
+      pip install mpi4py
     ```
 
 **macOS / Windows:** Direct installation is usually supported:
-    ```
-    pip install mpi4py
+
+    ```bash
+      pip install mpi4py
     ```
 
 ### SuperTML
@@ -142,8 +145,10 @@ The **SuperTML** method generates text-based synthetic images and requires the *
 #### Font Installation
 
 - **Linux**: Install Microsoft Core Fonts:
-  ```bash
-  sudo apt install ttf-mscorefonts-installer
+  
+    ```bash
+      sudo apt install ttf-mscorefonts-installer
+    ```
 
 On **Google Colab**, installing additional fonts is not permitted due to administrative restrictions.
 
@@ -151,9 +156,9 @@ On **Google Colab**, installing additional fonts is not permitted due to adminis
 
 **You can install TINTOlib using [Pypi](https://pypi.org/project/TINTOlib/)**:
 
-```
-    pip install TINTOlib
-```
+    ```bash
+      pip install TINTOlib
+    ```
 
 TINTOlib already includes all necessary dependencies, so there’s no need to install them individually.
 
@@ -168,20 +173,20 @@ However, if you prefer manual installation or want to explore the full environme
 
 To use a specific image transformation model, import it directly. For example, to use **TINTO**:
 
-```python
-from TINTOlib.tinto import TINTO
-```
+    ```python
+      from TINTOlib.tinto import TINTO
+    ```
 
 To import a specific model use 
-``` python
-    from TINTOlib.tinto import TINTO
-```
+    ``` python
+        from TINTOlib.tinto import TINTO
+    ```
 
 Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
-``` python
-    model = TINTO(problem="supervised", blur=True)
-```
+    ``` python
+      model = TINTO(problem="supervised", blur=True)
+    ```
 
 ---
 
@@ -195,20 +200,20 @@ To generate synthetic images, use the following workflow with the `fit`, `transf
 #### Sintaxis
 
 1. The `fit` method trains the model on the tabular data and prepares it for image generation.
-```python
-  model.fit(data)
-```
+    ```python
+      model.fit(data)
+    ```
 
 2. The `transform` method generates and saves synthetic images in a specified folder. It requires the model to be fitted first.
-```python
-  model.transform(data, folder)
-```
+    ```python
+      model.transform(data, folder)
+    ```
 
 3. The `fit_transform` method combines the training and image generation steps. It fits the model to the data and generates synthetic images in one step.
 
-```python
-  model.fit_transform(data, folder)
-```
+  ```python
+    model.fit_transform(data, folder)
+  ```
 
 #### Notes:
 - **The model must be fitted** before using the `transform` method. If the model isn't fitted, a `RuntimeError` will be raised.
@@ -248,10 +253,10 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 
 The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
 
-```python
-  model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
-  model.fit_transform("iris.csv", "synthetic_images")
-```
+    ```python
+      model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
+      model.fit_transform("iris.csv", "synthetic_images")
+    ```
 
 <!--
 - **Blurring (-B)**: Create the images with blurring technique.
