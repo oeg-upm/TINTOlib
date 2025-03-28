@@ -246,7 +246,7 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 | 6.3 | 3.3 | 6.0 | 2.5 | 3 |
 
 
-The following example shows how to create 30x30 images with characteristic pixels with blurring for the first row:
+The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
 
 ```python
   model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
