@@ -128,7 +128,7 @@ This method relies on `mpi4py`, which enables parallel computation using MPI (Me
     ```bash
       pip install mpi4py
     ```
-  **macOS / Windows:** Direct installation is usually supported:
+- **MacOS / Windows:** Direct installation is usually supported:
 
     ```bash
       pip install mpi4py
