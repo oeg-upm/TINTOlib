@@ -217,8 +217,8 @@ To generate synthetic images, use the following workflow with the `fit`, `transf
 - **The model must be fitted** before using the `transform` method. If the model isn't fitted, a `RuntimeError` will be raised.
 
 
-### How to use TINTOlib 
-To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. It includes videoturials, slides and Jupyter Notebooks that demonstrate how to apply state-of-the-art vision models like Vision Transformers (ViTs), Convolutional Neural Networks (CNNs) and Hybrid Neural Networks to problems.
+### Iris dataset Example
+To get started with **TINTOlib**, a dedicated **[Crash Course Repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. It includes videoturials, slides and Jupyter Notebooks that demonstrate how to apply state-of-the-art vision models like Vision Transformers (ViTs), Convolutional Neural Networks (CNNs) and Hybrid Neural Networks to problems.
 <!--It includes:
 
 - **Slides and Jupyter notebooks** demonstrating how to:
