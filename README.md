@@ -1,4 +1,4 @@
-## TINTOlib
+# TINTOlib: Python Library to convert Tabular Data into Synthetic Images
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pypi.python.org/pypi/)
@@ -268,6 +268,14 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 <kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/blurring.png" alt="TINTO blurring" width="250"></kbd>
 </p>
 </div>
+
+---
+
+## 💬 More information
+
+- For more detailed information, refer to the **[TINTOlib ReadTheDocs](https://tintolib.readthedocs.io/en/latest/)**.  
+- GitHub repository: **[TINTOlib Documentation](https://github.com/oeg-upm/TINTOlib-Documentation)**.
+- PyPI: **[PyPI](https://pypi.org/project/TINTOlib/)**.
 
 ---
 
