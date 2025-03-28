@@ -47,6 +47,7 @@ This hands-on tutorial includes **bilingual videos (English/Spanish)** and **pra
 
 **TINTOlib** is a state-of-the-art Python library that transforms **tidy data** (also known as tabular data) into **synthetic images**, enabling the application of advanced deep learning techniques, including **Vision Transformers (ViTs)** and **Convolutional Neural Networks (CNNs)**, to traditionally structured data. This transformation bridges the gap between tabular data and powerful vision-based machine learning models, unlocking new possibilities for tackling regression, classification, and other complex tasks.
 
+<!--
 **Citing TINTO**: If you used TINTO in your work, please cite the **[SoftwareX](https://doi.org/10.1016/j.softx.2023.101391)**:
 
 ```bib
@@ -76,7 +77,7 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
     doi = {https://doi.org/10.1016/j.inffus.2022.10.011}
 }
 ```
-
+-->
 ---
 
 ## 📚 Features
@@ -179,7 +180,7 @@ To import a specific model use
 Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
 ``` python
-    model = TINTO(blur=True)
+    model = TINTO(problem="supervised", blur=True)
 ```
 
 ---
@@ -187,34 +188,25 @@ Create the model. If you don't set any hyperparameter, the model will use the de
 ## 🔧 Generating Synthetic Images
 To generate synthetic images, use the following workflow with the `fit`, `transform`, and `fit_transform` methods:
 
-#### **Fitting the Model**
-The `fit` method trains the model on the tabular data and prepares it for image generation.
-```python
-model.fit(data)
-```
 **Parameters**:
-- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.  
-  - The target column must be the last column.
-
-#### **Generating Synthetic Images**
-The `transform` method generates and saves synthetic images in a specified folder. It requires the model to be fitted first.
-```python
-model.transform(data, folder)
-```
-**Parameters**:
-- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.
-  - The target column must be the last column.
+- **data**: A path to a CSV file or a Pandas DataFrame  (target column must be the last column).
 - **folder**: Path to the folder where the synthetic images will be saved.
 
-#### **Combining Fit and Transform**
-The `fit_transform` method combines the training and image generation steps. It fits the model to the data and generates synthetic images in one step.
+1. The `fit` method trains the model on the tabular data and prepares it for image generation.
 ```python
-model.fit_transform(data, folder)
+  model.fit(data)
 ```
-**Parameters**:
-- **data**: A path to a CSV file or a Pandas DataFrame containing the features and targets.
-  - The target column must be the last column.
-- **folder**: Path to the folder where the synthetic images will be saved.
+
+2. The `transform` method generates and saves synthetic images in a specified folder. It requires the model to be fitted first.
+```python
+  model.transform(data, folder)
+```
+
+3. The `fit_transform` method combines the training and image generation steps. It fits the model to the data and generates synthetic images in one step.
+
+```python
+  model.fit_transform(data, folder)
+```
 
 #### Notes:
 - **The model must be fitted** before using the `transform` method. If the model isn't fitted, a `RuntimeError` will be raised.
@@ -226,7 +218,8 @@ model.fit_transform(data, folder)
 For detailed usage, examples, and tutorials, visit the **[TINTOlib Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
 ### How to use TINTOlib - Google Colab crash course
-To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. This repository provides a comprehensive guide to using TINTOlib for transforming tabular data into synthetic images and applying these images to machine learning tasks. It includes:
+To get started with **TINTOlib**, a dedicated **[crash course repository](https://github.com/oeg-upm/TINTOlib-Crash_Course)** is available. It includes videoturials, slides and Jupyter Notebooks that demonstrate how to apply state-of-the-art vision models like Vision Transformers (ViTs), Convolutional Neural Networks (CNNs) and Hybrid Neural Networks to problems.
+<!--It includes:
 
 - **Slides and Jupyter notebooks** demonstrating how to:
   - Transform tabular data into images using **TINTOlib**.
@@ -237,6 +230,7 @@ To get started with **TINTOlib**, a dedicated **[crash course repository](https:
   - **Another branch** (CNN or ViT) processes synthetic images.
 
 This architecture leverages the strengths of both tabular and image-based data representations, enabling improved performance on complex machine learning tasks. The repository is ideal for those looking to integrate image-based deep learning techniques into tabular data workflows.
+-->
 
 ### An Example to transform Tidy Data into synthetic image
 
@@ -250,14 +244,20 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 | 6.3 | 3.3 | 6.0 | 2.5 | 3 |
 
 
-### Simple example with TINTO Blurring
-The following example shows how to create 30x30 images with characteristic pixels with blurring: 
+The following example shows how to create 30x30 images with characteristic pixels with blurring for the first row:
+
+```python
+  model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
+  model.fit_transform("iris.csv", "synthetic_images")
+```
+
+<!--
 - **Blurring (-B)**: Create the images with blurring technique.
 - **Dimensional Reduction Algorithm (-alg)**: t-SNE is used.
 - **Blurring option (-oB)**: Create de images with maximum value of overlaping pixel
 - **Image size (-px)**: 30x30 pixels
 - **Blurring steps (-sB)**: Expand 5 pixels the blurring.
-
+-->
 <div>
 <p align = "center">
 <kbd><img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/blurring.png" alt="TINTO blurring" width="250"></kbd>
