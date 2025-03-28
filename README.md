@@ -192,7 +192,7 @@ To generate synthetic images, use the following workflow with the `fit`, `transf
 - **data**: A path to a CSV file or a Pandas DataFrame  (target column must be the last column).
 - **folder**: Path to the folder where the synthetic images will be saved.
 
-### Examples
+#### Sintaxis
 
 1. The `fit` method trains the model on the tabular data and prepares it for image generation.
 ```python
