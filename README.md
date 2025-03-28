@@ -276,6 +276,8 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 
 TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)**.
 
+---
+
 ## 👥 Authors
 - **[Manuel Castillo-Cara](https://github.com/manwestc)**
 - **[Raúl García-Castro](https://github.com/rgcmme)**
@@ -283,6 +285,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
 - **[Jiayun Liu](https://github.com/DCY1117)**
 
+---
 
 ## 🏛️ Contributors
 
