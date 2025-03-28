@@ -153,8 +153,7 @@ On **Google Colab**, installing additional fonts is not permitted due to adminis
 
 ## 📄 Getting Started
 
-**You can install TINTOlib using [Pypi](https://pypi.org/project/TINTOlib/)**:
-
+- You can install TINTOlib using **[Pypi](https://pypi.org/project/TINTOlib/)**:
     ```bash
       pip install TINTOlib
     ```
