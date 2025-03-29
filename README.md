@@ -35,7 +35,7 @@ Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and h
 This hands-on tutorial includes **bilingual videos (English/Spanish)** and **practical notebooks** to help you learn how to use **TINTOlib** with deep learning models like CNNs, ViTs, and hybrid architectures.
 
 <p align="center">
-  <a href="https://github.com/oeg-upm/TINTOlib-Crash_Course" target="_blank">
+  <a href="https://github.com/oeg-upm/TINTOlib-Crash_Course/blob/main/5_TINTOlib%20Videotutorial%20course/README.md" target="_blank">
     <img src="https://img.shields.io/badge/GitHub-VideoTutorial%20Course-black?style=for-the-badge&logo=GitHub&logoColor=white" alt="Access the Course on GitHub"/>
   </a>
 </p>
