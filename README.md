@@ -51,7 +51,7 @@ This hands-on tutorial includes **bilingual videos (English/Spanish)** and **pra
 
 ---
 
-## 🔎 Explore with DeepWiki
+## 🔎 Explore TINTOlib with DeepWiki
 
 TINTOlib has a dedicated space on **[DeepWiki](https://deepwiki.com/oeg-upm/TINTOlib)**, where you can explore semantic documentation, relevant links, bibliography, and answers to frequently asked questions about its use and application.
 
