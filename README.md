@@ -8,6 +8,7 @@
 [![Open In Colab-ViT](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT.ipynb)
 [![Open In Colab-ViT+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT%2BMLP.ipynb)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oeg-upm/TINTOlib)
+[![PyPI Downloads](https://static.pepy.tech/badge/tintolib)](https://pepy.tech/projects/tintolib)
 
 
 <div>
