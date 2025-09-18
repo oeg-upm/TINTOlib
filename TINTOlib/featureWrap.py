@@ -223,7 +223,7 @@ class FeatureWrap(AbstractImageMethod):
     
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         X = x.values 
-        Y = y.values if y is not None else None
+        y = y.values if y is not None else None
         
         is_categorical = [pd.api.types.is_string_dtype(x[col]) for col in x]
         matrices = self.__preprocess_samples(x, is_categorical)
