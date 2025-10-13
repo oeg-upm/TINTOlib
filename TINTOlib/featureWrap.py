@@ -222,6 +222,9 @@ class FeatureWrap(AbstractImageMethod):
         return self
     
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        X = x.values 
+        y = y.values if y is not None else None
+        
         is_categorical = [pd.api.types.is_string_dtype(x[col]) for col in x]
         matrices = self.__preprocess_samples(x, is_categorical)
         self.__save_images(matrices, y, num_elems=x.shape[0])
