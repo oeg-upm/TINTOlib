@@ -34,9 +34,7 @@ Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and h
 <!-- ====== Video Card (visible directamente) ====== -->
 ### 🎬 TINTOlib — Overview Video (English)
 
-https://github.com/oeg-upm/TINTOlib/blob/main/video/TINTOlib-video-En.mp4
-
-[▶ See in Spanish](video/TINTOlib-video-En.mp4)
+[TINTOlib-video-En.mp4](video/TINTOlib-video-En.mp4)
 
 ---
 
