@@ -32,33 +32,11 @@ Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and h
 ---
 
 <!-- ====== Video Card (visible directamente) ====== -->
-<div style="background:#ffffff;border:1px solid #d0d7de;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin:16px 0;">
-  <!-- Título con barra lateral -->
-  <div style="
-       display:flex;align-items:center;gap:8px;
-       font-size:1.25rem;font-weight:800;color:#37474f;
-       background:linear-gradient(90deg, rgba(21,101,192,.08), #fff);
-       border-left:6px solid #1565c0;border-radius:12px;
-       padding:8px 12px;margin:0 0 12px 0;">
-    🎬 TINTOlib — Overview Video (English)
-    <div style="flex:1;height:3px;background:linear-gradient(to right,#4a90e2,#e91e63);border-radius:2px;margin-left:8px;"></div>
-  </div>
+### 🎬 TINTOlib — Overview Video (English)
 
-  <!-- Vídeo visible -->
-  <div style="text-align:center;">
-    <video src="video/TINTOlib-video-En.mp4"
-           controls
-           width="720"
-           style="max-width:100%;
-                  border:1px solid #d0d7de;
-                  border-radius:12px;
-                  background:#000;
-                  box-shadow:0 2px 8px rgba(0,0,0,.06);">
-      Your browser does not support the video tag.
-      <a href="video/TINTOlib-video-En.mp4">Download video</a>.
-    </video>
-  </div>
-</div>
+https://github.com/oeg-upm/TINTOlib/blob/main/video/TINTOlib-video-En.mp4
+
+[▶ See in Spanish(video/TINTOlib-video-En.mp4)
 
 ---
 
