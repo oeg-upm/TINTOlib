@@ -31,64 +31,33 @@ Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and h
 
 ---
 
-<div style="max-width: 980px; margin: 1rem auto;">
-
-  <!-- Header estilo barra -->
-  <h2 style="
-      display:flex; align-items:center; gap:.5rem;
-      font-size:1.15rem; font-weight:800; margin:0; 
-      color:#1f2937; background:linear-gradient(90deg, rgba(21,101,192,.08), #ffffff);
-      border-left:6px solid #1565c0; border-radius:12px; padding:.55rem .85rem;">
-    🧠 Overview
-    <span style="flex:1; height:3px; margin-left:.6rem; background:linear-gradient(to right,#4a90e2,#e91e63); border-radius:2px;"></span>
-  </h2>
-
+<!-- ====== Video Card (visible directamente) ====== -->
+<div style="background:#ffffff;border:1px solid #d0d7de;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin:16px 0;">
+  <!-- Título con barra lateral -->
   <div style="
-  max-width: 980px; margin: 1rem auto; padding:1rem 1.25rem;
-  border-radius:14px; color:#ffffff;
-  background:linear-gradient(135deg, #7b0f38, #9e1b51 60%, #ff0f5e);
-">
-  <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
-    <img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo.svg"
-         alt="TINTOlib" width="84" height="84"
-         style="background:#fff; border-radius:14px; padding:.35rem;">
-    <div style="flex:1; min-width:240px;">
-      <div style="font-size:1.4rem; font-weight:800; line-height:1.2;">TINTOlib — Tabular Data → Synthetic Images</div>
-      <div style="opacity:.95; margin-top:.25rem;">Open-source Python library for CNNs, ViTs & hybrid models on tabular data</div>
-    </div>
+       display:flex;align-items:center;gap:8px;
+       font-size:1.25rem;font-weight:800;color:#37474f;
+       background:linear-gradient(90deg, rgba(21,101,192,.08), #fff);
+       border-left:6px solid #1565c0;border-radius:12px;
+       padding:8px 12px;margin:0 0 12px 0;">
+    🎬 TINTOlib — Overview Video (English)
+    <div style="flex:1;height:3px;background:linear-gradient(to right,#4a90e2,#e91e63);border-radius:2px;margin-left:8px;"></div>
   </div>
-</div>
 
----
-
-### 🎬 TINTOlib — Overview Video
-
-<div align="center" style="max-width:980px; margin:0 auto;">
-
-<details open>
-  <summary><strong>Español</strong> (click para abrir/cerrar)</summary>
-
-  <p></p>
-  <video src="video/TINTOlib-video-Es.mp4" controls style="width:100%; max-width:900px; border:1px solid #d0d7de; border-radius:12px; background:#000;">
-    Tu navegador no soporta el vídeo.
-    <a href="video/TINTOlib-video-Es.mp4">Descargar (ES)</a>.
-  </video>
-  <p style="font-size:.9rem; color:#555;">Si no se reproduce inline, usa el enlace de descarga.</p>
-
-</details>
-
-<details>
-  <summary><strong>English</strong> (click to open/close)</summary>
-
-  <p></p>
-  <video src="video/TINTOlib-video-En.mp4" controls style="width:100%; max-width:900px; border:1px solid #d0d7de; border-radius:12px; background:#000;">
-    Your browser does not support the video tag.
-    <a href="video/TINTOlib-video-En.mp4">Download (EN)</a>.
-  </video>
-  <p style="font-size:.9rem; color:#555;">If inline playback fails, use the download link.</p>
-
-</details>
-
+  <!-- Vídeo visible -->
+  <div style="text-align:center;">
+    <video src="video/TINTOlib-video-En.mp4"
+           controls
+           width="720"
+           style="max-width:100%;
+                  border:1px solid #d0d7de;
+                  border-radius:12px;
+                  background:#000;
+                  box-shadow:0 2px 8px rgba(0,0,0,.06);">
+      Your browser does not support the video tag.
+      <a href="video/TINTOlib-video-En.mp4">Download video</a>.
+    </video>
+  </div>
 </div>
 
 ---
