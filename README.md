@@ -31,6 +31,46 @@ Learn how to turn tabular data into synthetic images and apply CNNs, ViTs, and h
 
 ---
 
+<div style="max-width: 980px; margin: 1rem auto;">
+
+  <h2 style="
+      display:flex; align-items:center; gap:.5rem;
+      font-size:1.15rem; font-weight:800; margin:0; 
+      color:#1f2937; background:linear-gradient(90deg, rgba(21,101,192,.08), #ffffff);
+      border-left:6px solid #1565c0; border-radius:12px; padding:.55rem .85rem;">
+    🎬 TINTOlib — Overview Video
+    <span style="flex:1; height:3px; margin-left:.6rem; background:linear-gradient(to right,#4a90e2,#e91e63); border-radius:2px;"></span>
+  </h2>
+
+  <div style="border:1px solid #d0d7de; border-radius:12px; padding:1rem; margin-top:.6rem; background:#ffffff;">
+
+  <details open>
+    <summary><strong>Español</strong> (click para abrir/cerrar)</summary>
+    <div style="margin:.8rem 0 0;">
+      <video src="video/TINTOlib-video-Es.mp4" controls style="width:100%; max-width:900px; border:1px solid #d0d7de; border-radius:12px; background:#000;"></video>
+      <p style="margin:.4rem 0 0; font-size:.9rem;">
+        Si el navegador no lo reproduce, puedes descargarlo
+        <a href="video/TINTOlib-video-Es.mp4">aquí</a>.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary><strong>English</strong> (click to open/close)</summary>
+    <div style="margin:.8rem 0 0;">
+      <video src="video/TINTOlib-video-En.mp4" controls style="width:100%; max-width:900px; border:1px solid #d0d7de; border-radius:12px; background:#000;"></video>
+      <p style="margin:.4rem 0 0; font-size:.9rem;">
+        If your browser can’t play it inline, download it
+        <a href="video/TINTOlib-video-En.mp4">here</a>.
+      </p>
+    </div>
+  </details>
+
+  </div>
+</div>
+
+---
+
 ### 📺 VideoTutorial Course (English/Spanish)
 
 🎥 Prefer not to register on Udemy or looking for the English version of the course? No worries — you can follow the full course directly on GitHub!
