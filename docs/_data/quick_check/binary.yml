@@ -1,0 +1,54 @@
+- dataset: bioresponse
+  meta:
+    task: binary
+    target: Bioresponse
+    sample_size: 3751
+    n_features: 1777
+    n_num_features: 1776
+    n_cat_features: 1
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 2
+    imbalance_ratio: 1.18462
+    source: https://api.openml.org/data/v1/download/4134/bioresponse.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.81847 ± 0.00477
+    primary_mean: 0.81847
+    secondary_raw: 0.88961 ± 0.00122
+    secondary_mean: 0.88961
+  best_transformed:
+    family: CNN
+    best_variant: REFINED
+    primary_raw: 0.78686 ± 0.01036
+    primary_mean: 0.78686
+    secondary_raw: 0.85621 ± 0.00549
+    secondary_mean: 0.85621
+- dataset: credit_approval
+  meta:
+    task: binary
+    target: class
+    sample_size: 690
+    n_features: 15
+    n_num_features: 6
+    n_cat_features: 9
+    categorical_pct: 0.0
+    missing_pct: 0.6473429951690821
+    n_classes: 2
+    imbalance_ratio: 1.247557003257329
+    source: https://api.openml.org/data/v1/download/29/credit-approval.arff
+  best_classical:
+    family: MLP
+    best_variant: MLP
+    primary_raw: 0.87692 ± 0.00430
+    primary_mean: 0.87692
+    secondary_raw: 0.94468 ± 0.00151
+    secondary_mean: 0.94468
+  best_transformed:
+    family: ViT
+    best_variant: FeatureWrap
+    primary_raw: 0.89808 ± 0.03010
+    primary_mean: 0.89808
+    secondary_raw: 0.95735 ± 0.00327
+    secondary_mean: 0.95735

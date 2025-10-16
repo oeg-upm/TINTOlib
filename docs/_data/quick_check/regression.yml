@@ -1,0 +1,54 @@
+- dataset: geographical_origin_of_music
+  meta:
+    task: regression
+    target: latitude
+    sample_size: 1059
+    n_features: 116
+    n_num_features: 116
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44965/geographical_origin_of_music.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 16.09875 ± 0.27347
+    primary_mean: 16.09875
+    secondary_raw: 0.28649 ± 0.02426
+    secondary_mean: 0.28649
+  best_transformed:
+    family: CNN
+    best_variant: REFINED
+    primary_raw: 15.02703 ± 0.62945
+    primary_mean: 15.02703
+    secondary_raw: 0.37760 ± 0.05210
+    secondary_mean: 0.3776
+- dataset: student_performance_por
+  meta:
+    task: regression
+    target: G3
+    sample_size: 649
+    n_features: 30
+    n_num_features: 13
+    n_cat_features: 17
+    categorical_pct: 0.5666666666666667
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44967/student_performance_por.arff
+  best_classical:
+    family: Trees
+    best_variant: LightGBM
+    primary_raw: 2.07327 ± 0.01229
+    primary_mean: 2.07327
+    secondary_raw: 0.24692 ± 0.00894
+    secondary_mean: 0.24692
+  best_transformed:
+    family: ViT+MLP
+    best_variant: REFINED
+    primary_raw: 2.00620 ± 0.02164
+    primary_mean: 2.0062
+    secondary_raw: 0.29482 ± 0.01526
+    secondary_mean: 0.29482

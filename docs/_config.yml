@@ -1,0 +1,18 @@
+title: TINTOlib Experiments
+description: Benchmarks and visuals for regression, binary, and multiclass tasks
+theme: minima
+markdown: kramdown
+
+# Top navigation
+header_pages:
+  - regression.md
+  - multiclass.md
+  - binary.md
+
+# Optional: tweak kramdown tables a bit
+kramdown:
+  input: GFM
+
+# Add a little CSS
+sass:
+  style: compressed

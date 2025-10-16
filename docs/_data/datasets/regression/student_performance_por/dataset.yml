@@ -1,0 +1,370 @@
+meta:
+  id: 44967
+  name: student_performance_por
+  task: regression
+  sample_size: 649
+  instances: 649
+  features: 30
+  n_features: 30
+  n_num_features: 13
+  n_cat_features: 17
+  cat_frac_est: 0.5666666666666667
+  missing_pct_estimated_from_file: 0.0
+  source: "https://api.openml.org/data/v1/download/44967/student_performance_por.arff"
+  openml_page: "https://www.openml.org/d/44967"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/44967) · [Original](https://archive.ics.uci.edu/ml/datasets/student+performance)"
+  target_variable: "G3"
+
+leaderboard_columns:
+  - { key: family, label: "Family" }
+  - { key: best_variant, label: "Best variant" }
+  - { key: test_rmse, label: "Test RMSE (↓)" }
+  - { key: test_r2, label: "Test R² (↑)" }
+  - { key: training_time_s, label: "Train time (s)" }
+  - { key: total_params, label: "#Params" }
+  - { key: flops, label: "FLOPs" }
+leaderboard_rows:
+  - family: "Trees"
+    best_variant: "LightGBM"
+    test_rmse: "2.07327 ± 0.01229"
+    test_r2: "0.24692 ± 0.00894"
+    training_time_s: "0.06854 ± 0.00324"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_rmse: "2.09287 ± 0.08028"
+    test_r2: "0.23174 ± 0.05981"
+    training_time_s: "3.05389 ± 0.51833"
+    total_params: "292,353"
+    flops: "583,680"
+  - family: "ViT (only)"
+    best_variant: "REFINED"
+    test_rmse: "2.13202 ± 0.06906"
+    test_r2: "0.20300 ± 0.05223"
+    training_time_s: "19.78263 ± 0.04077"
+    total_params: "8,970,759"
+    flops: "1,111,201,232"
+  - family: "ViT+MLP"
+    best_variant: "REFINED"
+    test_rmse: "2.00620 ± 0.02164"
+    test_r2: "0.29482 ± 0.01526"
+    training_time_s: "24.76651 ± 0.31276"
+    total_params: "8,878,343"
+    flops: "33,044,561,088"
+  - family: "CNN"
+    best_variant: "IGTD"
+    test_rmse: "2.08120 ± 0.15865"
+    test_r2: "0.23765 ± 0.12046"
+    training_time_s: "8.71615 ± 0.05789"
+    total_params: "824,241"
+    flops: "12,292,800"
+  - family: "CNN+MLP"
+    best_variant: "REFINED"
+    test_rmse: "2.03476 ± 0.06501"
+    test_r2: "0.27407 ± 0.04684"
+    training_time_s: "20.00194 ± 0.48703"
+    total_params: "6,591,281"
+    flops: "730,020,896"
+
+arch_sections:
+  - title: "Tree Baselines"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "LightGBM"
+        test_rmse: "2.07327 ± 0.01229"
+        test_r2: "0.24692 ± 0.00894"
+        training_time_s: "0.06854 ± 0.00324"
+        total_params: "—"
+        flops: "—"
+      - method: "XGBoost"
+        test_rmse: "2.07417 ± 0.01860"
+        test_r2: "0.24625 ± 0.01354"
+        training_time_s: "0.15527 ± 0.00400"
+        total_params: "—"
+        flops: "—"
+      - method: "CatBoost"
+        test_rmse: "2.08151 ± 0.00951"
+        test_r2: "0.24094 ± 0.00693"
+        training_time_s: "12.64899 ± 0.14024"
+        total_params: "—"
+        flops: "—"
+  - title: "MLP"
+    columns:
+      - { key: train_loss, label: "Train loss" }
+      - { key: val_loss, label: "Val loss" }
+      - { key: test_loss, label: "Test loss" }
+      - { key: train_rmse, label: "Train RMSE" }
+      - { key: val_rmse, label: "Val RMSE" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: total_params, label: "Total params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - train_loss: "5.52015 ± 3.62724"
+        val_loss: "5.85536 ± 0.08859"
+        test_loss: "4.64651 ± 0.62714"
+        train_rmse: "2.20826 ± 0.92555"
+        val_rmse: "2.75390 ± 0.02521"
+        test_rmse: "2.09287 ± 0.08028"
+        test_r2: "0.23174 ± 0.05981"
+        total_params: "292,353"
+        flops: "583,680"
+  - title: "ViT"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        test_rmse: "2.23586 ± 0.02876"
+        test_r2: "0.12409 ± 0.02259"
+        training_time_s: "18.44586 ± 0.19326"
+        total_params: "903,703"
+        flops: "29,203,002"
+      - method: "IGTD"
+        test_rmse: "2.28951 ± 0.07894"
+        test_r2: "0.08080 ± 0.06307"
+        training_time_s: "11.72688 ± 0.10983"
+        total_params: "2,774,881"
+        flops: "27,840,536"
+      - method: "REFINED"
+        test_rmse: "2.13202 ± 0.06906"
+        test_r2: "0.20300 ± 0.05223"
+        training_time_s: "19.78263 ± 0.04077"
+        total_params: "8,970,759"
+        flops: "1,111,201,232"
+      - method: "DistanceMatrix"
+        test_rmse: "2.15614 ± 0.07647"
+        test_r2: "0.18473 ± 0.05856"
+        training_time_s: "32.18724 ± 0.15245"
+        total_params: "17,054,305"
+        flops: "1,703,980,720"
+      - method: "BarGraph"
+        test_rmse: "2.25989 ± 0.12131"
+        test_r2: "0.10322 ± 0.09584"
+        training_time_s: "12.96351 ± 0.18219"
+        total_params: "1,216,353"
+        flops: "459,910,052"
+      - method: "Combination"
+        test_rmse: "2.21138 ± 0.12874"
+        test_r2: "0.14096 ± 0.09914"
+        training_time_s: "14.19763 ± 0.12567"
+        total_params: "4,855,105"
+        flops: "456,591,504"
+      - method: "SuperTML"
+        test_rmse: "2.22813 ± 0.13748"
+        test_r2: "0.12761 ± 0.11154"
+        training_time_s: "18.68712 ± 0.78474"
+        total_params: "1,753,089"
+        flops: "55,688,968"
+      - method: "FeatureWrap"
+        test_rmse: "2.26426 ± 0.03637"
+        test_r2: "0.10163 ± 0.02890"
+        training_time_s: "40.14557 ± 4.76981"
+        total_params: "22,093,623"
+        flops: "442,033,759"
+      - method: "BIE"
+        test_rmse: "2.32541 ± 0.10244"
+        test_r2: "0.05117 ± 0.08415"
+        training_time_s: "50.89112 ± 0.34698"
+        total_params: "22,192,513"
+        flops: "2,904,925,784"
+  - title: "ViT + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        test_rmse: "2.22408 ± 0.13201"
+        test_r2: "0.13097 ± 0.10137"
+        training_time_s: "22.41009 ± 0.33038"
+        total_params: "1,360,151"
+        flops: "293,072,208"
+      - method: "IGTD"
+        test_rmse: "2.04088 ± 0.02291"
+        test_r2: "0.27022 ± 0.01646"
+        training_time_s: "16.02527 ± 0.26102"
+        total_params: "3,116,769"
+        flops: "914,998,320"
+      - method: "REFINED"
+        test_rmse: "2.00620 ± 0.02164"
+        test_r2: "0.29482 ± 0.01526"
+        training_time_s: "24.76651 ± 0.31276"
+        total_params: "8,878,343"
+        flops: "33,044,561,088"
+      - method: "DistanceMatrix"
+        test_rmse: "2.06605 ± 0.03636"
+        test_r2: "0.25200 ± 0.02656"
+        training_time_s: "38.64666 ± 0.90085"
+        total_params: "17,145,249"
+        flops: "14,740,056,064"
+      - method: "BarGraph"
+        test_rmse: "2.04117 ± 0.01500"
+        test_r2: "0.27005 ± 0.01072"
+        training_time_s: "18.48115 ± 0.51367"
+        total_params: "1,436,097"
+        flops: "17,873,390,744"
+      - method: "Combination"
+        test_rmse: "2.15356 ± 0.06181"
+        test_r2: "0.18696 ± 0.04625"
+        training_time_s: "18.95864 ± 0.27732"
+        total_params: "4,862,817"
+        flops: "8,873,642,016"
+      - method: "SuperTML"
+        test_rmse: "2.06424 ± 0.05476"
+        test_r2: "0.25307 ± 0.03928"
+        training_time_s: "21.70629 ± 1.15053"
+        total_params: "2,078,081"
+        flops: "1,683,872,736"
+      - method: "FeatureWrap"
+        test_rmse: "2.18022 ± 0.09262"
+        test_r2: "0.16605 ± 0.06917"
+        training_time_s: "53.58027 ± 1.19315"
+        total_params: "22,633,079"
+        flops: "23,547,780,378"
+      - method: "BIE"
+        test_rmse: "2.10730 ± 0.07137"
+        test_r2: "0.22131 ± 0.05285"
+        training_time_s: "57.14752 ± 1.44125"
+        total_params: "22,625,345"
+        flops: "24,682,275,008"
+  - title: "CNN"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        test_rmse: "2.20393 ± 0.05426"
+        test_r2: "0.14863 ± 0.04235"
+        training_time_s: "9.40622 ± 0.28257"
+        total_params: "44,137"
+        flops: "9,609,200"
+      - method: "IGTD"
+        test_rmse: "2.08120 ± 0.15865"
+        test_r2: "0.23765 ± 0.12046"
+        training_time_s: "8.71615 ± 0.05789"
+        total_params: "824,241"
+        flops: "12,292,800"
+      - method: "REFINED"
+        test_rmse: "2.13354 ± 0.11906"
+        test_r2: "0.20055 ± 0.09003"
+        training_time_s: "14.35458 ± 0.06314"
+        total_params: "6,492,657"
+        flops: "66,168,768"
+      - method: "DistanceMatrix"
+        test_rmse: "2.12103 ± 0.06746"
+        test_r2: "0.21121 ± 0.05013"
+        training_time_s: "24.99695 ± 0.21563"
+        total_params: "1,405,713"
+        flops: "487,848,704"
+      - method: "BarGraph"
+        test_rmse: "2.32736 ± 0.10341"
+        test_r2: "0.04956 ± 0.08450"
+        training_time_s: "20.30143 ± 0.14342"
+        total_params: "668,033"
+        flops: "184,843,344"
+      - method: "Combination"
+        test_rmse: "2.21374 ± 0.12857"
+        test_r2: "0.13913 ± 0.09999"
+        training_time_s: "16.30842 ± 0.07185"
+        total_params: "1,710,385"
+        flops: "1,457,369,280"
+      - method: "SuperTML"
+        test_rmse: "2.25473 ± 0.07110"
+        test_r2: "0.10865 ± 0.05721"
+        training_time_s: "19.47898 ± 0.36295"
+        total_params: "319,761"
+        flops: "310,244,736"
+      - method: "FeatureWrap"
+        test_rmse: "2.58094 ± 0.12282"
+        test_r2: "-0.16911 ± 0.11451"
+        training_time_s: "23.04521 ± 0.18939"
+        total_params: "3,067,097"
+        flops: "63,097,992"
+      - method: "BIE"
+        test_rmse: "2.30823 ± 0.17893"
+        test_r2: "0.06211 ± 0.14743"
+        training_time_s: "21.22984 ± 1.06166"
+        total_params: "2,692,721"
+        flops: "256,454,400"
+  - title: "CNN + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE" }
+      - { key: test_r2, label: "Test R²" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        test_rmse: "2.10339 ± 0.05933"
+        test_r2: "0.22442 ± 0.04448"
+        training_time_s: "12.84134 ± 0.07940"
+        total_params: "537,033"
+        flops: "116,529,336"
+      - method: "IGTD"
+        test_rmse: "2.16746 ± 0.10360"
+        test_r2: "0.17547 ± 0.07799"
+        training_time_s: "12.30086 ± 0.17006"
+        total_params: "1,066,417"
+        flops: "140,541,632"
+      - method: "REFINED"
+        test_rmse: "2.03476 ± 0.06501"
+        test_r2: "0.27407 ± 0.04684"
+        training_time_s: "20.00194 ± 0.48703"
+        total_params: "6,591,281"
+        flops: "730,020,896"
+      - method: "DistanceMatrix"
+        test_rmse: "2.20535 ± 0.11973"
+        test_r2: "0.14593 ± 0.09290"
+        training_time_s: "27.69409 ± 1.14331"
+        total_params: "1,836,817"
+        flops: "488,709,824"
+      - method: "BarGraph"
+        test_rmse: "2.09846 ± 0.08224"
+        test_r2: "0.22759 ± 0.06083"
+        training_time_s: "30.53304 ± 1.71425"
+        total_params: "1,040,449"
+        flops: "2,041,457,440"
+      - method: "Combination"
+        test_rmse: "2.21351 ± 0.13429"
+        test_r2: "0.13910 ± 0.10258"
+        training_time_s: "18.47078 ± 0.45905"
+        total_params: "1,969,073"
+        flops: "1,457,885,888"
+      - method: "SuperTML"
+        test_rmse: "2.05941 ± 0.01953"
+        test_r2: "0.25693 ± 0.01407"
+        training_time_s: "21.61322 ± 0.57559"
+        total_params: "656,721"
+        flops: "310,917,504"
+      - method: "FeatureWrap"
+        test_rmse: "2.08629 ± 0.08131"
+        test_r2: "0.23653 ± 0.05844"
+        training_time_s: "24.74906 ± 0.23222"
+        total_params: "3,502,169"
+        flops: "63,967,080"
+      - method: "BIE"
+        test_rmse: "2.30793 ± 0.04552"
+        test_r2: "0.06655 ± 0.03657"
+        training_time_s: "21.66396 ± 0.61913"
+        total_params: "3,000,625"
+        flops: "257,069,440"
