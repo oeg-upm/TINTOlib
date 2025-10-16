@@ -1,5 +1,7 @@
 # TINTOlib: Python Library to convert Tabular Data into Synthetic Images
 
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-View%20Documentation-brightgreen?logo=github)](https://oeg-upm.github.io/TINTOlib/)
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue)](https://pypi.python.org/pypi/)
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
@@ -11,11 +13,20 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/tintolib)](https://pepy.tech/projects/tintolib)
 
 
+---
+
 <div>
     <p align = "center">
     <img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
     </p>
 </div>
+
+## 📊 Benchmarks & Results
+
+- Explore detailed benchmark results, model comparisons, and performance tables for TINTOlib on various datasets.
+- 👉 **See the latest benchmarks:** [TINTOlib Benchmarks (GitHub Pages)](https://oeg-upm.github.io/TINTOlib/)
+
+---
 
 ## 🎉 New Free Course on Udemy! (Spanish) 🎉
 
