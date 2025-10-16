@@ -1,0 +1,15 @@
+/* Global table scroll utilities */
+.table-scroll {
+	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.table-scroll table {
+	border-collapse: collapse;
+}
+.table-scroll th,
+.table-scroll td {
+	padding: 6px 8px;
+	white-space: nowrap;
+}
+

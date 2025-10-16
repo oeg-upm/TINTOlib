@@ -1,0 +1,341 @@
+meta:
+  id: 1468
+  name: cnae-9
+  task: multiclass
+  sample_size: 1080
+  instances: 1080
+  features: 856
+  n_features: 856
+  n_num_features: 856
+  n_cat_features: 0
+  n_classes: 9
+  imbalance_ratio: 1.0
+  missing_cells_estimated_from_file: 0
+  missing_pct_estimated_from_file: 0.0
+  source: "https://api.openml.org/data/v1/download/1468/cnae-9.arff"
+  openml_page: "https://www.openml.org/d/1468"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/1468) · [Original](https://archive.ics.uci.edu/ml/datasets/CNAE-9)"
+  target_variable: "Class"
+  numerical_features_note: "All 856 features (V1–V856) are numeric frequency-based descriptors."
+
+leaderboard_columns:
+  - { key: family, label: "Family" }
+  - { key: best_variant, label: "Best variant" }
+  - { key: test_accuracy, label: "Test Accuracy (↑)" }
+  - { key: test_f1, label: "Test F1 (↑)" }
+  - { key: training_time_s, label: "Train time (s)" }
+  - { key: total_params, label: "#Params" }
+  - { key: flops, label: "FLOPs" }
+leaderboard_rows:
+  - family: "Trees"
+    best_variant: "XGBoost"
+    test_accuracy: "0.95432 ± 0.00338"
+    test_f1: "0.95461 ± 0.00345"
+    training_time_s: "8.44052"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_accuracy: "0.97037 ± 0.00805"
+    test_f1: "0.96992 ± 0.00846"
+    training_time_s: "10.34689"
+    total_params: "706,057"
+    flops: "1,411,072"
+  - family: "ViT"
+    best_variant: "IGTD"
+    test_accuracy: "0.93827 ± 0.01310"
+    test_f1: "0.93838 ± 0.01313"
+    training_time_s: "26.78283"
+    total_params: "1,269,455"
+    flops: "12,377,946"
+  - family: "ViT+MLP"
+    best_variant: "REFINED"
+    test_accuracy: "0.96173 ± 0.00517"
+    test_f1: "0.96194 ± 0.00487"
+    training_time_s: "75.39355"
+    total_params: "1,989,455"
+    flops: "10,130,914,304"
+  - family: "CNN"
+    best_variant: "IGTD"
+    test_accuracy: "0.93704 ± 0.01537"
+    test_f1: "0.93723 ± 0.01538"
+    training_time_s: "23.99849"
+    total_params: "190,897"
+    flops: "63,914,592"
+  - family: "CNN+MLP"
+    best_variant: "IGTD"
+    test_accuracy: "0.95556 ± 0.00805"
+    test_f1: "0.96572 ± 0.00999"
+    training_time_s: "157.23238"
+    total_params: "2,804,841"
+    flops: "18,386,727,744"
+
+arch_sections:
+  - title: "Tree Baselines"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Acc" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_precision, label: "Test Precision" }
+      - { key: test_recall, label: "Test Recall" }
+      - { key: training_time_s, label: "Train time (s)" }
+    rows:
+      - method: "XGBoost"
+        test_accuracy: "0.95432 ± 0.00338"
+        test_f1: "0.95461 ± 0.00345"
+        test_precision: "0.95848 ± 0.00428"
+        test_recall: "0.95432 ± 0.00338"
+        training_time_s: "8.44052 ± 0.11371"
+      - method: "CatBoost"
+        test_accuracy: "0.93951 ± 0.00805"
+        test_f1: "0.94003 ± 0.00780"
+        test_precision: "0.94732 ± 0.00626"
+        test_recall: "0.93951 ± 0.00805"
+        training_time_s: "6.54664 ± 0.10359"
+      - method: "LightGBM"
+        test_accuracy: "0.94938 ± 0.00805"
+        test_f1: "0.95004 ± 0.00766"
+        test_precision: "0.95597 ± 0.00687"
+        test_recall: "0.94938 ± 0.00805"
+        training_time_s: "8.07665 ± 1.28849"
+  - title: "MLP"
+    columns:
+      - { key: train_loss, label: "Train loss" }
+      - { key: val_loss, label: "Val loss" }
+      - { key: test_loss, label: "Test loss" }
+      - { key: test_accuracy, label: "Test accuracy" }
+      - { key: test_precision, label: "Test precision" }
+      - { key: test_recall, label: "Test recall" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_roc_auc, label: "Test ROC AUC" }
+      - { key: test_log_loss, label: "Test LogLoss" }
+      - { key: test_mcc, label: "Test MCC" }
+      - { key: total_params, label: "Total params" }
+      - { key: flops, label: "FLOPs" }
+      - { key: macs, label: "MACs" }
+    rows:
+      - train_loss: "0.01342 ± 0.01090"
+        val_loss: "0.12372 ± 0.01638"
+        test_loss: "0.08709 ± 0.01161"
+        test_accuracy: "0.97037 ± 0.00805"
+        test_precision: "0.97239 ± 0.00756"
+        test_recall: "0.97037 ± 0.00805"
+        test_f1: "0.96992 ± 0.00846"
+        test_roc_auc: "0.99961 ± 0.00018"
+        test_log_loss: "0.10320 ± 0.01376"
+        test_mcc: "0.96701 ± 0.00891"
+        total_params: "706,057"
+        flops: "1,411,072"
+        macs: "705,024"
+  - title: "ViT"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: test_accuracy, label: "Test Acc" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_precision, label: "Test Precision" }
+      - { key: test_recall, label: "Test Recall" }
+      - { key: test_roc_auc, label: "Test ROC AUC" }
+      - { key: test_log_loss, label: "Test LogLoss" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        training_time_s: "24.18381 ± 0.14994"
+        test_accuracy: "0.97334 ± 0.00296"
+        test_f1: "0.82123 ± 0.03314"
+        test_precision: "0.88654 ± 0.02193"
+        test_recall: "0.86791 ± 0.03361"
+        test_roc_auc: "0.94138 ± 0.01966"
+        test_log_loss: "0.90270 ± 0.01715"
+        total_params: "1,600,609"
+        flops: "83,777,096"
+      - method: "IGTD"
+        training_time_s: "26.78283"
+        test_accuracy: "0.93827 ± 0.01310"
+        test_f1: "0.93838 ± 0.01313"
+        test_precision: "—"
+        test_recall: "—"
+        test_roc_auc: "—"
+        test_log_loss: "—"
+        total_params: "1,269,455"
+        flops: "12,377,946"
+      - method: "REFINED"
+        training_time_s: "51.73347 ± 8.33281"
+        test_accuracy: "0.97624 ± 0.01070"
+        test_f1: "0.92404 ± 0.01751"
+        test_precision: "0.92346 ± 0.02849"
+        test_recall: "0.93110 ± 0.02637"
+        test_roc_auc: "0.99342 ± 0.00305"
+        test_log_loss: "0.32760 ± 0.05950"
+        total_params: "1,269,455"
+        flops: "12,377,946"
+      - method: "FeatureWrap"
+        training_time_s: "78.42049 ± 11.15532"
+        test_accuracy: "0.90424 ± 0.00418"
+        test_f1: "0.79585 ± 0.01276"
+        test_precision: "0.75926 ± 0.01746"
+        test_recall: "0.79167 ± 0.01411"
+        test_roc_auc: "0.97051 ± 0.00461"
+        test_log_loss: "0.77868 ± 0.08332"
+        total_params: "17,470,447"
+        flops: "174,454,188"
+  - title: "ViT + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: test_accuracy, label: "Test Acc" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_precision, label: "Test Precision" }
+      - { key: test_recall, label: "Test Recall" }
+      - { key: test_roc_auc, label: "Test ROC AUC" }
+      - { key: test_log_loss, label: "Test LogLoss" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        training_time_s: "51.20903 ± 5.63295"
+        test_accuracy: "0.98946 ± 0.00302"
+        test_f1: "0.95172 ± 0.00838"
+        test_precision: "0.96049 ± 0.01883"
+        test_recall: "0.96218 ± 0.01829"
+        test_roc_auc: "0.99859 ± 0.00163"
+        test_log_loss: "0.13929 ± 0.07387"
+        total_params: "3,893,025"
+        flops: "464,977,088 ± 91,899,166.11703"
+      - method: "IGTD"
+        training_time_s: "36.43950 ± 1.83848"
+        test_accuracy: "0.98792 ± 0.00475"
+        test_f1: "0.95294 ± 0.01026"
+        test_precision: "0.95556 ± 0.01408"
+        test_recall: "0.95874 ± 0.01229"
+        test_roc_auc: "0.99784 ± 0.00181"
+        test_log_loss: "0.22177 ± 0.09474"
+        total_params: "1,218,401"
+        flops: "269,517,528 ± 23,674,701.60606"
+      - method: "REFINED"
+        training_time_s: "75.39355 ± 2.91066"
+        test_accuracy: "0.99004 ± 0.00320"
+        test_f1: "0.95299 ± 0.00580"
+        test_precision: "0.96173 ± 0.00517"
+        test_recall: "0.96512 ± 0.00333"
+        test_roc_auc: "0.99862 ± 0.00102"
+        test_log_loss: "0.14492 ± 0.04696"
+        total_params: "1,989,455"
+        flops: "648,339,608 ± 36,611,247.47466"
+      - method: "FeatureWrap"
+        training_time_s: "94.19557 ± 3.95154"
+        test_accuracy: "0.98666 ± 0.00948"
+        test_f1: "0.93410 ± 0.03600"
+        test_precision: "0.94568 ± 0.01598"
+        test_recall: "0.95165 ± 0.01262"
+        test_roc_auc: "0.99831 ± 0.00069"
+        test_log_loss: "0.21044 ± 0.05732"
+        total_params: "18,746,639"
+        flops: "2,513,403,744 ± 496,755,031.91467"
+  - title: "CNN"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: test_accuracy, label: "Test Acc" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_precision, label: "Test Precision" }
+      - { key: test_recall, label: "Test Recall" }
+      - { key: test_roc_auc, label: "Test ROC AUC" }
+      - { key: test_log_loss, label: "Test LogLoss" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        training_time_s: "18.50549 ± 0.88259"
+        test_accuracy: "0.70133 ± 0.00457"
+        test_f1: "0.63837 ± 0.01416"
+        test_precision: "0.68148 ± 0.01549"
+        test_recall: "0.69369 ± 0.01499"
+        test_roc_auc: "0.93206 ± 0.00367"
+        test_log_loss: "0.96299 ± 0.03732"
+        total_params: "77,937"
+        flops: "3,614,528"
+      - method: "IGTD"
+        training_time_s: "23.99849"
+        test_accuracy: "0.93704 ± 0.01537"
+        test_f1: "0.93723 ± 0.01538"
+        test_precision: "—"
+        test_recall: "—"
+        test_roc_auc: "—"
+        test_log_loss: "—"
+        total_params: "190,897"
+        flops: "63,914,592"
+      - method: "REFINED"
+        training_time_s: "39.24781 ± 1.83563"
+        test_accuracy: "0.97247 ± 0.00675"
+        test_f1: "0.91175 ± 0.02772"
+        test_precision: "0.91358 ± 0.00756"
+        test_recall: "0.92283 ± 0.00767"
+        test_roc_auc: "0.99358 ± 0.00182"
+        test_log_loss: "0.37951 ± 0.03106"
+        total_params: "733,137"
+        flops: "63,914,592"
+      - method: "FeatureWrap"
+        training_time_s: "77.13566 ± 0.42878"
+        test_accuracy: "0.96653 ± 0.00509"
+        test_f1: "0.91007 ± 0.01701"
+        test_precision: "0.88148 ± 0.01104"
+        test_recall: "0.89928 ± 0.01478"
+        test_roc_auc: "0.99107 ± 0.00174"
+        test_log_loss: "0.53426 ± 0.04917"
+        total_params: "11,985,833"
+        flops: "1,669,530,816"
+  - title: "CNN + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: training_time_s, label: "Train time (s)" }
+      - { key: test_accuracy, label: "Test Acc" }
+      - { key: test_f1, label: "Test F1" }
+      - { key: test_precision, label: "Test Precision" }
+      - { key: test_recall, label: "Test Recall" }
+      - { key: test_roc_auc, label: "Test ROC AUC" }
+      - { key: test_log_loss, label: "Test LogLoss" }
+      - { key: total_params, label: "#Params" }
+      - { key: flops, label: "FLOPs" }
+    rows:
+      - method: "TINTO"
+        training_time_s: "29.90100 ± 2.27126"
+        test_accuracy: "0.98492 ± 0.00487"
+        test_f1: "0.94350 ± 0.01763"
+        test_precision: "0.96420 ± 0.00276"
+        test_recall: "0.96609 ± 0.00225"
+        test_roc_auc: "0.99911 ± 0.00047"
+        test_log_loss: "0.10987 ± 0.02834"
+        total_params: "820,465"
+        flops: "56,082,752"
+      - method: "IGTD"
+        training_time_s: "157.23238"
+        test_accuracy: "0.95556 ± 0.00805"
+        test_f1: "0.96572 ± 0.00999"
+        test_precision: "—"
+        test_recall: "—"
+        test_roc_auc: "—"
+        test_log_loss: "—"
+        total_params: "2,804,841"
+        flops: "18,386,727,744"
+      - method: "REFINED"
+        training_time_s: "42.14406 ± 2.49779"
+        test_accuracy: "0.98654 ± 0.00336"
+        test_f1: "0.94222 ± 0.01663"
+        test_precision: "0.95185 ± 0.01187"
+        test_recall: "0.95589 ± 0.01141"
+        test_roc_auc: "0.99915 ± 0.00040"
+        test_log_loss: "0.15621 ± 0.02966"
+        total_params: "1,422,257"
+        flops: "718,212,000"
+      - method: "FeatureWrap"
+        training_time_s: "97.10382 ± 4.24365"
+        test_accuracy: "0.98926 ± 0.00357"
+        test_f1: "0.95299 ± 0.01137"
+        test_precision: "0.93580 ± 0.01421"
+        test_recall: "0.94377 ± 0.01086"
+        test_roc_auc: "0.99883 ± 0.00059"
+        test_log_loss: "0.22689 ± 0.08034"
+        total_params: "12,981,545"
+        flops: "18,386,727,744"

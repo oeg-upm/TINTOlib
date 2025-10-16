@@ -1,0 +1,9146 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Binary Classification Benchmarks | TINTOlib Experiments</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Binary Classification Benchmarks" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Benchmarks and visuals for regression, binary, and multiclass tasks" />
+<meta property="og:description" content="Benchmarks and visuals for regression, binary, and multiclass tasks" />
+<link rel="canonical" href="http://localhost:4000/binary.html" />
+<meta property="og:url" content="http://localhost:4000/binary.html" />
+<meta property="og:site_name" content="TINTOlib Experiments" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Binary Classification Benchmarks" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Benchmarks and visuals for regression, binary, and multiclass tasks","headline":"Binary Classification Benchmarks","url":"http://localhost:4000/binary.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="TINTOlib Experiments" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">TINTOlib Experiments</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/regression.html">Regression Benchmarks</a><a class="page-link" href="/multiclass.html">Multiclass Benchmarks</a><a class="page-link" href="/binary.html">Binary Classification Benchmarks</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1 id="binary-classification-benchmarks">Binary Classification Benchmarks</h1>
+
+<style>
+.wrapper {
+  max-width: 1200px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media screen and (max-width: 640px) {
+  .wrapper {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+</style>
+
+<h2>Dataset Overview</h2>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Instances</th>
+      <th>Features</th>
+      <th>Numeric</th>
+      <th>Categorical</th>
+      <th>Target</th>
+      <th>Classes</th>
+      <th>Imbalance</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <tr>
+        <td><a href="#bioresponse">Bioresponse</a></td>
+        <td>3751</td>
+        <td>1777</td>
+        <td>1776</td>
+        <td>1</td>
+        <td>Bioresponse</td>
+        <td>2</td>
+        <td>1.18462</td>
+      </tr>
+    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <tr>
+        <td><a href="#credit-approval">Credit approval</a></td>
+        <td>690</td>
+        <td>15</td>
+        <td>6</td>
+        <td>9</td>
+        <td>class</td>
+        <td>2</td>
+        <td>1.247557003257329</td>
+      </tr>
+    
+  </tbody>
+</table>
+</div>
+
+<h2 id="quick-check">Quick Check</h2>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Type</th>
+      <th>Family / Variant</th>
+      <th>Test accuracy</th>
+      <th>Test ROC AUC</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    
+      
+        
+        
+        
+        
+        <tr>
+          <td rowspan="2">Bioresponse</td>
+          <td>Best classical</td>
+          <td>Trees / XGBoost</td>
+          <td>
+            
+              
+                <strong>0.81847 ± 0.00477</strong>
+              
+            
+          </td>
+          <td>
+            
+              
+                <strong>0.88961 ± 0.00122</strong>
+              
+            
+          </td>
+        </tr>
+        <tr>
+          <td>Best transformed</td>
+          <td>CNN / REFINED</td>
+          <td>
+            
+              
+                0.78686 ± 0.01036
+              
+            
+          </td>
+          <td>
+            
+              
+                0.85621 ± 0.00549
+              
+            
+          </td>
+        </tr>
+      
+        
+        
+        
+        
+        <tr>
+          <td rowspan="2">Credit approval</td>
+          <td>Best classical</td>
+          <td>MLP / MLP</td>
+          <td>
+            
+              
+                0.87692 ± 0.00430
+              
+            
+          </td>
+          <td>
+            
+              
+                0.94468 ± 0.00151
+              
+            
+          </td>
+        </tr>
+        <tr>
+          <td>Best transformed</td>
+          <td>ViT / FeatureWrap</td>
+          <td>
+            
+              
+                <strong>0.89808 ± 0.03010</strong>
+              
+            
+          </td>
+          <td>
+            
+              
+                <strong>0.95735 ± 0.00327</strong>
+              
+            
+          </td>
+        </tr>
+      
+    
+  </tbody>
+</table>
+</div>
+
+<h2 id="bioresponse"><a id="bioresponse"></a>Bioresponse</h2>
+
+<p><strong>Source</strong>: <a href="https://www.openml.org/d/4134">OpenML</a> · <a href="https://api.openml.org/data/v1/download/4134/bioresponse.arff">Original</a></p>
+
+<h3 id="leaderboard">Leaderboard</h3>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      
+        <th>Family</th>
+      
+        <th>Best variant</th>
+      
+        <th>Test Accuracy (↑)</th>
+      
+        <th>Test ROC AUC (↑)</th>
+      
+        <th>Train time (s)</th>
+      
+        <th>#Params</th>
+      
+        <th>FLOPs</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>Trees</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>XGBoost</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.81847 ± 0.00477</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.88961 ± 0.00122</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.41230</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.78615 ± 0.01182</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.84194 ± 0.00613</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>13.43436</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>1,041,409</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>2,082,048</strong></td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.76945 ± 0.01214</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.83747 ± 0.00358</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>67.72601</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>4,426,201</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>43,919,946</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.77620 ± 0.01066</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.84131 ± 0.00261</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>85.62639</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>5,496,729</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>637,718,480</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.78686 ± 0.01036</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.85621 ± 0.00549</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>56.44847</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2,715,313</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>1,506,688,896</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.78686 ± 0.01036</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.85253 ± 0.01044</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>63.84759</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>3,799,729</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>1,508,856,848</td>
+        
+      </tr>
+    
+  </tbody>
+</table>
+</div>
+
+<details class="arch-results">
+  <summary>Architecture Results</summary>
+
+  
+  <details class="arch-section">
+    <summary>Tree Baselines</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Train time (s)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>XGBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81847 ± 0.00477</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.83107 ± 0.00477</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.82426 ± 0.00680</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83800 ± 0.00371</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.88961 ± 0.00122</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.41230</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>CatBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81457 ± 0.00463</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82622 ± 0.00461</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81377 ± 0.00783</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.83912 ± 0.00567</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87989 ± 0.00397</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>25.20507 ± 0.05985</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>LightGBM</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80888 ± 0.00728</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82135 ± 0.00736</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81115 ± 0.01459</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83205 ± 0.01089</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87810 ± 0.00307</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1.24869 ± 0.04968</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Train loss</th>
+          
+            <th>Val loss</th>
+          
+            <th>Test loss</th>
+          
+            <th>Test accuracy (↑)</th>
+          
+            <th>Test precision</th>
+          
+            <th>Test recall</th>
+          
+            <th>Test F1</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>Test MCC</th>
+          
+            <th>Total params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.38982 ± 0.03167</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.52523 ± 0.00288</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.49655 ± 0.00660</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78615 ± 0.01182</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81263 ± 0.01049</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78689 ± 0.02714</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.79930 ± 0.01397</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.84194 ± 0.00613</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.49659 ± 0.00617</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.57126 ± 0.02221</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>1,041,409</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2,082,048</strong></td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>39.12782 ± 0.22880</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.69130 ± 0.00918</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74404 ± 0.01060</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.67546 ± 0.00969</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82885 ± 0.02909</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72977 ± 0.01074</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.59970 ± 0.00773</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>1,716,385</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>85,861,632</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>53.50183 ± 0.76464</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74458 ± 0.02887</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.78704 ± 0.01479</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72113 ± 0.03852</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.86885 ± 0.02820</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82965 ± 0.01231</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.55979 ± 0.03481</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>4,550,263</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>155,284,479</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>67.72601 ± 1.34755</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.76945 ± 0.01214</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78885 ± 0.00776</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78407 ± 0.02504</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79475 ± 0.02279</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.83747 ± 0.00358</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.51418 ± 0.00312</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>4,426,201</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>43,919,946</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>63.76220 ± 1.49083</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72220 ± 0.01321</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73929 ± 0.00978</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75338 ± 0.02814</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72721 ± 0.02862</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.78393 ± 0.01199</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.57526 ± 0.01544</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>9,800,161</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>333,217,900</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>62.18761 ± 6.29526</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77336 ± 0.00463</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.78515 ± 0.00592</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80698 ± 0.00511</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76459 ± 0.01257</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83574 ± 0.00424</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.50571 ± 0.00383</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2,657,889</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>809,617,408 ± 160,014,690</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>73.41846 ± 1.17743</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76909 ± 0.01554</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.79588 ± 0.00733</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76581 ± 0.03178</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.83016 ± 0.02565</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83846 ± 0.00896</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.50748 ± 0.01806</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,871,831</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3,481,690,302 ± 305,835,318</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>85.62639 ± 2.60948</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77620 ± 0.01066</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.78976 ± 0.01479</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80488 ± 0.02779</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77771 ± 0.04575</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.84131 ± 0.00261</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.51031 ± 0.01926</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,496,729</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>637,718,480 ± 126,040,181</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>83.09175 ± 5.88656</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78224 ± 0.01070</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79224 ± 0.01093</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81974 ± 0.00857</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76656 ± 0.01340</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83531 ± 0.00602</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.50986 ± 0.01106</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>10,885,697</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>7,426,666,584 ± 652,366,162</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>34.07241 ± 0.46630</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.70444 ± 0.01650</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75249 ± 0.00673</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.69077 ± 0.02870</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.82951 ± 0.04423</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75853 ± 0.01253</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.58758 ± 0.00870</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>30,369</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>6,680,388</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>51.55007 ± 1.14411</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.63197 ± 0.08147</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.69982 ± 0.03777</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.65871 ± 0.10504</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79934 ± 0.19212</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75447 ± 0.03277</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.69259 ± 0.11148</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,417,457</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>978,246,400</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>56.44847 ± 0.36734</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.79183 ± 0.01769</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.80690 ± 0.01185</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81448 ± 0.04146</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80262 ± 0.04169</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.85621 ± 0.00549</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.48291 ± 0.01118</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,715,313</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,506,688,896</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>77.51294 ± 0.31586</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73996 ± 0.01592</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75638 ± 0.03293</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76865 ± 0.03896</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75279 ± 0.08763</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80743 ± 0.00882</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.54629 ± 0.01841</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,155,537</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,894,869,760</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>52.17665 ± 2.32481</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77869 ± 0.00749</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79065 ± 0.01160</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81068 ± 0.01265</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77246 ± 0.03098</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84023 ± 0.00584</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.50143 ± 0.00800</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>1,088,657</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>184,719,528</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>59.26457 ± 1.49678</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.70764 ± 0.02508</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73493 ± 0.04397</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73387 ± 0.08276</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76656 ± 0.15670</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80774 ± 0.02291</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.60415 ± 0.08857</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6,056,049</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>979,523,520</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>63.84759 ± 1.33045</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78686 ± 0.01036</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.80513 ± 0.00924</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80144 ± 0.04783</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.81443 ± 0.05808</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.85253 ± 0.01044</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.50015 ± 0.02944</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3,799,729</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,508,856,848</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>81.22601 ± 0.07450</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74423 ± 0.00879</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75265 ± 0.02133</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79149 ± 0.03435</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72197 ± 0.06192</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81223 ± 0.01007</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.54734 ± 0.02279</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,999,569</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,896,557,568</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+
+</details>
+
+<hr />
+
+<h2 id="credit-approval"><a id="credit-approval"></a>Credit approval</h2>
+
+<p><strong>Source</strong>: <a href="https://www.openml.org/d/29">OpenML</a> · <a href="https://api.openml.org/data/v1/download/29/credit-approval.arff">Original</a></p>
+
+<h3 id="leaderboard-1">Leaderboard</h3>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      
+        <th>Family</th>
+      
+        <th>Best variant</th>
+      
+        <th>Test Accuracy (↑)</th>
+      
+        <th>Test ROC AUC (↑)</th>
+      
+        <th>Train time (s)</th>
+      
+        <th>#Params</th>
+      
+        <th>FLOPs</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>Trees</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>LightGBM</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.75577 ± 0.00527</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.95064 ± 0.00133</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.09859</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.87692 ± 0.00430</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.94468 ± 0.00151</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>6.46258</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>27,137</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>53,760</strong></td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>FeatureWrap</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.89808 ± 0.03010</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>0.95735 ± 0.00327</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>24.34938</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>7,265,761</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>72,676,493</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>BIE</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.88462 ± 0.00962</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.95232 ± 0.00606</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>40.93451</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>1,859,585</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>1,387,447,200</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>BarGraph</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.87115 ± 0.01994</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.94483 ± 0.00932</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>24.68416</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>189,889</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>132,799,648</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>DistanceMatrix</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.88077 ± 0.01874</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>0.94430 ± 0.00532</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>35.87942</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>488,481</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>453,152,896</td>
+        
+      </tr>
+    
+  </tbody>
+</table>
+</div>
+
+<details class="arch-results">
+  <summary>Architecture Results</summary>
+
+  
+  <details class="arch-section">
+    <summary>Tree Baselines</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Train time (s)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>LightGBM</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75577 ± 0.00527</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81780 ± 0.00321</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.98276 ± 0.00000</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.70027 ± 0.00470</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.95064 ± 0.00133</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.09859 ± 0.00641</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>XGBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.89808 ± 0.00860</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.90421 ± 0.00727</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86207 ± 0.00000</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.95079 ± 0.01597</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.94535 ± 0.00056</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.41230 ± 0.00573</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>CatBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88462 ± 0.00000</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88679 ± 0.00000</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81035 ± 0.00000</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.97917 ± 0.00000</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.94670 ± 0.00041</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.63444 ± 0.05896</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Train loss</th>
+          
+            <th>Val loss</th>
+          
+            <th>Test loss</th>
+          
+            <th>Test accuracy (↑)</th>
+          
+            <th>Test precision</th>
+          
+            <th>Test recall</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test MCC</th>
+          
+            <th>Total params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.32544 ± 0.01337</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.32932 ± 0.00195</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.28471 ± 0.00117</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.87692 ± 0.00430</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.93474 ± 0.00934</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.83793 ± 0.00944</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.88363 ± 0.00421</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.94468 ± 0.00151</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.75903 ± 0.00888</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>27,137</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>53,760</strong></td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>24.18381 ± 0.14994</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97334 ± 0.00296</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82123 ± 0.03314</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88654 ± 0.02193</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86791 ± 0.03361</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.94138 ± 0.01966</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.90270 ± 0.01715</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,600,609</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>83,777,096</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>68.75373 ± 0.10999</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97080 ± 0.00332</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75752 ± 0.01060</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84423 ± 0.01580</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84125 ± 0.02458</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88966 ± 0.02885</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.86430 ± 0.01354</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>19,520,281</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>667,902,402</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>29.86047 ± 0.45036</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97190 ± 0.00150</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76177 ± 0.01712</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87500 ± 0.00680</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.91834 ± 0.00850</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85172 ± 0.01542</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88368 ± 0.00721</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,268,487</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>696,741,440</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>28.01472 ± 0.10554</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97244 ± 0.00438</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75849 ± 0.03001</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86539 ± 0.02150</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89253 ± 0.04424</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86552 ± 0.03316</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87773 ± 0.01787</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3,595,591</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>71,253,567</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>33.32826 ± 2.41426</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97363 ± 0.00281</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77823 ± 0.03742</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86539 ± 0.01799</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87735 ± 0.02393</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88276 ± 0.02833</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87968 ± 0.01632</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>1,036,999</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>20,876,839</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>43.79120 ± 0.31413</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97146 ± 0.00178</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76056 ± 0.01574</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86923 ± 0.01874</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88397 ± 0.03368</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88276 ± 0.00771</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88301 ± 0.01423</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,364,615</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>47,539,495</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>55.46818 ± 0.95789</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97304 ± 0.00159</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76590 ± 0.03576</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86731 ± 0.01720</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89317 ± 0.06675</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87586 ± 0.06264</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88065 ± 0.00824</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>11,972,449</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,580,762,012</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>24.34938 ± 0.09730</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.97597 ± 0.00245</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.82721 ± 0.02674</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.89808 ± 0.03010</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87395 ± 0.04923</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.95862 ± 0.00944</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.91357 ± 0.02319</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>7,265,761</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>72,676,493</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>31.80109 ± 0.45090</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97138 ± 0.00737</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76480 ± 0.02098</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.01580</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89001 ± 0.02562</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88276 ± 0.03738</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88563 ± 0.01540</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,831,681</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>62,989,904</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>36.11794 ± 0.54655</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97265 ± 0.00400</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.78003 ± 0.02799</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.02394</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88942 ± 0.05987</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88966 ± 0.04496</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88714 ± 0.01516</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,153,313</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>774,421,568</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>88.77799 ± 1.40963</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97031 ± 0.00462</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74201 ± 0.03719</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85577 ± 0.02255</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88956 ± 0.03197</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84828 ± 0.04463</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.86746 ± 0.02201</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>19,548,953</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6,611,922,832</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>37.56043 ± 0.44217</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97315 ± 0.00257</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75091 ± 0.02145</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87692 ± 0.00430</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.93162 ± 0.01586</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84138 ± 0.00771</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88408 ± 0.00269</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5,142,983</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>13,348,791,360</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>33.55061 ± 1.04348</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97134 ± 0.00276</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73496 ± 0.01761</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.00430</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.94842 ± 0.01573</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.81724 ± 0.01542</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87775 ± 0.00454</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3,738,311</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>779,787,256</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>47.16871 ± 1.24050</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96340 ± 0.00583</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77224 ± 0.02284</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.01053</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89774 ± 0.01961</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87241 ± 0.02313</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88457 ± 0.00988</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>1,084,551</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>803,412,036</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>58.56323 ± 6.61817</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96940 ± 0.00273</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.73836 ± 0.04004</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.00430</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.91746 ± 0.03598</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85172 ± 0.04496</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88189 ± 0.00790</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,436,903</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>527,485,752</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>74.32829 ± 5.53914</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.97351 ± 0.00345</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75122 ± 0.03228</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86346 ± 0.01850</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88901 ± 0.06414</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87241 ± 0.06047</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87717 ± 0.01092</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>12,460,001</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>30,112,373,304</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>35.66323 ± 0.36383</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97168 ± 0.00230</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76905 ± 0.03416</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.89039 ± 0.01458</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89089 ± 0.02661</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.91724 ± 0.03738</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.90311 ± 0.01369</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>7,325,569</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3,665,691,148</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>40.93451 ± 0.83433</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97242 ± 0.00145</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75235 ± 0.03215</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88462 ± 0.00962</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.94643 ± 0.02228</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84138 ± 0.01889</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89051 ± 0.00897</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,859,585</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,387,447,200</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>22.76856 ± 0.21394</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97207 ± 0.00154</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76000 ± 0.03333</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.87885 ± 0.01609</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.91333 ± 0.01960</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86552 ± 0.03316</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88831 ± 0.01599</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>108,793</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>16,313,808</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>34.86336 ± 0.12589</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96198 ± 0.00949</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.70385 ± 0.06975</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85577 ± 0.01923</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.90302 ± 0.01110</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83103 ± 0.04463</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86486 ± 0.02211</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,758,497</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>26,344,896</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>19.94357 ± 0.08692</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96625 ± 0.00279</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72330 ± 0.00569</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86731 ± 0.01971</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.90918 ± 0.04680</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85172 ± 0.06744</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87678 ± 0.02234</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,112,225</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>20,382,208</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>32.35910 ± 2.07113</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96938 ± 0.00313</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.77864 ± 0.02282</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85577 ± 0.02150</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87447 ± 0.04377</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86897 ± 0.03575</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87059 ± 0.01765</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>431,553</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>321,349,776</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>24.68416 ± 0.52450</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96888 ± 0.00310</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.71735 ± 0.04057</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87115 ± 0.01994</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.92317 ± 0.04319</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84138 ± 0.02557</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87950 ± 0.01609</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>189,889</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>132,799,648</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>30.61405 ± 0.78141</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96607 ± 0.00320</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.76374 ± 0.02576</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87692 ± 0.02085</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.91658 ± 0.02910</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85862 ± 0.03932</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88591 ± 0.02025</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,126,289</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>729,226,960</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>56.27273 ± 1.87451</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97041 ± 0.00524</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75280 ± 0.02933</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85962 ± 0.03160</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86397 ± 0.06470</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89655 ± 0.04044</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87766 ± 0.02171</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>357,681</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>244,017,024</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>21.80783 ± 0.12512</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97182 ± 0.00252</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.80075 ± 0.04721</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.87885 ± 0.02413</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87491 ± 0.06307</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.92069 ± 0.04152</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89497 ± 0.01722</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,679,265</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>26,047,680</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>23.68857 ± 1.57080</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.97263 ± 0.00359</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.79526 ± 0.05025</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82692 ± 0.02040</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.80599 ± 0.02899</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.91035 ± 0.01889</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.85457 ± 0.01417</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,219,369</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>452,641,280</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Train time (s)</th>
+          
+            <th>Test Acc (↑)</th>
+          
+            <th>Test F1 (↑)</th>
+          
+            <th>Test Precision</th>
+          
+            <th>Test Recall</th>
+          
+            <th>Test ROC AUC</th>
+          
+            <th>Test LogLoss</th>
+          
+            <th>#Params</th>
+          
+            <th>FLOPs</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>23.51064 ± 1.06906</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96707 ± 0.00614</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.75082 ± 0.02054</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86731 ± 0.02489</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89853 ± 0.04504</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86207 ± 0.03448</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87889 ± 0.02100</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>170,793</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>16,437,264</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>36.58546 ± 0.15293</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.95951 ± 0.00815</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72782 ± 0.01887</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.88462 ± 0.00962</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.93942 ± 0.01918</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.84828 ± 0.01889</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89128 ± 0.00918</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,735,457</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>26,298,688</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>21.89030 ± 0.07673</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96761 ± 0.00358</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72065 ± 0.02280</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87885 ± 0.00860</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.94184 ± 0.01278</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83448 ± 0.01542</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88479 ± 0.00862</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2,491,169</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>21,139,456</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>35.87942 ± 2.03683</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97073 ± 0.00566</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.72532 ± 0.04591</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88077 ± 0.01874</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.90919 ± 0.05523</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87931 ± 0.05172</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.89164 ± 0.01540</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>488,481</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>321,463,144</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>35.27408 ± 3.46612</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.97111 ± 0.00284</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.71134 ± 0.03457</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87308 ± 0.01426</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.94121 ± 0.01852</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.82414 ± 0.01889</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87865 ± 0.01386</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>219,425</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>132,858,336</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>49.18553 ± 2.91262</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96438 ± 0.00472</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.70106 ± 0.02357</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85769 ± 0.02753</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88503 ± 0.05529</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86207 ± 0.05314</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87115 ± 0.02328</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,317,009</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>15,321,762,960</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>56.67474 ± 4.74708</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96369 ± 0.00613</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74369 ± 0.03724</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86731 ± 0.00805</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86725 ± 0.03440</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.90345 ± 0.05115</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.88339 ± 0.00958</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>441,649</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>244,184,512</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>23.54730 ± 0.12061</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.97332 ± 0.00305</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.74736 ± 0.03495</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87115 ± 0.00860</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.92557 ± 0.03114</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.83793 ± 0.03132</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87876 ± 0.00864</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,775,201</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>26,239,200</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>26.65689 ± 1.21066</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.96959 ± 0.00750</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.76029 ± 0.01694</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.85385 ± 0.02085</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.86260 ± 0.03206</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>0.87931 ± 0.02112</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>0.87046 ± 0.01693</strong></td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>1,475,625</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>453,152,896</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+
+</details>
+
+<hr />
+
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">TINTOlib Experiments</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">TINTOlib Experiments</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Benchmarks and visuals for regression, binary, and multiclass tasks</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
