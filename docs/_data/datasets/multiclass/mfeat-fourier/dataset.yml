@@ -1,0 +1,179 @@
+meta:
+  id: 14
+  name: mfeat-fourier
+  task: multiclass
+  sample_size: 2000
+  instances: 2000
+  features: 76
+  n_features: 76
+  n_num_features: 76
+  n_cat_features: 0
+  n_classes: 10
+  imbalance_ratio: 1.0
+  missing_cells_estimated_from_file: 0
+  missing_pct_estimated_from_file: 0.0
+  source: "https://www.openml.org/search?type=data&status=active&id=14&sort=runs"
+  openml_page: "https://www.openml.org/d/14"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/14) · [UCI](https://archive.ics.uci.edu/ml/datasets/Multiple+Features)"
+  target_variable: "class"
+
+leaderboard_columns:
+  - { key: family, label: "Family" }
+  - { key: best_variant, label: "Best variant" }
+  - { key: test_accuracy, label: "Test Accuracy (↑)" }
+  - { key: training_time_s, label: "Train time (s)" }
+  - { key: total_params, label: "#Params" }
+  - { key: flops, label: "FLOPs" }
+
+leaderboard_rows:
+  - family: "Trees"
+    best_variant: "CatBoost"
+    test_accuracy: "0.858667 ± 0.009603"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_accuracy: "0.820000 ± 0.012247"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "ViT"
+    best_variant: "TINTO_blur"
+    test_accuracy: "0.870000 ± 0.016997"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "ViT+MLP"
+    best_variant: "TINTO_blur"
+    test_accuracy: "0.866667 ± 0.014720"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN"
+    best_variant: "TINTO_blur"
+    test_accuracy: "0.864667 ± 0.007674"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN+MLP"
+    best_variant: "TINTO_blur"
+    test_accuracy: "0.844667 ± 0.021422"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+
+arch_sections:
+  - title: "Tree Baselines"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - method: "XGBoost"
+        test_accuracy: "0.842000 ± 0.009603"
+      - method: "CatBoost"
+        test_accuracy: "0.858667 ± 0.009603"
+      - method: "LightGBM"
+        test_accuracy: "0.857333 ± 0.010382"
+
+  - title: "MLP"
+    columns:
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - test_accuracy: "0.820000 ± 0.012247"
+
+  - title: "ViT"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - method: "TINTO_blur"
+        test_accuracy: "0.870000 ± 0.016997"
+      - method: "IGTD"
+        test_accuracy: "0.831333 ± 0.013038"
+      - method: "REFINED"
+        test_accuracy: "0.807333 ± 0.013622"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.821333 ± 0.022186"
+      - method: "BarGraph"
+        test_accuracy: "0.825333 ± 0.018348"
+      - method: "Combination"
+        test_accuracy: "0.836000 ± 0.017857"
+      - method: "SuperTML"
+        test_accuracy: "0.742667 ± 0.018166"
+      - method: "FeatureWrap"
+        test_accuracy: "0.674667 ± 0.022925"
+      - method: "BIE"
+        test_accuracy: "0.678000 ± 0.021029"
+
+  - title: "ViT + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - method: "TINTO_blur"
+        test_accuracy: "0.866667 ± 0.014720"
+      - method: "IGTD"
+        test_accuracy: "0.820667 ± 0.016228"
+      - method: "REFINED"
+        test_accuracy: "0.808000 ± 0.024449"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.837333 ± 0.011879"
+      - method: "BarGraph"
+        test_accuracy: "0.824000 ± 0.025755"
+      - method: "Combination"
+        test_accuracy: "0.820667 ± 0.015528"
+      - method: "SuperTML"
+        test_accuracy: "0.812000 ± 0.017733"
+      - method: "FeatureWrap"
+        test_accuracy: "0.816000 ± 0.006831"
+      - method: "BIE"
+        test_accuracy: "0.805333 ± 0.011205"
+
+  - title: "CNN"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - method: "TINTO_blur"
+        test_accuracy: "0.864667 ± 0.007674"
+      - method: "IGTD"
+        test_accuracy: "0.798667 ± 0.025122"
+      - method: "REFINED"
+        test_accuracy: "0.804667 ± 0.009309"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.810000 ± 0.017951"
+      - method: "BarGraph"
+        test_accuracy: "0.806667 ± 0.026771"
+      - method: "Combination"
+        test_accuracy: "0.804000 ± 0.008300"
+      - method: "SuperTML"
+        test_accuracy: "0.661333 ± 0.047469"
+      - method: "FeatureWrap"
+        test_accuracy: "0.594000 ± 0.018469"
+      - method: "BIE"
+        test_accuracy: "0.481333 ± 0.117109"
+
+  - title: "CNN + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_accuracy, label: "Test Accuracy (↑)" }
+    rows:
+      - method: "TINTO_blur"
+        test_accuracy: "0.844667 ± 0.021422"
+      - method: "IGTD"
+        test_accuracy: "0.798000 ± 0.011690"
+      - method: "REFINED"
+        test_accuracy: "0.797333 ± 0.004346"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.801333 ± 0.008028"
+      - method: "BarGraph"
+        test_accuracy: "0.817333 ± 0.013208"
+      - method: "Combination"
+        test_accuracy: "0.812000 ± 0.009603"
+      - method: "SuperTML"
+        test_accuracy: "0.692000 ± 0.058052"
+      - method: "FeatureWrap"
+        test_accuracy: "0.801333 ± 0.010954"
+      - method: "BIE"
+        test_accuracy: "0.518667 ± 0.382235"

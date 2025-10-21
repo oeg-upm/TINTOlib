@@ -1,3 +1,30 @@
+- dataset: boston_housing
+  meta:
+    task: regression
+    target: MEDV
+    sample_size: 506
+    n_features: 13
+    n_num_features: 11
+    n_cat_features: 2
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://www.openml.org/d/531
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 2.700084 ± 0.106243
+    primary_mean: 2.700084
+    secondary_raw: null
+    secondary_mean: null
+  best_transformed:
+    family: CNN+MLP
+    best_variant: REFINED
+    primary_raw: 2.438903 ± 0.162972
+    primary_mean: 2.438903
+    secondary_raw: null
+    secondary_mean: null
 - dataset: geographical_origin_of_music
   meta:
     task: regression

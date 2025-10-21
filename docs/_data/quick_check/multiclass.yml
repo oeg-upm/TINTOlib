@@ -52,3 +52,30 @@
     primary_mean: 0.96173
     secondary_raw: 0.96194 ± 0.00487
     secondary_mean: 0.96194
+- dataset: mfeat-fourier
+  meta:
+    task: multiclass
+    target: class
+    sample_size: 2000
+    n_features: 76
+    n_num_features: 76
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 10
+    imbalance_ratio: 1.0
+    source: https://www.openml.org/search?type=data&status=active&id=14&sort=runs
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.858667 ± 0.009603
+    primary_mean: 0.858667
+    secondary_raw: null
+    secondary_mean: null
+  best_transformed:
+    family: ViT
+    best_variant: TINTO_blur
+    primary_raw: 0.870000 ± 0.016997
+    primary_mean: 0.87
+    secondary_raw: null
+    secondary_mean: null
