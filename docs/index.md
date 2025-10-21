@@ -28,5 +28,6 @@ Each task page lists every dataset with:
 1. **Dataset information** – core statistics plus links back to the original source.
 2. **Leaderboard** – baseline tree models for quick reference.
 3. **Architecture sections** – detailed metrics for TINTOlib transformations (ViT, CNN, hybrids, etc.).
+4. **Quick Check** – at-a-glance comparison of best classical (Trees/MLP) vs. best transformed (ViT/CNN/Hybrid) models, showing whether tabular-to-image transformations improve performance for each dataset.
 
-Use these pages to compare architectures, check data characteristics, and identify promising starting points for new experiments.
+Use these pages to compare architectures, check data characteristics, and identify promising starting points for new experiments. The Quick Check summaries help you quickly spot which datasets benefit most from vision-based approaches.
