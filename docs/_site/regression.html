@@ -81,6 +81,26 @@
       
       
       <tr>
+        <td><a href="#boston-housing">Boston housing</a></td>
+        <td>506</td>
+        <td>13</td>
+        <td>11</td>
+        <td>2</td>
+        <td>MEDV</td>
+      </tr>
+    
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <tr>
         <td><a href="#geographical-origin-of-music">Geographical origin of music</a></td>
         <td>1059</td>
         <td>116</td>
@@ -129,6 +149,44 @@
   <tbody>
     
     
+      
+        <tr>
+          <td rowspan="2">Boston housing</td>
+          <td>Best classical</td>
+          <td>Trees / CatBoost</td>
+          
+          
+          <td>
+            
+              
+                2.700084 ± 0.106243
+              
+            
+          </td>
+          
+          
+          <td>
+            
+              N/A
+            
+          </td>
+        </tr>
+        <tr>
+          <td>Best transformed</td>
+          <td>CNN+MLP / REFINED</td>
+          <td>
+            
+              
+                <strong>2.438903 ± 0.162972</strong>
+              
+            
+          </td>
+          <td>
+            
+              N/A
+            
+          </td>
+        </tr>
       
         <tr>
           <td rowspan="2">Geographical origin of music</td>
@@ -219,11 +277,1763 @@
 </table>
 </div>
 
+<h2 id="boston-housing">Boston housing</h2>
+
+<p><strong>Source</strong>: <a href="https://www.openml.org/d/531">OpenML</a></p>
+
+<h3 id="leaderboard">Leaderboard</h3>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      
+        <th>Family</th>
+      
+        <th>Best variant</th>
+      
+        <th>Test RMSE (↓)</th>
+      
+        <th>Train time (s)</th>
+      
+        <th>#Params</th>
+      
+        <th>FLOPs</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>Trees</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CatBoost</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2.700084 ± 0.106243</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2.828052 ± 0.131142</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>BarGraph</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2.519887 ± 0.196094</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>ViT+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>BarGraph</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2.559321 ± 0.246925</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>2.655326 ± 0.310791</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+      <tr>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>CNN+MLP</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>REFINED</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td><strong>2.438903 ± 0.162972</strong></td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>—</td>
+        
+      </tr>
+    
+  </tbody>
+</table>
+</div>
+
+<details class="arch-results">
+  <summary>Architecture Results</summary>
+
+  
+  <details class="arch-section">
+    <summary>Tree Baselines</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>XGBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.774923 ± 0.166530</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>CatBoost</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.700084 ± 0.106243</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>LightGBM</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.805457 ± 0.100855</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.828052 ± 0.131142</strong></td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO_blur</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.420081 ± 0.291512</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.142264 ± 0.439253</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.887821 ± 0.075405</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.312579 ± 0.484090</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.519887 ± 0.196094</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.633510 ± 0.163668</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6.109547 ± 0.426364</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6.627827 ± 0.349281</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>5.778989 ± 0.744815</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>ViT + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO_blur</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.912383 ± 0.222092</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.718218 ± 0.254985</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.797485 ± 0.111211</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.973885 ± 0.223999</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.559321 ± 0.246925</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.706478 ± 0.135370</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.271055 ± 0.765391</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.042458 ± 0.089480</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.702441 ± 0.482539</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO_blur</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.378587 ± 0.439270</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.351715 ± 0.370402</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.655326 ± 0.310791</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.707462 ± 0.084352</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.694138 ± 0.235391</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.805460 ± 0.463091</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>4.748231 ± 0.294039</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6.207377 ± 0.473304</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>6.171650 ± 0.318295</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+  <details class="arch-section">
+    <summary>CNN + MLP</summary>
+
+    
+    
+    
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          
+            <th>Method</th>
+          
+            <th>Test RMSE (↓)</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>TINTO_blur</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.058563 ± 0.552181</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>IGTD</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.860102 ± 0.426140</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>REFINED</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td><strong>2.438903 ± 0.162972</strong></td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>DistanceMatrix</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.768028 ± 0.092147</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BarGraph</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>2.853205 ± 0.236649</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>Combination</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.065310 ± 0.855346</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>SuperTML</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.352514 ± 0.511341</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>FeatureWrap</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.360638 ± 0.317116</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>BIE</td>
+            
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              <td>3.689836 ± 0.262252</td>
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+    
+  </details>
+  
+
+</details>
+
+<hr />
+
 <h2 id="geographical-origin-of-music">Geographical origin of music</h2>
 
 <p><strong>Source</strong>: <a href="https://www.openml.org/d/44965">OpenML</a> · <a href="https://archive.ics.uci.edu/ml/datasets/Geographical+Original+of+Music">Original</a></p>
 
-<h3 id="leaderboard">Leaderboard</h3>
+<h3 id="leaderboard-1">Leaderboard</h3>
 
 <div class="table-scroll">
 <table>
@@ -5999,7 +7809,7 @@
 
 <p><strong>Source</strong>: <a href="https://www.openml.org/d/44967">OpenML</a> · <a href="https://archive.ics.uci.edu/ml/datasets/student+performance">Original</a></p>
 
-<h3 id="leaderboard-1">Leaderboard</h3>
+<h3 id="leaderboard-2">Leaderboard</h3>
 
 <div class="table-scroll">
 <table>

@@ -1,0 +1,177 @@
+meta:
+  id: 531
+  name: boston_housing
+  task: regression
+  sample_size: 506
+  instances: 506
+  features: 13
+  n_features: 13
+  n_num_features: 11
+  n_cat_features: 2
+  missing_cells_estimated_from_file: 0
+  missing_pct_estimated_from_file: 0.0
+  source: "https://www.openml.org/d/531"
+  openml_page: "https://www.openml.org/d/531"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/531)"
+  target_variable: "MEDV"
+
+leaderboard_columns:
+  - { key: family, label: "Family" }
+  - { key: best_variant, label: "Best variant" }
+  - { key: test_rmse, label: "Test RMSE (↓)" }
+  - { key: training_time_s, label: "Train time (s)" }
+  - { key: total_params, label: "#Params" }
+  - { key: flops, label: "FLOPs" }
+
+leaderboard_rows:
+  - family: "Trees"
+    best_variant: "CatBoost"
+    test_rmse: "2.700084 ± 0.106243"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_rmse: "2.828052 ± 0.131142"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "ViT"
+    best_variant: "BarGraph"
+    test_rmse: "2.519887 ± 0.196094"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "ViT+MLP"
+    best_variant: "BarGraph"
+    test_rmse: "2.559321 ± 0.246925"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN"
+    best_variant: "REFINED"
+    test_rmse: "2.655326 ± 0.310791"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN+MLP"
+    best_variant: "REFINED"
+    test_rmse: "2.438903 ± 0.162972"
+    training_time_s: "—"
+    total_params: "—"
+    flops: "—"
+
+arch_sections:
+  - title: "Tree Baselines"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - method: "XGBoost"
+        test_rmse: "2.774923 ± 0.166530"
+      - method: "CatBoost"
+        test_rmse: "2.700084 ± 0.106243"
+      - method: "LightGBM"
+        test_rmse: "2.805457 ± 0.100855"
+
+  - title: "MLP"
+    columns:
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - test_rmse: "2.828052 ± 0.131142"
+
+  - title: "ViT"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - method: "TINTO_blur"
+        test_rmse: "3.420081 ± 0.291512"
+      - method: "IGTD"
+        test_rmse: "3.142264 ± 0.439253"
+      - method: "REFINED"
+        test_rmse: "2.887821 ± 0.075405"
+      - method: "DistanceMatrix"
+        test_rmse: "3.312579 ± 0.484090"
+      - method: "BarGraph"
+        test_rmse: "2.519887 ± 0.196094"
+      - method: "Combination"
+        test_rmse: "2.633510 ± 0.163668"
+      - method: "SuperTML"
+        test_rmse: "6.109547 ± 0.426364"
+      - method: "FeatureWrap"
+        test_rmse: "6.627827 ± 0.349281"
+      - method: "BIE"
+        test_rmse: "5.778989 ± 0.744815"
+
+  - title: "ViT + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - method: "TINTO_blur"
+        test_rmse: "2.912383 ± 0.222092"
+      - method: "IGTD"
+        test_rmse: "2.718218 ± 0.254985"
+      - method: "REFINED"
+        test_rmse: "2.797485 ± 0.111211"
+      - method: "DistanceMatrix"
+        test_rmse: "2.973885 ± 0.223999"
+      - method: "BarGraph"
+        test_rmse: "2.559321 ± 0.246925"
+      - method: "Combination"
+        test_rmse: "2.706478 ± 0.135370"
+      - method: "SuperTML"
+        test_rmse: "3.271055 ± 0.765391"
+      - method: "FeatureWrap"
+        test_rmse: "3.042458 ± 0.089480"
+      - method: "BIE"
+        test_rmse: "3.702441 ± 0.482539"
+
+  - title: "CNN"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - method: "TINTO_blur"
+        test_rmse: "3.378587 ± 0.439270"
+      - method: "IGTD"
+        test_rmse: "3.351715 ± 0.370402"
+      - method: "REFINED"
+        test_rmse: "2.655326 ± 0.310791"
+      - method: "DistanceMatrix"
+        test_rmse: "2.707462 ± 0.084352"
+      - method: "BarGraph"
+        test_rmse: "2.694138 ± 0.235391"
+      - method: "Combination"
+        test_rmse: "2.805460 ± 0.463091"
+      - method: "SuperTML"
+        test_rmse: "4.748231 ± 0.294039"
+      - method: "FeatureWrap"
+        test_rmse: "6.207377 ± 0.473304"
+      - method: "BIE"
+        test_rmse: "6.171650 ± 0.318295"
+
+  - title: "CNN + MLP"
+    columns:
+      - { key: method, label: "Method" }
+      - { key: test_rmse, label: "Test RMSE (↓)" }
+    rows:
+      - method: "TINTO_blur"
+        test_rmse: "3.058563 ± 0.552181"
+      - method: "IGTD"
+        test_rmse: "3.860102 ± 0.426140"
+      - method: "REFINED"
+        test_rmse: "2.438903 ± 0.162972"
+      - method: "DistanceMatrix"
+        test_rmse: "2.768028 ± 0.092147"
+      - method: "BarGraph"
+        test_rmse: "2.853205 ± 0.236649"
+      - method: "Combination"
+        test_rmse: "3.065310 ± 0.855346"
+      - method: "SuperTML"
+        test_rmse: "3.352514 ± 0.511341"
+      - method: "FeatureWrap"
+        test_rmse: "3.360638 ± 0.317116"
+      - method: "BIE"
+        test_rmse: "3.689836 ± 0.262252"
