@@ -15,18 +15,18 @@
 
 ---
 
+<div>
+    <p align = "center">
+    <img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
+    </p>
+</div>
+
 ## 📊 Benchmarks & Results
 
 - Explore detailed benchmark results, model comparisons, and performance tables for TINTOlib on various datasets.
 - 👉 **See the latest benchmarks:** [TINTOlib Benchmarks (GitHub Pages)](https://oeg-upm.github.io/TINTOlib/)
 
 ---
-
-<div>
-    <p align = "center">
-    <img src="https://raw.githubusercontent.com/DCY1117/TEMP-Images/refs/heads/main/TINTOlib-images/logo.svg" alt="TINTO Logo" width="150">
-    </p>
-</div>
 
 ## 🎉 New Free Course on Udemy! (Spanish) 🎉
 
