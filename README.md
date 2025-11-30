@@ -319,7 +319,7 @@ Using synthetic images, experiment with either vision models like CNNs or ViTs, 
 
 ## 📖 Citation
 
-If you use TINTOlib in your research, please cite our paper:
+If you use TINTOlib in your research, please cite our paper en [SoftwareX journal](https://doi.org/10.1016/j.softx.2025.102444):
 
 ```bibtex
 @article{LIU2025102444,
