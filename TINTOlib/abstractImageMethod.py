@@ -1,19 +1,21 @@
 # Standard library imports
+import os
 import pickle
 from abc import ABC, abstractmethod
+import warnings
+from contextlib import nullcontext
 
 # Third-party library imports
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-
+from tqdm import tqdm
 # Typing imports
 from typing import Optional, Union
 
 # Default configuration values
-default_problem = "supervised"  # Define the type of task [supervised, unsupervised, regression]
+default_problem = "classification"  # Define the type of task [classification, unsupervised, regression]
 default_verbose = False         # Verbose: if True, shows the compilation text
-default_normalize = True
 default_hyperparameters_filename = 'objs.pkl'
+allowed_values_for_problem = ["classification","supervised", "unsupervised", "regression"]
 
 class AbstractImageMethod(ABC):
     """
@@ -22,39 +24,30 @@ class AbstractImageMethod(ABC):
     """
     def __init__(
         self,
-        problem: Optional[str], 
+        problem: Optional[str],
         verbose: Optional[bool],
-        normalize: Optional[bool],
+        transformer=None
     ):
         # Validate `problem`
         if problem is None:
             problem = default_problem
-        allowed_values_for_problem = ["supervised", "unsupervised", "regression"]
-        if not isinstance(problem, str):
+        elif (not isinstance(problem, str)):
             raise TypeError(f"problem must be of type str (got {type(problem)})")
-        if problem not in allowed_values_for_problem:
+        elif(problem not in allowed_values_for_problem):
             raise ValueError(f"Allowed values for problem are {allowed_values_for_problem}. Instead got {problem}")
-        
+
+        if(problem == "supervised"):
+            warnings.warn("Problem type supervised will be deprecated. Instead use classification.",FutureWarning)
         # Validate `verbose`
         if verbose is None:
             verbose = default_verbose
         if not isinstance(verbose, bool):
             raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
-        
-        # Validate `normalize`
-        if normalize is None:
-            normalize = default_normalize
-        if not isinstance(normalize, bool):
-            raise TypeError(f"verbose must be of type bool (got {type(normalize)})")
 
+        self.transformer=transformer
         self.problem = problem
         self.verbose = verbose
         self._fitted = False  # Tracks if fit has been called
-
-        # Normalize data
-        self.normalize = normalize  # Whether to normalize data
-        self.scaler = MinMaxScaler() if normalize else None  # Initialize scaler if needed
-
 
     def saveHyperparameters(self, filename=default_hyperparameters_filename):
         """
@@ -89,21 +82,22 @@ class AbstractImageMethod(ABC):
         Parameters:
         - data: Path to CSV file or a pandas DataFrame containing data and targets.
         """
+        with (tqdm(total=100) if self.verbose == True else nullcontext()) as self.bar:
+            self.__progress=0
+            dataset = self._load_data(data)
+            x, y = self._split_features_targets(dataset)
 
-        dataset = self._load_data(data)
-        x, y = self._split_features_targets(dataset)
+            # Transform features if required
+            if self.transformer!=None:
+                x = pd.DataFrame(self.transformer.fit_transform(x), columns=x.columns)
 
-        # Normalize features if required
-        if self.normalize:
-            x = pd.DataFrame(self.scaler.fit_transform(x), columns=x.columns)
-
-        # Call the training function
-        self._fitAlg(x, y)
-
-        self._fitted = True  # Mark as fitted
-
-        if self.verbose:
-            print("Fit process completed.")
+            self.__update_progress_bar(progress=20, text='Fitting process')
+            # Call the training function
+            self._fitAlg(x, y)
+            self._fitted = True  # Mark as fitted
+            self.__update_progress_bar(progress=80, text='Fit process completed')
+            if self.verbose:
+                self._write_message("Fit process completed.")
 
     def transform(self, data, folder):
         """
@@ -115,19 +109,24 @@ class AbstractImageMethod(ABC):
         """
         if not self._fitted:
             raise RuntimeError("The model must be fitted before calling 'transform'. Please call 'fit' first.")
+        with (tqdm(total=100) if self.verbose==True else nullcontext()) as self.bar :
+            self.__imgs_routes=[]
+            self.__progress=0
 
-        dataset = self._load_data(data)
-        x, y = self._split_features_targets(dataset)
+            dataset = self._load_data(data)
+            x, y = self._split_features_targets(dataset)
+            self.bar_transform_step = (90 / x.shape[0])
 
-        # Normalize features if required
-        if self.normalize:
-            x = pd.DataFrame(self.scaler.transform(x), columns=x.columns)
+            # Transform features if required
+            if self.transformer != None:
+                x = pd.DataFrame(self.transformer.transform(x), columns=x.columns)
 
-        self.folder = folder
-        self._transformAlg(x, y)
-
-        if self.verbose:
-            print("Transform process completed.")
+            self.__update_progress_bar(progress=10, text='Generating and saving the synthetic images')
+            self.folder = folder
+            self._transformAlg(x, y)
+            self.__create_csv(x,y)
+            self.__update_progress_bar(progress=(100-self.__progress), text='Images generated and saved')
+            self._write_message("Transform process completed.")
 
     def fit_transform(self, data, folder):
         """
@@ -137,25 +136,35 @@ class AbstractImageMethod(ABC):
         - data: Path to CSV file or a pandas DataFrame containing data and targets.
         - folder: Path to folder where the images will be saved.
         """
-        dataset = self._load_data(data)
-        x, y = self._split_features_targets(dataset)
 
-        # Normalize features if required
-        if self.normalize:
-            x = pd.DataFrame(self.scaler.fit_transform(x), columns=x.columns)
 
-        self.folder = folder
-        self._fitAlg(x, y)
-        self._transformAlg(x, y)
-        self._fitted = True  # Mark as fitted after both operations
-    
-        if self.verbose:
-            print("Fit-Transform process completed.")
+        with (tqdm(total=100,dynamic_ncols=True) if self.verbose==True else nullcontext()) as bar:
+            self.__imgs_routes=[]
+            self.bar=bar
+            self.__progress = 0
+
+            dataset = self._load_data(data)
+            x, y = self._split_features_targets(dataset)
+            self.bar_transform_step=(70/x.shape[0])
+
+            # Transform features if required
+            if self.transformer!=None:
+                x = pd.DataFrame(self.transform.fit_transform(x), columns=x.columns)
+
+            self.__update_progress_bar(progress=10, text='Generating and saving the synthetic images')
+            self.folder = folder
+            self._fitAlg(x, y)
+            self.__update_progress_bar(progress=20, text='Generating and saving the synthetic images')
+            self._transformAlg(x, y)
+            self._fitted = True  # Mark as fitted after both operations
+            self.__update_progress_bar(progress=(100-self.__progress), text='Images generated and saved')
+            self._write_message("Fit-Transform process completed.")
 
     def _load_data(self, data: Union[str, pd.DataFrame]) -> pd.DataFrame:
         """
         Loads data from a file or returns the DataFrame directly.
         """
+        self.__update_progress_bar(progress=0,text='Preparing Data')
         if isinstance(data, str):
             dataset = pd.read_csv(data)
         elif isinstance(data, pd.DataFrame):
@@ -163,8 +172,11 @@ class AbstractImageMethod(ABC):
         else:
             raise TypeError("data must be a string (file path) or a pandas DataFrame.")
 
+        if(dataset.select_dtypes(exclude=["number"]).shape[1]!=0):
+            raise TypeError("There are non-numeric features in data")
+
         if self.verbose:
-            print("Data successfully loaded.")
+            self._write_message("Data successfully loaded.")
 
         return dataset
 
@@ -172,14 +184,73 @@ class AbstractImageMethod(ABC):
         """
         Splits dataset into features and targets based on the problem type.
         """
-        if self.problem in ["supervised", "regression"]:
+        if self.problem in ["classification","supervised", "regression"]:
             x = dataset.drop(columns=dataset.columns[-1])
             y = dataset[dataset.columns[-1]]
         else:
             x = dataset
             y = None
-
         return x, y
+
+    def __get_image_routes(self, y, num_image):
+        """
+        Build image routes depending on problem type.
+        Args:
+            y: Class variable
+            num_image: number of image that we'll build its routes
+
+        Returns:
+            (absolute route,relative route)
+        """
+        image_file = str(num_image).zfill(6) + ".png"
+        if (self.problem in ["classification","supervised"]):
+            subfolder = str(int(y)).zfill(2)
+        else:
+            subfolder = "images"
+
+        folder_route = os.path.join(self.folder, subfolder)
+        abs_route = os.path.join(self.folder, subfolder, image_file)
+        rlt_route = os.path.join(subfolder, image_file)
+
+        if not os.path.isdir(folder_route):
+            try:
+                os.makedirs(folder_route)
+            except:
+                self._write_message("Error: Could not create subfolder")
+
+        return abs_route, rlt_route
+
+    def _save_image(self, img_matrix, y,num_image):
+        abs_route,rtv_route=self.__get_image_routes(y,num_image)
+        self._img_to_file(img_matrix,abs_route,"png")
+        self.__imgs_routes.append({"images":rtv_route,"value":y})
+        self.__update_progress_bar(progress=self.bar_transform_step)
+
+    def __create_csv(self,X,y):
+        """
+        Create csv file to save the images routes
+        """
+        filepath = self.folder + "/" + self.problem + ".csv"
+        df = pd.concat([pd.DataFrame(data=self.__imgs_routes),X], axis=1)
+        df.to_csv(filepath, index=False)
+
+    def _features_pos_to_csv(self,columns,features_positions):
+        filepath = self.folder + "/features_positions.csv"
+        df = pd.DataFrame({"feature":columns,"row":features_positions[:,0],"column":features_positions[:,1]})
+        df.to_csv(filepath, index=False)
+
+    def __update_progress_bar(self,progress=None,text=None):
+        if(self.verbose):
+            if(progress != None):
+                self.__progress = self.__progress + progress
+                self.bar.update(progress)
+
+            if(text != None):
+                self.bar.set_description(text,refresh=True)
+
+    def _write_message(self,message):
+        if(self.verbose):
+            self.bar.write(message)
 
     @abstractmethod
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
@@ -196,4 +267,7 @@ class AbstractImageMethod(ABC):
         This method is not to be called from the outside.
         """
         raise NotImplementedError("Subclasses must implement _transform_alg.")
-    
+
+    @abstractmethod
+    def _img_to_file(self, image_matrix, file,extension):
+        raise NotImplementedError("Subclasses must implement _img_to_file method.")

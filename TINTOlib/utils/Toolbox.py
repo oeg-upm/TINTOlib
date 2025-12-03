@@ -78,9 +78,6 @@ def two_d_eq(xy,Nn):
         eq_xy[yy_idx,1] = ii * 1/Nn
     return eq_xy
 
-#embedding = MDS(n_components=2)
-#mds_xy = embedding.fit_transform(transposed_input)
-# to pixels
 def Assign_features_to_pixels(xy,nn,verbose = False):
     # For each unassigned feature, find its nearest pixel, repeat until every ft is assigned
     # xy is the 2-d coordinates (normalized to [0,1]); nn is the image width. Img size = n x n
@@ -143,8 +140,6 @@ def Assign_features_to_pixels(xy,nn,verbose = False):
                     result_table[each_pixel,2] = best_feature
                     pixel_avail[each_pixel] = False
                     feature_assigned[best_feature] = True
-        if verbose:
-            print(">> Assign features to pixels:", feature_assigned.sum(),"/",Nn)
     result_table[np.isnan(result_table[:, 2]), 2] = -1
 
     img = np.full((nn,nn),'NaN').astype(object)
@@ -155,9 +150,7 @@ def Assign_features_to_pixels(xy,nn,verbose = False):
         img[xx,yy] = ft
     return img.astype(object)
 
-#eq_xy = two_d_eq(mds_xy)
-#Img = Assign_features_to_pixels(eq_xy,nn,verbose=1)
-#Init_Corr_MDS = InitCorr(dist_mat,Img,nn)
+
 
 def MDS_Im_Gen(X,nn, Img):
     [N_sam,P_Feat] = X.shape

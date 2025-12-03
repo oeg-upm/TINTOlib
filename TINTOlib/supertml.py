@@ -14,6 +14,8 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 # Typing imports
 from typing import Union
 
+from sklearn.preprocessing import MinMaxScaler
+
 # Local application/library imports
 from TINTOlib.abstractImageMethod import AbstractImageMethod
 
@@ -34,10 +36,11 @@ class SuperTML(AbstractImageMethod):
     ----------
     problem : str, optional
         The type of problem, defining how the images are grouped. 
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        Default is True. Valid values: [True, False].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+    transformer : CustomTransformer, optional
+        Preprocessing transformations like scaling, normalization,etc.
+        Default is MinMaxScaler.
+        Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -66,14 +69,14 @@ class SuperTML(AbstractImageMethod):
     def __init__(
         self,
         problem=None,
-        normalize=None,
+        transformer=MinMaxScaler(),
         verbose=None,
         pixels=default_pixels,
         feature_importance=default_feature_importance,
         font_size=default_font_size,
         random_seed=default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.image_pixels = pixels
 
@@ -81,44 +84,6 @@ class SuperTML(AbstractImageMethod):
         self.font_size = font_size
 
         self.random_seed = random_seed
-
-    def __saveSupervised(self, y, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
-        # Subfolder check
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        image.save(route_complete)
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
-        return route_relative
-    
-    def __saveRegressionOrUnsupervised(self, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-        image.save(route_complete)
-
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
-    
-    # def calculate_feature_importance(self, data):
-    #     # Dummy implementation, replace with actual feature importance calculation
-    #     # Example: {'feature_0': 0.1, 'feature_1': 0.4, 'feature_2': 0.5}
-    #     return {f'feature_{i}': np.random.rand() for i in range(data.shape[1])}
 
     def check_overlap(self, x, y, text_width, text_height, positions):
         for px, py, pw, ph in positions:
@@ -128,6 +93,7 @@ class SuperTML(AbstractImageMethod):
 
     def __event2img(self,event: np.ndarray):
         # SuperTML-VF
+
         if self.feature_importance:
             padding = 5     # Padding around the texts
 
@@ -167,14 +133,13 @@ class SuperTML(AbstractImageMethod):
 
         # SuperTML-EF
         else:
+
             cell_width = self.image_pixels // self.columns
             rows = math.ceil(len(event) / self.columns)
             cell_height = self.image_pixels // rows
-
             font = ImageFont.truetype("arial.ttf", self.font_size)
             img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3]), 'RGB')
             draw = ImageDraw.Draw(img)
-
             for i, f in enumerate(event):
                 x = ((i % self.columns)) * cell_width
                 y = (i // self.columns) * cell_height
@@ -196,7 +161,7 @@ class SuperTML(AbstractImageMethod):
                 )
 
             return img
-        
+
     def calculate_feature_importances(self, X: np.ndarray, y: np.ndarray) -> None:
         """
         Calculates feature importances using a Random Forest model.
@@ -241,38 +206,9 @@ class SuperTML(AbstractImageMethod):
         X = x.values
         Y = y.values if y is not None else None
 
-        # Variable for regression problem
-        imagesRoutesArr = []
-
-        try:
-            os.makedirs(self.folder)
-            if self.verbose:
-                print("The folder was created " + self.folder + "...")
-        except:
-            if self.verbose:
-                print("The folder " + self.folder + " is already created...")
         for i in range(X.shape[0]):
-
             image = self.__event2img(X[i])
+            self._save_image(image,Y[i],i)
 
-            if self.problem == "supervised":
-                route = self.__saveSupervised(Y[i], i, image)
-                imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                route = self.__saveRegressionOrUnsupervised(i, image)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
-        
-        if self.problem == "supervised" :
-            data={'images':imagesRoutesArr,'class':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr,'values':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)     
+    def _img_to_file(self,image,file,extension):
+        image.save(file)

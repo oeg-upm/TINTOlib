@@ -15,9 +15,12 @@ from sklearn.metrics.pairwise import euclidean_distances
 # Typing imports
 from typing import Optional, Union
 
+from sklearn.preprocessing import MinMaxScaler
+
 # Local application/library imports
 from TINTOlib.abstractImageMethod import AbstractImageMethod
-from TINTOlib.utils import Toolbox
+from TINTOlib.utils import Toolbox, CustomTransformer
+
 
 ###########################################################
 ################    REFINED    ##############################
@@ -33,10 +36,11 @@ class REFINED(AbstractImageMethod):
     ----------
     problem : str, optional
         The type of problem, defining how the images are grouped. 
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        Default is True. Valid values: [True, False].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+    transformer : CustomTransformer, optional
+        Preprocessing transformations like scaling, normalization,etc.
+        Default is MinMaxScaler.
+        Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.xº
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -63,14 +67,14 @@ class REFINED(AbstractImageMethod):
     def __init__(
         self,
         problem: Optional[str] = None,
-        normalize: Optional[bool] = None,
+        transformer: Optional[CustomTransformer] = MinMaxScaler(),
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
         zoom: Optional[int] = default_zoom,
         random_seed: Optional[int] = default_random_seed,
     ):   
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
         if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
@@ -80,96 +84,23 @@ class REFINED(AbstractImageMethod):
         self.zoom = zoom
         self.random_seed = random_seed
 
-    def __saveSupervised(self, classValue, i, folder, matrix_a, fig, ax):
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(classValue)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
-        route = os.path.join(folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        shape = int(math.sqrt(matrix_a.shape[0]))
-        data = matrix_a.reshape(shape, shape)
-
-        fig.set_size_inches(shape, shape)
-        fig.set_dpi(self.zoom)
-        ax.clear()
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        ax.imshow(data, cmap='viridis', interpolation="nearest")
-        ax.axis('off')
-        fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
-        return route_relative
-
-    def __saveRegressionOrUnsupervised(self, i, folder, matrix_a, fig, ax):
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6)  + '.' + extension
-        route = os.path.join(folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        shape = int(math.sqrt(matrix_a.shape[0]))
-        data = matrix_a.reshape(shape,shape)
-
-        fig.set_size_inches(shape, shape)
-        fig.set_dpi(self.zoom)
-        ax.clear()
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        ax.imshow(data, cmap='viridis', interpolation="nearest")
-        ax.axis('off')
-        fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
-
+    def _img_to_file(self,image_matrix,file,extension):
+        shape = int(math.sqrt(image_matrix.shape[0]))
+        data = image_matrix.reshape(shape, shape)
+        plt.axis('off')
+        plt.imshow(data, cmap='viridis', interpolation="nearest")
+        plt.savefig(file,pad_inches=0, bbox_inches='tight', dpi=self.zoom)
+        
     def __saveImages(self,gene_names,coords,map_in_int, X, Y, nn):
 
         gene_names_MDS, coords_MDS, map_in_int_MDS=(gene_names,coords,map_in_int)
         X_REFINED_MDS = Toolbox.REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
-        imagesRoutesArr=[]
-        total = Y.shape[0]
 
         if self.verbose:
             print("SAVING")
-        
-        fig,ax = plt.subplots()
 
         for i in range(len(X_REFINED_MDS)):
-            if self.problem == "supervised":
-                route=self.__saveSupervised(Y[i], i, self.folder, X_REFINED_MDS[i], fig, ax)
-                imagesRoutesArr.append(route)
-
-            elif self.problem == "unsupervised" or self.problem == "regression" :
-                route = self.__saveRegressionOrUnsupervised(i, self.folder, X_REFINED_MDS[i], fig, ax)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
-            if self.verbose:
-                print("Created ", str(i+1), "/", int(total))
-
-        if self.problem == "supervised" :
-            data={'images':imagesRoutesArr,'class':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr,'values':Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+            self._save_image(X_REFINED_MDS[i],Y[i],i)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()

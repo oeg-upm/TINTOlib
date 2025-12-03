@@ -13,8 +13,12 @@ from scipy.stats import rankdata, spearmanr
 # Typing imports
 from typing import List, Optional, Union
 
+from sklearn.preprocessing import MinMaxScaler
+
 # Local application/library imports
 from TINTOlib.abstractImageMethod import AbstractImageMethod
+from TINTOlib.utils.CustomTransformer import CustomTransformer
+
 
 ###########################################################
 ################    IGTD    ###############################
@@ -30,10 +34,11 @@ class IGTD(AbstractImageMethod):
     ----------
     problem : str, optional
         The type of problem, defining how the images are grouped. 
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        Default is True. Valid values: [True, False].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+   transformer : CustomTransformer, optional
+        Preprocessing transformations like scaling, normalization,etc.
+        Default is MinMaxScaler.
+        Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -90,7 +95,7 @@ class IGTD(AbstractImageMethod):
     def __init__(
         self,
         problem: Optional[str] = None,
-        normalize: Optional[bool] = None,
+        transformer: Optional[CustomTransformer] = MinMaxScaler(),
         verbose: Optional[bool] = None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
@@ -103,7 +108,7 @@ class IGTD(AbstractImageMethod):
         zoom: Optional[int] = default_zoom,
         random_seed: Optional[int] = default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.scale = scale
         self.fea_dist_method = fea_dist_method
@@ -556,74 +561,15 @@ class IGTD(AbstractImageMethod):
 
         return index_record, err_record, run_time
 
-    def __saveSupervised(self, y, i, data_i, fig, ax):
-        '''
-        Saves the matrix as an image in a supervised dataset.
-
-        Input
-        -----
-        i: int
-            the index of the row within the dataset
-        y:
-            the true label of the i-th row
-        data_i: ndarray
-            the matrix containing the data to be saved as an image
-        '''
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        # Subfolder check
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        fig.set_size_inches(self.scale[1], self.scale[0])
+    def _img_to_file(self,image_matrix,file,extension):
+        fig = plt.figure(figsize=(self.scale[1], self.scale[0]))
         fig.set_dpi(self.zoom)
-        ax.clear()
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
-        ax.axis('off')
+        plt.imshow(image_matrix, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
+        plt.axis('off')
         fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
-
-    def __saveRegressionOrUnsupervised(self, i, data_i, fig, ax):
-        '''
-        Saves the matrix as an image in a regression or unsupervised dataset.
-
-        Input
-        -----
-        i: int
-            the index of the row within the dataset
-        data_i: ndarray
-            the matrix containing the data to be saved as an image
-        '''
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        fig.set_size_inches(self.scale[1], self.scale[0])
-        fig.set_dpi(self.zoom)
-        ax.clear()
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        ax.imshow(data_i, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
-        ax.axis('off')
-        fig.canvas.draw()
-        fig.savefig(fname=route_complete, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
+        fig.savefig(fname=file, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
+        plt.close(fig)
 
     def __generate_image_data(self, data, index, num_row, num_column, coord, labels):
         '''
@@ -654,17 +600,12 @@ class IGTD(AbstractImageMethod):
         samples:
             the names of indices of the samples.
         '''
-        image_folder = self.folder
-        imagesRoutesArr = []
+
         if isinstance(data, pd.DataFrame):
             samples = data.index.map(np.str)
             data = data.values
         else:
             samples = [str(i) for i in range(data.shape[0])]
-
-        if os.path.exists(image_folder):
-            shutil.rmtree(image_folder)
-        os.makedirs(image_folder)
 
         data_2 = data.copy()
         data_2 = data_2[:, index]
@@ -688,32 +629,12 @@ class IGTD(AbstractImageMethod):
 
             image_data[:, :, i] = data_i
             image_data[:, :, i] = 255 - image_data[:, :, i]
-            if image_folder is not None:
-                if self.problem == "supervised":
-                    route = self.__saveSupervised(labels[i], i, data_i, fig, ax)
-                    imagesRoutesArr.append(route)
-                elif self.problem == "unsupervised" or self.problem == "regression":
-                    route = self.__saveRegressionOrUnsupervised(i, data_i, fig, ax)
-                    imagesRoutesArr.append(route)
-                else:
-                    print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
 
-                # Verbose
-                if self.verbose:
-                    print("Created ", str(i + 1), "/", int(total))
+            self._save_image(data_i,labels[i],i)
 
-        if self.problem == "supervised":
-            data = {'images': imagesRoutesArr, 'class': labels}
-            supervisedCSV = pd.DataFrame(data=data)
-            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            unsupervisedCSV = pd.DataFrame(data=data)
-            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr, 'values': labels}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+            # Verbose
+            if self.verbose:
+                print("Created ", str(i + 1), "/", int(total))
 
         return image_data, samples
 
@@ -751,3 +672,5 @@ class IGTD(AbstractImageMethod):
             coord=self.coordinate,
             labels=Y
         )
+        print(np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))
+        self._features_pos_to_csv(x.columns,np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))

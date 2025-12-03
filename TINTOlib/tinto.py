@@ -14,6 +14,8 @@ from sklearn.manifold import TSNE
 # Typing imports
 from typing import Union
 
+from sklearn.preprocessing import MinMaxScaler
+
 # Local application/library imports
 from TINTOlib.abstractImageMethod import AbstractImageMethod
 
@@ -31,10 +33,11 @@ class TINTO(AbstractImageMethod):
     ----------
     problem : str, optional
         The type of problem, defining how the images are grouped. 
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        Default is True. Valid values: [True, False].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+    transformer : CustomTransformer, optional
+        Preprocessing transformations like scaling, normalization,etc.
+        Default is MinMaxScaler.
+        Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -99,7 +102,7 @@ class TINTO(AbstractImageMethod):
     def __init__(
         self,
         problem=None,
-        normalize=None,
+        transformer=MinMaxScaler(),
         verbose=None,
         pixels=default_pixels,
         algorithm=default_algorithm,
@@ -114,7 +117,7 @@ class TINTO(AbstractImageMethod):
         zoom=default_zoom,
         random_seed=default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.pixels = pixels
 
@@ -307,67 +310,25 @@ class TINTO(AbstractImageMethod):
         return matrix
 
 
-    def __saveSupervised(self, y, i, matrix_a):
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
-        # Subfolder check
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
 
-        # Repeat matrix to apply zoom
-        matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
-        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension, dpi=self.zoom)
-
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
-        return route_relative
-
-    def __saveRegressionOrUnsupervised(self, i, matrix_a):
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        # Repeat matrix to apply zoom
-        matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
-        matplotlib.image.imsave(route_complete, matrix_a, cmap='binary', format=extension, dpi=self.zoom)
-
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
 
     def __imageSampleFilterSubmatrix(self, X, Y, coord, matrix):
         """
         This function creates the samples, i.e., the images. This function has the following specifications:
         - The first conditional performs the pre-processing of the images by creating the matrices.
-        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
-          account in this step:
-            - The samples will be created according to the number of targets. Therefore, each folder that is
-              created will contain the images created for each target.
-            - In the code, the images are exported in PNG format; this can be changed to any other format.
+        - Then the for loop generates the images for each sample.
         """
         # Hyperparams
         amplification = self.amplification
         distance = self.distance
         steps = self.steps
         option = self.option
-        imagesRoutesArr=[]
-
         # Generate the filter
         if distance * steps * amplification != 0:  # The function is only called if there are no zeros (blurring).
             filter = self.__createFilter()
 
         total = X.shape[0]
+
         # In this part, images are generated for each sample.
         for i in range(total):
             matrix_a = np.zeros(matrix.shape)
@@ -378,31 +339,12 @@ class TINTO(AbstractImageMethod):
                 for eje_x, eje_y in coord:
                     matrix_a[int(eje_x), int(eje_y)] = next(iter_values_X)
 
-            if self.problem == "supervised":
-                route=self.__saveSupervised(Y[i],i,matrix_a)
-                imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                route = self.__saveRegressionOrUnsupervised( i, matrix_a)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+            matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
+            self._save_image(matrix_a,Y[i], i)
 
             #Verbose
             if self.verbose:
-                print("Created ", str(i + 1), "/", int(total))
-
-        if self.problem == "supervised":
-            data = {'images': imagesRoutesArr, 'class': Y}
-            supervisedCSV = pd.DataFrame(data=data)
-            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            unsupervisedCSV = pd.DataFrame(data=data)
-            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr, 'values': Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+                self.bar.write("Created ", str(i + 1), "/", int(total))
 
         return matrix
 
@@ -410,13 +352,8 @@ class TINTO(AbstractImageMethod):
         """
         This function creates the samples, i.e., the images. This function has the following specifications:
         - The first conditional performs the pre-processing of the images by creating the matrices.
-        - Then the for loop generates the images for each sample. Some assumptions have to be taken into
-          account in this step:
-            - The samples will be created according to the number of targets. Therefore, each folder that is
-              created will contain the images created for each target.
-            - In the code, the images are exported in PNG format; this can be changed to any other format.
+        - Then the for loop generates the images for each sample.
         """
-        imagesRoutesArr = []
         total = X.shape[0]
         # Aquí es donde se realiza el preprocesamiento siendo 'matriz' = 'm'
         if self.train_m:
@@ -430,7 +367,7 @@ class TINTO(AbstractImageMethod):
 
             matriz = np.copy(matrix_a)
         if self.verbose:
-            print("Generating images......")
+            self.bar.write("Generating images......")
         # En esta parte se generan las imágenes por cada muestra
         for i in range(total):
             matrix_a = np.copy(matriz)
@@ -442,31 +379,13 @@ class TINTO(AbstractImageMethod):
             for j in range(X.shape[1]):
                 matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
 
-            if self.problem == "supervised":
-                    route=self.__saveSupervised(Y[i],i,matrix)
-                    imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                    route = self.__saveRegressionOrUnsupervised( i, matrix_a)
-                    imagesRoutesArr.append(route)
-            else:
-                    print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
+            matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
+            self._save_image(matrix_a, Y[i], i)
 
-            #Verbose
+            # Verbose
             if self.verbose:
-                print("Created ", str(i + 1), "/", int(total))
+                self.bar.write("Created ", str(i + 1), "/", int(total))
 
-        if self.problem == "supervised":
-            data = {'images': imagesRoutesArr, 'class': Y}
-            supervisedCSV = pd.DataFrame(data=data)
-            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            unsupervisedCSV = pd.DataFrame(data=data)
-            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr, 'values': Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
 
         return matrix
 
@@ -484,7 +403,7 @@ class TINTO(AbstractImageMethod):
         X_trans = X.T
 
         if self.verbose:
-            print("Selected algorithm: " + self.algorithm)
+            self.bar.write("Selected algorithm: " + self.algorithm)
 
         if self.algorithm == 'PCA':
             X_embedded = PCA(n_components=2, random_state=self.random_seed).fit(X_trans).transform(X_trans)
@@ -494,13 +413,12 @@ class TINTO(AbstractImageMethod):
                 labels = np.append(labels, labels, axis=0)
             X_embedded = TSNE(n_components=2, random_state=self.random_seed, perplexity=50).fit_transform(X_trans)
         else:
-            print("Error: Incorrect algorithm")
+            self.bar.write("Error: Incorrect algorithm")
             X_embedded = np.random.rand(X.shape[1], 2)
 
         data_coord = {'x': X_embedded[:, 0], 'y': X_embedded[:, 1], 'Label': labels}
         dc = pd.DataFrame(data=data_coord)
         self.obtain_coord = dc.groupby('Label').mean().values
-
         del X_trans
         gc.collect()
 
@@ -525,10 +443,10 @@ class TINTO(AbstractImageMethod):
         try:
             os.makedirs(folder)
             if self.verbose:
-                print("The folder was created " + folder + "...")
+                self.bar.write("The folder was created " + folder + "...")
         except:
             if self.verbose:
-                print("The folder " + folder + " is already created...")
+                self.bar.write("The folder " + folder + " is already created...")
 
         if self.submatrix:
             self.m = self.__imageSampleFilterSubmatrix(X, Y, self.pos_pixel_caract, self.m)
@@ -557,3 +475,7 @@ class TINTO(AbstractImageMethod):
         if (y is None):
             y = np.zeros(x.shape[0])
         self.__createImage(x, y, self.folder)
+        self._features_pos_to_csv(x.columns,self.pos_pixel_caract)
+
+    def _img_to_file(self, image_matrix, file,extension):
+        matplotlib.image.imsave(file, image_matrix, cmap='binary', format=extension, dpi=self.zoom)

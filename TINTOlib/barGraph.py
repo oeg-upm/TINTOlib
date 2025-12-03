@@ -5,6 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 from PIL import Image
+from sklearn.preprocessing import MinMaxScaler
 
 # Typing imports
 from typing import Optional, Union
@@ -27,10 +28,11 @@ class BarGraph(AbstractImageMethod):
     ----------
     problem : str, optional
         The type of problem, defining how the images are grouped. 
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        Default is True. Valid values: [True, False].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+    transformer : CustomTransformer, optional
+        Preprocessing transformations like scaling, normalization,etc.
+        Default is MinMaxScaler.
+        Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.
     verbose : bool, optional
         Show execution details in the terminal. 
         Default is False. Valid values: [True, False].
@@ -52,13 +54,14 @@ class BarGraph(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        normalize=None,
+        transformer=MinMaxScaler(),
         verbose = None,
+
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
         zoom: int = default_zoom,
     ):
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         if not isinstance(pixel_width, int):
             raise TypeError(f"pixel_width must be of type int (got {type(pixel_width)})")
@@ -73,45 +76,12 @@ class BarGraph(AbstractImageMethod):
         self.gap = gap
 
         self.zoom = zoom
-                
-    def __saveSupervised(self, y, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
-        # Subfolder check
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
 
-        img = Image.fromarray(np.uint8(np.squeeze(image) * 255))
-        img = img.resize(size=(img.size[0]*self.zoom, img.size[1]*self.zoom), resample=Image.Resampling.NEAREST)
-        img.save(route_complete)
+    def _img_to_file(self, image_matrix, file,extension):
+        img = Image.fromarray(np.uint8(np.squeeze(image_matrix) * 255))
+        img = img.resize(size=(img.size[0] * self.zoom, img.size[1] * self.zoom), resample=Image.Resampling.NEAREST)
+        img.save(file)
 
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
-        return route_relative
-
-    def __saveRegressionOrUnsupervised(self, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        img = Image.fromarray(np.uint8(np.squeeze(image) * 255))
-        img = img.resize(size=(img.size[0]*self.zoom, img.size[1]*self.zoom), resample=Image.Resampling.NEAREST)
-        img.save(route_complete)
-
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
     
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         """
@@ -122,10 +92,6 @@ class BarGraph(AbstractImageMethod):
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         x = x.values
         Y = y.values if y is not None else None
-
-        # TODO: reorder columns
-
-        imagesRoutesArr = []    # List to store the routes
 
         # Image variables
         n_columns = x.shape[1]
@@ -149,24 +115,4 @@ class BarGraph(AbstractImageMethod):
                     (self.gap+(step_column*i_bar)) : (self.gap+(step_column*i_bar)) + self.pixel_width # The width of the column
                 ] = 1
                 
-            if self.problem == "supervised":
-                route = self.__saveSupervised(Y[i], i, image)
-                imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                route = self.__saveRegressionOrUnsupervised(i, image)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
-
-        if self.problem == "supervised":
-            data = {'images': imagesRoutesArr, 'class': Y}
-            supervisedCSV = pd.DataFrame(data=data)
-            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            unsupervisedCSV = pd.DataFrame(data=data)
-            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr, 'values': Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)
+            self._save_image(image,Y[i],i)
