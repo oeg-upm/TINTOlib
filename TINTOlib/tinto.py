@@ -342,10 +342,6 @@ class TINTO(AbstractImageMethod):
             matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
             self._save_image(matrix_a,Y[i], i)
 
-            #Verbose
-            if self.verbose:
-                self.bar.write("Created ", str(i + 1), "/", int(total))
-
         return matrix
 
     def __imageSampleFilter(self, X, Y, coord, matrix):

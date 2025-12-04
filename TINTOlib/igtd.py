@@ -377,8 +377,6 @@ class IGTD(AbstractImageMethod):
                 step_record[ii] = s
 
             err_record.append(err)
-            if self.verbose:
-                print('Step ' + str(s) + ' err: ' + str(err))
             index_record[s + 1, :] = index.copy()
             run_time.append(time.time() - t1)
 
@@ -534,8 +532,6 @@ class IGTD(AbstractImageMethod):
                 step_record[ii] = s
 
             err_record.append(err)
-            if self.verbose:
-                print('Step ' + str(s) + ' err: ' + str(err))
             index_record[s + 1, :] = index.copy()
             run_time.append(time.time() - t1)
 
@@ -632,10 +628,6 @@ class IGTD(AbstractImageMethod):
 
             self._save_image(data_i,labels[i],i)
 
-            # Verbose
-            if self.verbose:
-                print("Created ", str(i + 1), "/", int(total))
-
         return image_data, samples
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
@@ -672,5 +664,4 @@ class IGTD(AbstractImageMethod):
             coord=self.coordinate,
             labels=Y
         )
-        print(np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))
         self._features_pos_to_csv(x.columns,np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))

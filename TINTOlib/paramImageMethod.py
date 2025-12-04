@@ -66,7 +66,7 @@ class ParamImageMethod(AbstractImageMethod):
         if (self._relocate):
             if (self._duplicated(self._features_positions)):
                 optimizer = AssignerFactory.get_assigner('RelevanceAssigner', algorithm=self._algorithm_opt)
-                self._features_positions = optimizer.assign(self._features_coord, self._image_dim)
+                self._features_positions = optimizer.assign(self._features_relevance, self._image_dim)
 
 
     def _duplicated(self, features_positions):

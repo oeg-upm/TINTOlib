@@ -86,7 +86,6 @@ class AbstractImageMethod(ABC):
             self.__progress=0
             dataset = self._load_data(data)
             x, y = self._split_features_targets(dataset)
-
             # Transform features if required
             if self.transformer!=None:
                 x = pd.DataFrame(self.transformer.fit_transform(x), columns=x.columns)

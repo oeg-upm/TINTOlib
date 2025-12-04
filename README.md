@@ -126,18 +126,19 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 ## 🧪 Methods
 TINTOlib includes a variety of methods for generating synthetic images. Below is a summary of the supported methods and their hyperparameters:
 
-| Methods | Class | Hyperparameters |
-|:----------------------------------------------------------------:|:------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| [TINTO](https://github.com/oeg-upm/TINTO) | `TINTO()` | `problem` `normalize` `verbose` `pixels` `algorithm` `blur` `submatrix` `amplification` `distance` `steps` `option` `times` `train_m` `zoom` `random_seed` |
-| [IGTD](https://github.com/zhuyitan/igtd) | `IGTD()` | `problem` `normalize` `verbose` `scale` `fea_dist_method` `image_dist_method` `error` `max_step` `val_step` `switch_t` `min_gain` `zoom` `random_seed` |
-| [REFINED](https://github.com/omidbazgirTTU/REFINED) | `REFINED()` | `problem` `normalize` `verbose` `hcIterations` `n_processors` `zoom` `random_seed` |
-| [BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `BarGraph()` | `problem` `normalize` `verbose` `pixel_width` `gap` `zoom` |
-| [DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `DistanceMatrix()` | `problem` `normalize` `verbose` `zoom` |
-| [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/) | `Combination()` | `problem` `normalize` `verbose` `zoom` |
-| [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test) | `SuperTML()` | `problem` `normalize` `verbose` `pixels` `feature_importance` `font_size` `random_seed` |
-| [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87) | `FeatureWrap()` | `problem` `normalize` `verbose` `size` `bins` `zoom` |
-| [BIE](https://ieeexplore.ieee.org/document/10278393) | `BIE()` | `problem` `normalize` `verbose` `precision` `zoom` |
-
+|                                                                  Methods                                                                   |       Class        |                                                                                       Hyperparameters                                                                                        |
+|:------------------------------------------------------------------------------------------------------------------------------------------:|:------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                                 [TINTO](https://github.com/oeg-upm/TINTO)                                                  |     `TINTO()`      |                 `problem` `transformer` `verbose` `pixels` `algorithm` `blur` `submatrix` `amplification` `distance` `steps` `option` `times` `train_m` `zoom` `random_seed`                 |
+|                                                  [IGTD](https://github.com/zhuyitan/igtd)                                                  |      `IGTD()`      |                   `problem` `transformer` `verbose` `scale` `fea_dist_method` `image_dist_method` `error` `max_step` `val_step` `switch_t` `min_gain` `zoom` `random_seed`                   |
+|                                            [REFINED](https://github.com/omidbazgirTTU/REFINED)                                             |    `REFINED()`     |                                                     `problem` `transformer` `verbose` `hcIterations` `n_processors` `zoom` `random_seed`                                                     |
+|                            [BarGraph](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)                             |    `BarGraph()`    |                                                                 `problem` `transformer` `verbose` `pixel_width` `gap` `zoom`                                                                 |
+|                         [DistanceMatrix](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)                          | `DistanceMatrix()` |                                                                           `problem` `transformer` `verbose` `zoom`                                                                           |
+|                           [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)                           |  `Combination()`   |                                                                           `problem` `transformer` `verbose` `zoom`                                                                           |
+|                                      [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)                                      |    `SuperTML()`    |                                                  `problem` `transformer` `verbose` `pixels` `feature_importance` `font_size` `random_seed`                                                   |
+|                               [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87)                                |  `FeatureWrap()`   |                                                                    `problem` `transformer` `verbose` `size` `bins` `zoom`                                                                    |
+|                                            [BIE](https://ieeexplore.ieee.org/document/10278393)                                            |      `BIE()`       |                                                                     `problem` `transformer` `verbose` `precision` `zoom`                                                                     |
+|                                  [Fotomics](https://www.biorxiv.org/content/10.1101/2022.07.08.499309v2)                                   |    `Fotomic()`     | `image_dim` `problem` `transformer` `verbose` `outliers` `min_percentile` `max_percentile`  `outliers_treatment` `assignment_method` `relocate` `algorithm_opt` `group_method` `random_seed` |
+ |                                     [DeepInsight](https://www.nature.com/articles/s41598-024-63630-7)                                      | `DeepInsight()` |                                  `image_dim` `problem` `transformer` `verbose`  `assignment_method` `relocate` `algorithm_opt` `group_method` `random_seed`                                  |
 ---
 
 ## ⚠️ Platform-Specific Requirements for Certain Transformation Methods
@@ -346,7 +347,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[Raúl García-Castro](https://github.com/rgcmme)**
 - **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
 - **[Jiayun Liu](https://github.com/DCY1117)**
-
+- **[Javier López](https://github.com/javilecrin)**
 ---
 
 ## 🏛️ Contributors
