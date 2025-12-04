@@ -80,7 +80,7 @@ class DeepInsight(ParamImageMethod):
             case 'PCA':
                 return PCA(n_components=2,random_state=self._random_seed).fit_transform(x)
             case 't-SNE':
-                return TSNE(n_components=2,metric='cosine',random_state=self._random_seed).fit_transform(x)
+                return TSNE(n_components=2,metric='cosine',random_state=self._random_seed,perplexity=self._image_dim).fit_transform(x)
             case 'KPCA':
                 return KernelPCA(n_components=2,kernel='rbf',random_state=self._random_seed).fit_transform(x)
 
