@@ -14,10 +14,10 @@
   best_classical:
     family: Trees
     best_variant: CatBoost
-    primary_raw: 0.56380 ± 0.01882
-    primary_mean: 0.5638
-    secondary_raw: 0.53572 ± 0.02054
-    secondary_mean: 0.53572
+    primary_raw: 0.55928 ± 0.00248
+    primary_mean: 0.55928
+    secondary_raw: 0.53078 ± 0.00346
+    secondary_mean: 0.53078
   best_transformed:
     family: ViT
     best_variant: BarGraph
@@ -37,7 +37,7 @@
     missing_pct: 0.0
     n_classes: 9
     imbalance_ratio: 1.0
-    source: https://api.openml.org/data/v1/download/1468/cnae-9.arff
+    source: https://api.openml.org/data/v1/download/1586233/cnae-9.arff
   best_classical:
     family: MLP
     best_variant: MLP
@@ -47,11 +47,146 @@
     secondary_mean: 0.96992
   best_transformed:
     family: ViT+MLP
+    best_variant: SuperTML
+    primary_raw: 0.97037 ± 0.00517
+    primary_mean: 0.97037
+    secondary_raw: 0.97035 ± 0.00532
+    secondary_mean: 0.97035
+- dataset: connect-4
+  meta:
+    task: multiclass
+    target: class
+    sample_size: 67557
+    n_features: 42
+    n_num_features: 0
+    n_cat_features: 42
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 3
+    imbalance_ratio: 6.896107923709102
+    source: https://api.openml.org/data/v1/download/4965243/connect-4.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.86860 ± 0.00059
+    primary_mean: 0.8686
+    secondary_raw: 0.73852 ± 0.00118
+    secondary_mean: 0.73852
+  best_transformed:
+    family: ViT+MLP
+    best_variant: IGTD
+    primary_raw: 0.86819 ± 0.00221
+    primary_mean: 0.86819
+    secondary_raw: 0.86365 ± 0.00250
+    secondary_mean: 0.86365
+- dataset: covtype
+  meta:
+    task: multiclass
+    target: Cover_Type (integer 1..7)
+    sample_size: 581012
+    n_features: 54
+    n_num_features: 10
+    n_cat_features: 44
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 7
+    imbalance_ratio: null
+    source: OpenML/UCI Covertype
+  best_classical:
+    family: MLP
+    best_variant: MLP
+    primary_raw: 0.96310 ± 0.00000
+    primary_mean: 0.9631
+    secondary_raw: 0.96312 ± 0.00000
+    secondary_mean: 0.96312
+  best_transformed:
+    family: ViT+MLP
     best_variant: REFINED
-    primary_raw: 0.96173 ± 0.00517
-    primary_mean: 0.96173
-    secondary_raw: 0.96194 ± 0.00487
-    secondary_mean: 0.96194
+    primary_raw: 0.97050 ± 0.00000
+    primary_mean: 0.9705
+    secondary_raw: 0.97051 ± 0.00000
+    secondary_mean: 0.97051
+- dataset: dna
+  meta:
+    task: multiclass
+    target: class
+    sample_size: 3186
+    n_features: 180
+    n_num_features: 0
+    n_cat_features: 180
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 3
+    imbalance_ratio: 2.1620915032679737
+    source: https://api.openml.org/data/v1/download/40670/dna.arff
+  best_classical:
+    family: Trees
+    best_variant: LightGBM
+    primary_raw: 0.96904 ± 0.00229
+    primary_mean: 0.96904
+    secondary_raw: 0.96586 ± 0.00223
+    secondary_mean: 0.96586
+  best_transformed:
+    family: ViT+MLP
+    best_variant: IGTD
+    primary_raw: 0.96569 ± 0.00482
+    primary_mean: 0.96569
+    secondary_raw: 0.96579 ± 0.00484
+    secondary_mean: 0.96579
+- dataset: gas
+  meta:
+    task: multiclass
+    target: Class
+    sample_size: 13910
+    n_features: 128
+    n_num_features: 128
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 6
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/1588715/gas-drift.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.99482 ± 0.00021
+    primary_mean: 0.99482
+    secondary_raw: 0.99480 ± 0.00026
+    secondary_mean: 0.9948
+  best_transformed:
+    family: CNN
+    best_variant: REFINED
+    primary_raw: 0.99559 ± 0.00092
+    primary_mean: 0.99559
+    secondary_raw: 0.99559 ± 0.00092
+    secondary_mean: 0.99559
+- dataset: isolet
+  meta:
+    task: multiclass
+    target: class
+    sample_size: 7797
+    n_features: 617
+    n_num_features: 617
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: 26
+    imbalance_ratio: 1.0067114093959733
+    source: https://api.openml.org/data/v1/download/52405/isolet.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.96222 ± 0.00316
+    primary_mean: 0.96222
+    secondary_raw: 0.96221 ± 0.00314
+    secondary_mean: 0.96221
+  best_transformed:
+    family: ViT
+    best_variant: REFINED
+    primary_raw: 0.96376 ± 0.00268
+    primary_mean: 0.96376
+    secondary_raw: 0.96371 ± 0.00267
+    secondary_mean: 0.96371
 - dataset: mfeat-fourier
   meta:
     task: multiclass

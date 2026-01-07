@@ -3,28 +3,55 @@
     task: regression
     target: MEDV
     sample_size: 506
-    n_features: 13
+    n_features: N/A
     n_num_features: 11
     n_cat_features: 2
     categorical_pct: 0.0
-    missing_pct: 0.0
+    missing_pct: N/A
     n_classes: null
     imbalance_ratio: null
     source: https://www.openml.org/d/531
   best_classical:
     family: Trees
-    best_variant: CatBoost
-    primary_raw: 2.700084 ± 0.106243
-    primary_mean: 2.700084
-    secondary_raw: null
-    secondary_mean: null
+    best_variant: LightGBM
+    primary_raw: 2.64293 ± 0.08667
+    primary_mean: 2.64293
+    secondary_raw: 0.92436 ± 0.00503
+    secondary_mean: 0.92436
   best_transformed:
     family: CNN+MLP
-    best_variant: REFINED
-    primary_raw: 2.438903 ± 0.162972
-    primary_mean: 2.438903
-    secondary_raw: null
-    secondary_mean: null
+    best_variant: DistanceMatrix
+    primary_raw: 2.39441 ± 0.14017
+    primary_mean: 2.39441
+    secondary_raw: 0.93780 ± 0.00728
+    secondary_mean: 0.9378
+- dataset: california_housing
+  meta:
+    task: regression
+    target: medianHouseValue
+    sample_size: 20640
+    n_features: 8
+    n_num_features: 8
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44977/california_housing.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 0.43989 ± 0.00403
+    primary_mean: 0.43989
+    secondary_raw: 0.85687 ± 0.00263
+    secondary_mean: 0.85687
+  best_transformed:
+    family: CNN
+    best_variant: BIE
+    primary_raw: 0.44662 ± 0.00312
+    primary_mean: 0.44662
+    secondary_raw: 0.85247 ± 0.00205
+    secondary_mean: 0.85247
 - dataset: geographical_origin_of_music
   meta:
     task: regression
@@ -52,6 +79,60 @@
     primary_mean: 15.02703
     secondary_raw: 0.37760 ± 0.05210
     secondary_mean: 0.3776
+- dataset: health_insurance
+  meta:
+    task: regression
+    target: whrswk
+    sample_size: 22272
+    n_features: 11
+    n_num_features: 4
+    n_cat_features: 7
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44993/health_insurance.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 14.24579 ± 0.00935
+    primary_mean: 14.24579
+    secondary_raw: 0.41469 ± 0.00077
+    secondary_mean: 0.41469
+  best_transformed:
+    family: ViT
+    best_variant: REFINED
+    primary_raw: 14.31386 ± 0.04021
+    primary_mean: 14.31386
+    secondary_raw: 0.40908 ± 0.00332
+    secondary_mean: 0.40908
+- dataset: pumadyn32nh
+  meta:
+    task: regression
+    target: thetadd6
+    sample_size: 8192
+    n_features: 32
+    n_num_features: 32
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44981/pumadyn32nh.arff
+  best_classical:
+    family: Trees
+    best_variant: CatBoost
+    primary_raw: 0.02097 ± 0.00004
+    primary_mean: 0.02097
+    secondary_raw: 0.64498 ± 0.00135
+    secondary_mean: 0.64498
+  best_transformed:
+    family: ViT
+    best_variant: REFINED
+    primary_raw: 0.02185 ± 0.00008
+    primary_mean: 0.02185
+    secondary_raw: 0.61439 ± 0.00293
+    secondary_mean: 0.61439
 - dataset: student_performance_por
   meta:
     task: regression
@@ -60,7 +141,7 @@
     n_features: 30
     n_num_features: 13
     n_cat_features: 17
-    categorical_pct: 0.5666666666666667
+    categorical_pct: 0.0
     missing_pct: 0.0
     n_classes: null
     imbalance_ratio: null
@@ -79,3 +160,30 @@
     primary_mean: 2.0062
     secondary_raw: 0.29482 ± 0.01526
     secondary_mean: 0.29482
+- dataset: superconductivity
+  meta:
+    task: regression
+    target: critical_temp
+    sample_size: 21263
+    n_features: 81
+    n_num_features: 81
+    n_cat_features: 0
+    categorical_pct: 0.0
+    missing_pct: 0.0
+    n_classes: null
+    imbalance_ratio: null
+    source: https://api.openml.org/data/v1/download/44964/superconductivity.arff
+  best_classical:
+    family: Trees
+    best_variant: XGBoost
+    primary_raw: 9.39012 ± 0.01083
+    primary_mean: 9.39012
+    secondary_raw: 0.92444 ± 0.00017
+    secondary_mean: 0.92444
+  best_transformed:
+    family: CNN
+    best_variant: TINTO
+    primary_raw: 9.48401 ± 0.05426
+    primary_mean: 9.48401
+    secondary_raw: 0.92292 ± 0.00088
+    secondary_mean: 0.92292
