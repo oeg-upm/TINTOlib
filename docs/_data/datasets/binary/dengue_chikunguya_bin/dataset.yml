@@ -2,10 +2,10 @@ meta:
   id: null
   name: dengue_chikunguya_bin
   task: binary
-  sample_size: null
-  instances: null
-  features: N/A
-  n_features: N/A
+  sample_size: 11448
+  instances: 11448
+  features: 26
+  n_features: 26
   n_num_features: 2
   n_cat_features: 24
   source: "https://data.mendeley.com/datasets/bv26kznkjs/1"
@@ -13,7 +13,7 @@ meta:
   task_intro: "**Source**: Mendeley Data"
   target_variable: "CLASSI_FIN"
   n_classes: 2
-  imbalance_ratio: null
+  imbalance_ratio: 1.0
   missing_cells_estimated_from_file: N/A
   missing_pct_estimated_from_file: N/A
 leaderboard_columns:

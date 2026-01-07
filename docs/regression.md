@@ -153,8 +153,9 @@ title: Regression Benchmarks
 {% assign dataset = data.dataset | default: data %}
 {% assign meta = dataset.meta %}
 {% assign name = meta.name | default: slug %}
+{% assign heading_id = name | replace: '_', ' ' | slugify %}
 
-## {{ name | replace: '_', ' ' | capitalize }}
+## <a id="{{ heading_id }}"></a>{{ name | replace: '_', ' ' | capitalize }}
 
 {% if meta.task_intro %}
 {{ meta.task_intro | markdownify }}

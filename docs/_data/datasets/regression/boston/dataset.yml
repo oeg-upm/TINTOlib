@@ -4,8 +4,8 @@ meta:
   task: regression
   sample_size: 506
   instances: 506
-  features: N/A
-  n_features: N/A
+  features: 13
+  n_features: 13
   n_num_features: 11
   n_cat_features: 2
   source: "https://www.openml.org/d/531"

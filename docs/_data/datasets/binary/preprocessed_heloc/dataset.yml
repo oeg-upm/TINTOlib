@@ -1,21 +1,21 @@
 meta:
-  id: 0
+  id: 45068
   name: preprocessed_heloc
   task: binary
-  sample_size: N/A
-  instances: N/A
-  features: N/A
-  n_features: N/A
-  n_num_features: N/A
-  n_cat_features: N/A
-  source: N/A
-  openml_page: N/A
-  task_intro: 'Dataset: preprocessed_heloc'
-  target_variable: N/A
-  n_classes: N/A
-  imbalance_ratio: N/A
-  missing_cells_estimated_from_file: N/A
-  missing_pct_estimated_from_file: N/A
+  sample_size: 10459
+  instances: 10459
+  features: 23
+  n_features: 23
+  n_num_features: 23
+  n_cat_features: 0
+  source: "https://api.openml.org/data/v1/download/22102461/heloc_dataset_v1.arff"
+  openml_page: "https://www.openml.org/d/45068"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/45068) · [FICO](https://community.fico.com/s/explainable-machine-learning-challenge)"
+  target_variable: "RiskPerformance"
+  n_classes: 2
+  imbalance_ratio: 1.1246
+  missing_cells_estimated_from_file: 0
+  missing_pct_estimated_from_file: 0.0
 leaderboard_columns:
   - {key: family, label: "Family"}
   - {key: best_variant, label: "Best variant"}
