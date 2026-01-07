@@ -1,0 +1,290 @@
+meta:
+  name: covtype
+  task: multiclass
+  sample_size: 581012
+  instances: 581012
+  features: 54
+  n_features: 54
+  n_num_features: 10
+  n_cat_features: 44
+  source: "OpenML/UCI Covertype"
+  task_intro: "**Source**: UCI Covertype / OpenML"
+  target_variable: "Cover_Type (integer 1..7)"
+  n_classes: 7
+  missing_pct_estimated_from_file: 0.0
+leaderboard_columns:
+  - {key: family, label: "Family"}
+  - {key: best_variant, label: "Best variant"}
+  - {key: test_accuracy, label: "Test Accuracy (↑)"}
+  - {key: test_f1, label: "Test F1 (↑)"}
+  - {key: training_time_s, label: "Train time (s)"}
+  - {key: total_params, label: "#Params"}
+  - {key: flops, label: "FLOPs"}
+leaderboard_rows:
+  - family: "ViT+MLP"
+    best_variant: "REFINED"
+    test_accuracy: "0.97050 ± 0.00000"
+    test_f1: "0.97051 ± 0.00000"
+    training_time_s: "4491.06401 ± 0.00000"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN"
+    best_variant: "Combination"
+    test_accuracy: "0.96485 ± 0.00000"
+    test_f1: "0.96487 ± 0.00000"
+    training_time_s: "4482.55339 ± 0.00000"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_accuracy: "0.96310 ± 0.00000"
+    test_f1: "0.96312 ± 0.00000"
+    training_time_s: "2870.39325 ± 0.00000"
+    total_params: "—"
+    flops: "—"
+  - family: "CNN+MLP"
+    best_variant: "REFINED"
+    test_accuracy: "0.96289 ± 0.00000"
+    test_f1: "0.96284 ± 0.00000"
+    training_time_s: "1832.13226 ± 0.00000"
+    total_params: "—"
+    flops: "—"
+  - family: "ViT"
+    best_variant: "DistanceMatrix"
+    test_accuracy: "0.96078 ± 0.00000"
+    test_f1: "0.96075 ± 0.00000"
+    training_time_s: "7455.48702 ± 0.00000"
+    total_params: "—"
+    flops: "—"
+arch_sections:
+  - title: "MLP"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: test_accuracy, label: "Test Accuracy (↑)"}
+      - {key: test_f1, label: "Test F1 (↑)"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "MLP"
+        test_accuracy: "0.96310 ± 0.00000"
+        test_f1: "0.96312 ± 0.00000"
+        training_time_s: "2870.39325 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+  - title: "ViT"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: test_accuracy, label: "Test Accuracy (↑)"}
+      - {key: test_f1, label: "Test F1 (↑)"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "TINTO"
+        test_accuracy: "0.95210 ± 0.00000"
+        test_f1: "0.95211 ± 0.00000"
+        training_time_s: "3717.71217 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "IGTD"
+        test_accuracy: "0.93557 ± 0.00000"
+        test_f1: "0.93560 ± 0.00000"
+        training_time_s: "4028.44666 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "REFINED"
+        test_accuracy: "0.94441 ± 0.00000"
+        test_f1: "0.94441 ± 0.00000"
+        training_time_s: "3636.44167 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BarGraph"
+        test_accuracy: "0.95900 ± 0.00000"
+        test_f1: "0.95899 ± 0.00000"
+        training_time_s: "3740.85926 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "FeatureWrap"
+        test_accuracy: "0.94988 ± 0.00000"
+        test_f1: "0.94983 ± 0.00000"
+        training_time_s: "3783.60048 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "Combination"
+        test_accuracy: "0.94756 ± 0.00000"
+        test_f1: "0.94756 ± 0.00000"
+        training_time_s: "3769.21102 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.96078 ± 0.00000"
+        test_f1: "0.96075 ± 0.00000"
+        training_time_s: "7455.48702 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+  - title: "ViT + MLP"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: test_accuracy, label: "Test Accuracy (↑)"}
+      - {key: test_f1, label: "Test F1 (↑)"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "TINTO"
+        test_accuracy: "0.95972 ± 0.00000"
+        test_f1: "0.95972 ± 0.00000"
+        training_time_s: "4179.14185 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "IGTD"
+        test_accuracy: "0.96671 ± 0.00000"
+        test_f1: "0.96671 ± 0.00000"
+        training_time_s: "4298.49003 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "REFINED"
+        test_accuracy: "0.97050 ± 0.00000"
+        test_f1: "0.97051 ± 0.00000"
+        training_time_s: "4491.06401 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BarGraph"
+        test_accuracy: "0.95683 ± 0.00000"
+        test_f1: "0.95682 ± 0.00000"
+        training_time_s: "4305.19298 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "FeatureWrap"
+        test_accuracy: "0.95517 ± 0.00000"
+        test_f1: "0.95518 ± 0.00000"
+        training_time_s: "4388.84096 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "Combination"
+        test_accuracy: "0.95903 ± 0.00000"
+        test_f1: "0.95903 ± 0.00000"
+        training_time_s: "4331.18001 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.96499 ± 0.00000"
+        test_f1: "0.96499 ± 0.00000"
+        training_time_s: "4372.84549 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+  - title: "CNN"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: test_accuracy, label: "Test Accuracy (↑)"}
+      - {key: test_f1, label: "Test F1 (↑)"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "TINTO"
+        test_accuracy: "0.95707 ± 0.00000"
+        test_f1: "0.95707 ± 0.00000"
+        training_time_s: "4064.05686 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "IGTD"
+        test_accuracy: "0.95949 ± 0.00000"
+        test_f1: "0.95949 ± 0.00000"
+        training_time_s: "4029.40301 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "REFINED"
+        test_accuracy: "0.96206 ± 0.00000"
+        test_f1: "0.96207 ± 0.00000"
+        training_time_s: "4004.55836 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BarGraph"
+        test_accuracy: "0.96467 ± 0.00000"
+        test_f1: "0.96467 ± 0.00000"
+        training_time_s: "3929.04679 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "FeatureWrap"
+        test_accuracy: "0.94784 ± 0.00000"
+        test_f1: "0.94780 ± 0.00000"
+        training_time_s: "3922.66296 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "Combination"
+        test_accuracy: "0.96485 ± 0.00000"
+        test_f1: "0.96487 ± 0.00000"
+        training_time_s: "4482.55339 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.95455 ± 0.00000"
+        test_f1: "0.95455 ± 0.00000"
+        training_time_s: "4027.21556 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BIE"
+        test_accuracy: "0.95304 ± 0.00000"
+        test_f1: "0.95301 ± 0.00000"
+        training_time_s: "3952.53097 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+  - title: "CNN + MLP"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: test_accuracy, label: "Test Accuracy (↑)"}
+      - {key: test_f1, label: "Test F1 (↑)"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "TINTO"
+        test_accuracy: "0.95034 ± 0.00000"
+        test_f1: "0.95032 ± 0.00000"
+        training_time_s: "1772.66925 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "IGTD"
+        test_accuracy: "0.94519 ± 0.00000"
+        test_f1: "0.94519 ± 0.00000"
+        training_time_s: "1722.16181 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "REFINED"
+        test_accuracy: "0.96289 ± 0.00000"
+        test_f1: "0.96284 ± 0.00000"
+        training_time_s: "1832.13226 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BarGraph"
+        test_accuracy: "0.93826 ± 0.00000"
+        test_f1: "0.93826 ± 0.00000"
+        training_time_s: "1745.82248 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "FeatureWrap"
+        test_accuracy: "0.94837 ± 0.00000"
+        test_f1: "0.94836 ± 0.00000"
+        training_time_s: "1655.45252 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "Combination"
+        test_accuracy: "0.94017 ± 0.00000"
+        test_f1: "0.94018 ± 0.00000"
+        training_time_s: "1712.62713 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "DistanceMatrix"
+        test_accuracy: "0.96089 ± 0.00000"
+        test_f1: "0.96089 ± 0.00000"
+        training_time_s: "1734.12690 ± 0.00000"
+        total_params: "—"
+        flops: "—"
+      - method: "BIE"
+        test_accuracy: "0.90212 ± 0.00000"
+        test_f1: "0.90207 ± 0.00000"
+        training_time_s: "1684.29330 ± 0.00000"
+        total_params: "—"
+        flops: "—"

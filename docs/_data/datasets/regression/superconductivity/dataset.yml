@@ -1,0 +1,351 @@
+meta:
+  id: 44964
+  name: superconductivity
+  task: regression
+  sample_size: 21263
+  instances: 21263
+  features: 81
+  n_features: 81
+  n_num_features: 81
+  n_cat_features: 0
+  source: "https://api.openml.org/data/v1/download/44964/superconductivity.arff"
+  openml_page: "https://www.openml.org/d/44964"
+  task_intro: "**Source**: [OpenML](https://www.openml.org/d/44964) · [Original](https://archive.ics.uci.edu/ml/datasets/superconductivty+data)"
+  target_variable: "critical_temp"
+  missing_pct_estimated_from_file: 0.0
+leaderboard_columns:
+  - {key: family, label: "Family"}
+  - {key: best_variant, label: "Best variant"}
+  - {key: test_rmse, label: "Test RMSE"}
+  - {key: test_r2, label: "Test R²"}
+  - {key: training_time_s, label: "Train time (s)"}
+  - {key: total_params, label: "#Params"}
+  - {key: flops, label: "FLOPs"}
+leaderboard_rows:
+  - family: "Trees"
+    best_variant: "XGBoost"
+    test_rmse: "9.39012 ± 0.01083"
+    test_r2: "0.92444 ± 0.00017"
+    training_time_s: "14.42918 ± 0.71470"
+    total_params: "—"
+    flops: "—"
+  - family: "MLP"
+    best_variant: "MLP"
+    test_rmse: "13.02278 ± 0.08713"
+    test_r2: "0.85467 ± 0.00195"
+    training_time_s: "38.31988 ± 0.27649"
+    total_params: "206,337 ± 0.00000"
+    flops: "411,776 ± 0.00000"
+  - family: "ViT"
+    best_variant: "Combination"
+    test_rmse: "9.85932 ± 0.03877"
+    test_r2: "0.91670 ± 0.00065"
+    training_time_s: "1,081.16444 ± 256.86060"
+    total_params: "13,374,487 ± 0.00000"
+    flops: "585,567,985,104.19995 ± 1,302,618,243,023.18262"
+  - family: "CNN"
+    best_variant: "TINTO"
+    test_rmse: "9.48401 ± 0.05426"
+    test_r2: "0.92292 ± 0.00088"
+    training_time_s: "577.38758 ± 197.83984"
+    total_params: "10,741,857 ± 0.00000"
+    flops: "710,159,859,724.80005 ± 1,271,392,566,165.7981"
+arch_sections:
+  - title: "Tree Baselines"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: train_rmse, label: "Train RMSE"}
+      - {key: val_rmse, label: "Val RMSE"}
+      - {key: test_rmse, label: "Test RMSE"}
+      - {key: train_r2, label: "Train R²"}
+      - {key: val_r2, label: "Val R²"}
+      - {key: test_r2, label: "Test R²"}
+      - {key: training_time_s, label: "Train time (s)"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+    rows:
+      - method: "CatBoost"
+        train_rmse: "4.53931 ± 0.01369"
+        val_rmse: "9.27537 ± 0.06568"
+        test_rmse: "9.50490 ± 0.06107"
+        train_r2: "0.98249 ± 0.00011"
+        val_r2: "0.92601 ± 0.00105"
+        test_r2: "0.92258 ± 0.00100"
+        training_time_s: "35.48475 ± 0.25031"
+        total_params: "—"
+        flops: "—"
+      - method: "LightGBM"
+        train_rmse: "5.75896 ± 0.03346"
+        val_rmse: "9.46416 ± 0.07228"
+        test_rmse: "9.78001 ± 0.12346"
+        train_r2: "0.97182 ± 0.00033"
+        val_r2: "0.92297 ± 0.00117"
+        test_r2: "0.91803 ± 0.00207"
+        training_time_s: "1.28021 ± 0.04398"
+        total_params: "—"
+        flops: "—"
+      - method: "XGBoost"
+        train_rmse: "4.83724 ± 0.01133"
+        val_rmse: "9.06668 ± 0.03218"
+        test_rmse: "9.39012 ± 0.01083"
+        train_r2: "0.98012 ± 0.00009"
+        val_r2: "0.92931 ± 0.00050"
+        test_r2: "0.92444 ± 0.00017"
+        training_time_s: "14.42918 ± 0.71470"
+        total_params: "—"
+        flops: "—"
+  - title: "MLP"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: train_rmse, label: "Train RMSE"}
+      - {key: val_rmse, label: "Val RMSE"}
+      - {key: test_rmse, label: "Test RMSE"}
+      - {key: train_r2, label: "Train R²"}
+      - {key: val_r2, label: "Val R²"}
+      - {key: test_r2, label: "Test R²"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+      - {key: training_time_s, label: "Train time (s)"}
+    rows:
+      - method: "MLP"
+        train_rmse: "12.18590 ± 0.07631"
+        val_rmse: "12.35558 ± 0.05771"
+        test_rmse: "13.02278 ± 0.08713"
+        train_r2: "0.87381 ± 0.00158"
+        val_r2: "0.86872 ± 0.00123"
+        test_r2: "0.85467 ± 0.00195"
+        total_params: "206,337 ± 0.00000"
+        flops: "411,776 ± 0.00000"
+        training_time_s: "38.31988 ± 0.27649"
+  - title: "ViT"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: train_rmse, label: "Train RMSE"}
+      - {key: val_rmse, label: "Val RMSE"}
+      - {key: test_rmse, label: "Test RMSE"}
+      - {key: train_r2, label: "Train R²"}
+      - {key: val_r2, label: "Val R²"}
+      - {key: test_r2, label: "Test R²"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+      - {key: training_time_s, label: "Train time (s)"}
+    rows:
+      - method: "TINTO"
+        train_rmse: "7.42554 ± 0.13475"
+        val_rmse: "10.17726 ± 0.06878"
+        test_rmse: "10.23188 ± 0.14155"
+        train_r2: "0.95313 ± 0.00171"
+        val_r2: "0.91092 ± 0.00120"
+        test_r2: "0.91028 ± 0.00247"
+        total_params: "11,288,857 ± 0.00000"
+        flops: "106,213,732 ± 0.00000"
+        training_time_s: "424.71950 ± 6.58643"
+      - method: "IGTD"
+        train_rmse: "7.20714 ± 0.10199"
+        val_rmse: "9.98521 ± 0.11446"
+        test_rmse: "10.02393 ± 0.11961"
+        train_r2: "0.95585 ± 0.00124"
+        val_r2: "0.91425 ± 0.00197"
+        test_r2: "0.91389 ± 0.00206"
+        total_params: "3,641,431 ± 0.00000"
+        flops: "35,974,944 ± 0.00000"
+        training_time_s: "490.10305 ± 2.71046"
+      - method: "REFINED"
+        train_rmse: "6.81035 ± 0.43307"
+        val_rmse: "9.98932 ± 0.18200"
+        test_rmse: "10.14475 ± 0.17488"
+        train_r2: "0.96046 ± 0.00519"
+        val_r2: "0.91417 ± 0.00313"
+        test_r2: "0.91179 ± 0.00305"
+        total_params: "3,035,031 ± 0.00000"
+        flops: "59,100,759 ± 0.00000"
+        training_time_s: "228.89744 ± 8.49279"
+      - method: "DistanceMatrix"
+        train_rmse: "6.56761 ± 0.30220"
+        val_rmse: "9.79910 ± 0.15459"
+        test_rmse: "9.91098 ± 0.08857"
+        train_r2: "0.96328 ± 0.00343"
+        val_r2: "0.91741 ± 0.00260"
+        test_r2: "0.91582 ± 0.00150"
+        total_params: "20,136,423 ± 0.00000"
+        flops: "20,714,923,423,581.60156 ± 43,332,096,532,550.5625"
+        training_time_s: "1,470.66296 ± 6.31309"
+      - method: "BarGraph"
+        train_rmse: "6.14691 ± 0.09702"
+        val_rmse: "9.60107 ± 0.15526"
+        test_rmse: "9.95331 ± 0.12401"
+        train_r2: "0.96789 ± 0.00102"
+        val_r2: "0.92071 ± 0.00257"
+        test_r2: "0.91510 ± 0.00211"
+        total_params: "21,098,263 ± 0.00000"
+        flops: "400,874,159 ± 0.00000"
+        training_time_s: "637.27321 ± 1.90689"
+      - method: "Combination"
+        train_rmse: "6.14398 ± 0.14685"
+        val_rmse: "9.41024 ± 0.04133"
+        test_rmse: "9.85932 ± 0.03877"
+        train_r2: "0.96791 ± 0.00155"
+        val_r2: "0.92385 ± 0.00067"
+        test_r2: "0.91670 ± 0.00065"
+        total_params: "13,374,487 ± 0.00000"
+        flops: "585,567,985,104.19995 ± 1,302,618,243,023.18262"
+        training_time_s: "1,081.16444 ± 256.86060"
+      - method: "SuperTML"
+        train_rmse: "4.55318 ± 0.38427"
+        val_rmse: "10.55164 ± 0.18643"
+        test_rmse: "10.95439 ± 0.18499"
+        train_r2: "0.98228 ± 0.00301"
+        val_r2: "0.90423 ± 0.00340"
+        test_r2: "0.89715 ± 0.00349"
+        total_params: "13,033,665 ± 0.00000"
+        flops: "413,926,829,673.59998 ± 907,899,654,168.94824"
+        training_time_s: "3,195.55674 ± 161.28588"
+      - method: "FeatureWrap"
+        train_rmse: "12.76631 ± 0.43769"
+        val_rmse: "16.11097 ± 0.41295"
+        test_rmse: "20.59555 ± 1.42934"
+        train_r2: "0.86138 ± 0.00966"
+        val_r2: "0.77667 ± 0.01144"
+        test_r2: "0.63513 ± 0.05126"
+        total_params: "26,463,961 ± 0.00000"
+        flops: "820,659,602,644.80005 ± 1,828,045,572,040.96899"
+        training_time_s: "951.38445 ± 310.15833"
+      - method: "BIE"
+        train_rmse: "4.29548 ± 0.22002"
+        val_rmse: "10.70148 ± 0.08250"
+        test_rmse: "11.03662 ± 0.22029"
+        train_r2: "0.98429 ± 0.00162"
+        val_r2: "0.90151 ± 0.00152"
+        test_r2: "0.89559 ± 0.00420"
+        total_params: "35,879,911 ± 0.00000"
+        flops: "27,587,790,024,715.39844 ± 61,453,258,210,193.89844"
+        training_time_s: "2,437.28664 ± 6.34257"
+  - title: "ViT + MLP"
+    columns:
+      - {key: method, label: "Method"}
+    rows:
+      - {method: "TINTO"}
+      - {method: "IGTD"}
+      - {method: "REFINED"}
+      - {method: "DistanceMatrix"}
+      - {method: "BarGraph"}
+      - {method: "Combination"}
+      - {method: "SuperTML"}
+      - {method: "FeatureWrap"}
+      - {method: "BIE"}
+  - title: "CNN"
+    columns:
+      - {key: method, label: "Method"}
+      - {key: train_rmse, label: "Train RMSE"}
+      - {key: val_rmse, label: "Val RMSE"}
+      - {key: test_rmse, label: "Test RMSE"}
+      - {key: train_r2, label: "Train R²"}
+      - {key: val_r2, label: "Val R²"}
+      - {key: test_r2, label: "Test R²"}
+      - {key: total_params, label: "#Params"}
+      - {key: flops, label: "FLOPs"}
+      - {key: training_time_s, label: "Train time (s)"}
+    rows:
+      - method: "TINTO"
+        train_rmse: "6.26595 ± 0.15267"
+        val_rmse: "9.62326 ± 0.07660"
+        test_rmse: "9.48401 ± 0.05426"
+        train_r2: "0.96662 ± 0.00165"
+        val_r2: "0.92036 ± 0.00127"
+        test_r2: "0.92292 ± 0.00088"
+        total_params: "10,741,857 ± 0.00000"
+        flops: "710,159,859,724.80005 ± 1,271,392,566,165.7981"
+        training_time_s: "577.38758 ± 197.83984"
+      - method: "IGTD"
+        train_rmse: "6.19039 ± 0.22334"
+        val_rmse: "9.61344 ± 0.14718"
+        test_rmse: "9.85135 ± 0.11225"
+        train_r2: "0.96740 ± 0.00233"
+        val_r2: "0.92051 ± 0.00244"
+        test_r2: "0.91683 ± 0.00189"
+        total_params: "4,507,673 ± 0.00000"
+        flops: "309,129,657,280 ± 574,781,614,714.94189"
+        training_time_s: "509.33440 ± 180.92264"
+      - method: "REFINED"
+        train_rmse: "5.94252 ± 0.19473"
+        val_rmse: "9.57097 ± 0.09981"
+        test_rmse: "9.57201 ± 0.11834"
+        train_r2: "0.96997 ± 0.00197"
+        val_r2: "0.92122 ± 0.00165"
+        test_r2: "0.92148 ± 0.00194"
+        total_params: "1,654,833 ± 0.00000"
+        flops: "166,022,193,100.79999 ± 280,016,749,242.1524"
+        training_time_s: "422.80904 ± 162.80911"
+      - method: "DistanceMatrix"
+        train_rmse: "5.80147 ± 0.04815"
+        val_rmse: "9.53799 ± 0.14256"
+        test_rmse: "9.60631 ± 0.06818"
+        train_r2: "0.97140 ± 0.00047"
+        val_r2: "0.92175 ± 0.00233"
+        test_r2: "0.92092 ± 0.00112"
+        total_params: "8,309,345 ± 0.00000"
+        flops: "2,461,664,039,412.7998 ± 4,017,310,686,211.29297"
+        training_time_s: "1,089.20098 ± 310.99029"
+      - method: "BarGraph"
+        train_rmse: "5.22966 ± 0.16871"
+        val_rmse: "9.79060 ± 0.06058"
+        test_rmse: "9.96486 ± 0.06396"
+        train_r2: "0.97674 ± 0.00149"
+        val_r2: "0.91756 ± 0.00102"
+        test_r2: "0.91491 ± 0.00109"
+        total_params: "11,044,833 ± 0.00000"
+        flops: "4,525,419,867,219.2002 ± 7,390,524,080,872.92383"
+        training_time_s: "866.04780 ± 203.89004"
+      - method: "Combination"
+        train_rmse: "5.34537 ± 0.19032"
+        val_rmse: "9.55318 ± 0.07219"
+        test_rmse: "9.94313 ± 0.10081"
+        train_r2: "0.97569 ± 0.00173"
+        val_r2: "0.92151 ± 0.00118"
+        test_r2: "0.91528 ± 0.00172"
+        total_params: "9,819,433 ± 0.00000"
+        flops: "849,233,239,970.40002 ± 1,160,163,613,041.34424"
+        training_time_s: "535.82400 ± 72.16412"
+      - method: "SuperTML"
+        train_rmse: "4.29412 ± 0.25653"
+        val_rmse: "10.48723 ± 0.08078"
+        test_rmse: "10.59245 ± 0.09414"
+        train_r2: "0.98429 ± 0.00193"
+        val_r2: "0.90541 ± 0.00146"
+        test_r2: "0.90385 ± 0.00171"
+        total_params: "4,634,473 ± 0.00000"
+        flops: "709,217,228,032 ± 1,564,581,382,185.67017"
+        training_time_s: "2,983.68161 ± 201.08062"
+      - method: "FeatureWrap"
+        train_rmse: "13.77206 ± 2.12998"
+        val_rmse: "15.71511 ± 0.35545"
+        test_rmse: "21.06315 ± 0.83208"
+        train_r2: "0.83574 ± 0.05462"
+        val_r2: "0.78753 ± 0.00962"
+        test_r2: "0.61936 ± 0.03016"
+        total_params: "5,460,577 ± 0.00000"
+        flops: "1,030,081,193,107.19995 ± 1,820,098,138,320.47534"
+        training_time_s: "512.76986 ± 183.44309"
+      - method: "BIE"
+        train_rmse: "4.55087 ± 0.51946"
+        val_rmse: "10.98117 ± 0.14843"
+        test_rmse: "11.21765 ± 0.17455"
+        train_r2: "0.98222 ± 0.00407"
+        val_r2: "0.89629 ± 0.00279"
+        test_r2: "0.89215 ± 0.00336"
+        total_params: "11,563,073 ± 0.00000"
+        flops: "15,283,835,263,308.80078 ± 21,448,598,033,060.51562"
+        training_time_s: "1,266.2391 ± 0.28499"
+  - title: "CNN + MLP"
+    columns:
+      - {key: method, label: "Method"}
+    rows:
+      - {method: "TINTO"}
+      - {method: "IGTD"}
+      - {method: "REFINED"}
+      - {method: "DistanceMatrix"}
+      - {method: "BarGraph"}
+      - {method: "Combination"}
+      - {method: "SuperTML"}
+      - {method: "FeatureWrap"}
+      - {method: "BIE"}
