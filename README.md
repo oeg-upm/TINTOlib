@@ -67,18 +67,6 @@ This hands-on tutorial includes **bilingual videos (English/Spanish)** and **pra
 
 **TINTOlib** is a state-of-the-art Python library that transforms **tidy data** (also known as tabular data) into **synthetic images**, enabling the application of advanced deep learning techniques, including **Vision Transformers (ViTs)** and **Convolutional Neural Networks (CNNs)**, to traditionally structured data. This transformation bridges the gap between tabular data and powerful vision-based machine learning models, unlocking new possibilities for tackling regression, classification, and other complex tasks.
 
----
-
-## 🔎 Explore TINTOlib with DeepWiki
-
-TINTOlib has a dedicated space on **[DeepWiki](https://deepwiki.com/oeg-upm/TINTOlib)**, where you can explore semantic documentation, relevant links, bibliography, and answers to frequently asked questions about its use and application.
-
-<p align="center">
-  <a href="https://deepwiki.com/oeg-upm/TINTOlib" target="_blank">
-    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"/>
-  </a>
-</p>
-
 <!--
 **Citing TINTO**: If you used TINTO in your work, please cite the **[SoftwareX](https://doi.org/10.1016/j.softx.2023.101391)**:
 
@@ -318,7 +306,7 @@ Using synthetic images, experiment with either vision models like CNNs or ViTs, 
 
 ## 📖 Citation
 
-If you use TINTOlib in your research, please cite our papers en 
+If you use TINTOlib in your research, please cite our papers: 
 
 - [SoftwareX journal](https://doi.org/10.1016/j.softx.2025.102444):
 
