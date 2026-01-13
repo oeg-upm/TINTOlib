@@ -53,6 +53,9 @@ class Fotomics(ParamImageMethod):
         Optimization algorithm that could be apply in pixels assignment stage.
     group_method : str, optional
         Using to apply different techniques to calculate pixels values that share multiples features. Default is 'avg'.
+    zoom : int, optional
+        Multiplication factor determining the size of the saved image relative to the original size.
+        Default is 1. Valid values: integer > 0.
     format : str, optional
         Output format using images with matplotlib with [0,255] range for pixel or using npy format.
         Default is images with format 'png'.
