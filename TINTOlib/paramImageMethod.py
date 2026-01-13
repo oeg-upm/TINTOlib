@@ -1,19 +1,62 @@
 from abc import abstractmethod
 from typing import Union
-
 import numpy as np
 import pandas as pd
-from TINTOlib.abstractImageMethod import AbstractImageMethod
 from TINTOlib.utils.assigner import AssignerFactory
-import matplotlib.image
+
+from TINTOlib.mappingMethod import MappingMethod
+
+
+###########################################################
+################    ParamImageMethod    ##############################
+###########################################################
 
 default_assignment_method = 'bin'
 default_random_seed = 1,
 default_algorithm_opt = 'lsa'
 default_group_method = 'avg'
+default_zoom=1
+default_format='png'
+default_cmap = 'gray'  # Default cmap image output
 
-class ParamImageMethod(AbstractImageMethod):
 
+class ParamImageMethod(MappingMethod):
+    """
+       MappingMethod: Abstract class that group similar functionality about mapping parametric methods. Mapping parametric methods are those that assign a pixel to each feature using
+        an extraction features coordinates process following by a mapping process like FOTOMIC and DEEPINSIGHT. This class inherits from MappingMethod and AbstractImageMethod.
+
+       Parameters:
+       ----------
+       dim : int
+           Order size for a square matrix image
+       problem : str, optional
+           The type of problem, defining how the images are grouped.
+           Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
+      transformer : CustomTransformer, optional
+           Preprocessing transformations like scaling, normalization,etc.
+           Default is LogScaler custom transformer.
+           Valid: Scikit Learn transformers or custom implementation using inheritance over CustomTransformer class.
+       verbose : bool, optional
+           Show execution details in the terminal.
+           Default is False. Valid values: [True, False].
+       assignment_method : str, optional
+           Using to apply different techniques to mapping features with pixels. Default is 'bin'.
+       relocate: bool, optional
+           Relocate features so that each pixel can represent a single feature. Use the relevance of features and pixels shift to build a cost function
+       algorithm_opt : str, optional
+           Optimization algorithm that could be apply in pixels assignment stage.
+       group_method : str, optional
+           Using to apply different techniques to calculate pixels values that share multiples features. Default is 'avg'.
+       format : str, optional
+           Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+           Default is images with format 'png'.
+       cmap : str, optional
+           color map to use with matplotlib.
+           Default is gray
+       random_seed : int, optional
+           Seed for reproducibility.
+           Default is 1. Valid values: integer.
+       """
     def __init__(self,
             dim,
             problem=None,
@@ -23,6 +66,9 @@ class ParamImageMethod(AbstractImageMethod):
             relocate=False,
             algorithm_opt=default_algorithm_opt,
             group_method=default_group_method,
+            zoom=default_zoom,
+            format=default_format,
+            cmap=default_cmap,
             random_seed=default_random_seed
     ):
         if (assignment_method not in ["bin", "quantile_transform", "PixelCentroidsAssigner","binDigitize"]):
@@ -34,7 +80,7 @@ class ParamImageMethod(AbstractImageMethod):
         if (group_method not in ["avg", "rev"]):
             raise ValueError("Group method must be in ['avg', 'rev']")
 
-        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer,format=format, zoom=zoom, cmap=cmap)
         self._image_dim = dim
         self._algorithm_opt = algorithm_opt
         self._random_seed = random_seed
@@ -57,6 +103,7 @@ class ParamImageMethod(AbstractImageMethod):
         self._features_coord=self._get_features_coords(x_transposed)
         # Mapping features coordinates with image
         self._mapping_features()
+        self._build_features_mapping(x.columns,self._features_positions)
 
     def _mapping_features(self):
         assigner = AssignerFactory.get_assigner(self._assignment_method,
@@ -70,18 +117,42 @@ class ParamImageMethod(AbstractImageMethod):
 
 
     def _duplicated(self, features_positions):
+        """
+
+        Args:
+            features_positions: array with pixels positions by feature
+
+        Returns:
+            Boolean indicating if features positions are duplicated
+        """
         df_feature_pos = pd.DataFrame(features_positions)
         return df_feature_pos.duplicated().any()
 
     def _compute_relevance(self, features_coord, features_positions):
+        """
+
+        Args:
+            features_coord: features coordinates retrieved using a features extraction method
+            features_positions: array with pixels positions by feature
+
+        Returns:
+            Array that contains features positions with norm by feature computed using features coordinates
+        """
         norm = np.linalg.norm(features_coord, axis=1).reshape(-1, 1) + 1
         return np.hstack((features_positions, norm))
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        """
+
+        Args:
+            x: Pandas Dataframe with feature tabular data
+            y: Pandas Dataframe with class tabular data
+
+        """
         imgs_coord = self._calculate_pixels_values(x)
         # Create and Save Images
         self._create_images(imgs_coord, y)
-        self._features_pos_to_csv(x.columns,self._features_positions)
+        self._features_mapping_to_csv()
 
 
     def _calculate_pixels_values(self,x):
@@ -150,13 +221,6 @@ class ParamImageMethod(AbstractImageMethod):
             img=np.zeros((self._image_dim,self._image_dim))
             img[imgs_coord[0].astype(int),imgs_coord[1].astype(int)]=imgs_coord[m]
             self._save_image(img,y.iloc[i],i)
-
-
-    def _img_to_file(self,image,file,extension):
-        matplotlib.image.imsave(file, image, format=extension,cmap='gray',vmin=0,vmax=1)
-
-    def get_dim(self):
-        return self._image_dim
 
     @abstractmethod
     def _get_features_coords(self,x):

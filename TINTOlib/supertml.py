@@ -180,7 +180,7 @@ class SuperTML(AbstractImageMethod):
         np.random.shuffle(indices)
 
         # Split the data into training and testing sets
-        if self.problem == 'supervised':
+        if self.problem in ['supervised','classification']:
             model = RandomForestClassifier(random_state=self.random_seed, n_jobs=-1)
         else:
             model = RandomForestRegressor(random_state=self.random_seed, n_jobs=-1)
@@ -210,5 +210,5 @@ class SuperTML(AbstractImageMethod):
             image = self.__event2img(X[i])
             self._save_image(image,Y[i],i)
 
-    def _img_to_file(self,image,file,extension):
+    def _img_to_file(self,image,file):
         image.save(file)

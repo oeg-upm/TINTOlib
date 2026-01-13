@@ -107,8 +107,8 @@ class FeatureWrap(AbstractImageMethod):
             matrix = np.repeat(np.repeat(matrix, self.zoom, axis=0), self.zoom, axis=1)
             self._save_image(matrix,y[i],i)
 
-    def _img_to_file(self,image,file,extension):
-        matplotlib.image.imsave(file, image, cmap='gray', format=extension, dpi=self.zoom, vmin=0, vmax=255)
+    def _img_to_file(self,image,file):
+        matplotlib.image.imsave(file, image, cmap='gray', format='png', dpi=self.zoom, vmin=0, vmax=255)
 
     def __binary_vector_to_matrix(self, binary_vector):
         # Calculate the total number of pixels in the image

@@ -16,6 +16,7 @@ default_problem = "classification"  # Define the type of task [classification, u
 default_verbose = False         # Verbose: if True, shows the compilation text
 default_hyperparameters_filename = 'objs.pkl'
 allowed_values_for_problem = ["classification","supervised", "unsupervised", "regression"]
+default_format='png'
 
 class AbstractImageMethod(ABC):
     """
@@ -26,7 +27,8 @@ class AbstractImageMethod(ABC):
         self,
         problem: Optional[str],
         verbose: Optional[bool],
-        transformer=None
+        transformer=None,
+        format=default_format
     ):
         # Validate `problem`
         if problem is None:
@@ -44,10 +46,14 @@ class AbstractImageMethod(ABC):
         if not isinstance(verbose, bool):
             raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
 
+        if(format not in ["png","npy"]):
+            raise ValueError(f"Allowed values for format are png or npy")
+
         self.transformer=transformer
         self.problem = problem
         self.verbose = verbose
-        self._fitted = False  # Tracks if fit has been called
+        self._fitted = False # Tracks if fit has been called
+        self.format=format
 
     def saveHyperparameters(self, filename=default_hyperparameters_filename):
         """
@@ -55,10 +61,25 @@ class AbstractImageMethod(ABC):
         This point is basically to be able to reproduce the experiments or reuse the transformation
         on unlabelled data.
         """
-        with open(filename, 'wb') as f:
-            pickle.dump(self.__dict__, f)
+        to_save = dict(self.__dict__)
+
+        runtime_keys = [
+            "bar",
+            "_AbstractImageMethod__imgs_routes",
+            "bar_transform_step",
+            "_AbstractImageMethod__progress",
+            "folder",
+        ]
+
+        for k in runtime_keys:
+            to_save.pop(k, None)
+
+        with open(filename, "wb") as f:
+            pickle.dump(to_save, f)
+
         if self.verbose:
             print(f"Hyperparameters successfully saved in {filename}.")
+
 
     def loadHyperparameters(self, filename=default_hyperparameters_filename):
         """
@@ -114,6 +135,7 @@ class AbstractImageMethod(ABC):
 
             dataset = self._load_data(data)
             x, y = self._split_features_targets(dataset)
+            x_original = x
             self.bar_transform_step = (90 / x.shape[0])
 
             # Transform features if required
@@ -123,7 +145,7 @@ class AbstractImageMethod(ABC):
             self.__update_progress_bar(progress=10, text='Generating and saving the synthetic images')
             self.folder = folder
             self._transformAlg(x, y)
-            self.__create_csv(x,y)
+            self.__create_csv(x_original)
             self.__update_progress_bar(progress=(100-self.__progress), text='Images generated and saved')
             self._write_message("Transform process completed.")
 
@@ -173,6 +195,8 @@ class AbstractImageMethod(ABC):
 
         if(dataset.select_dtypes(exclude=["number"]).shape[1]!=0):
             raise TypeError("There are non-numeric features in data")
+        if(dataset.isna().any().any()):
+            raise TypeError("There are missing values in data")
 
         if self.verbose:
             self._write_message("Data successfully loaded.")
@@ -201,7 +225,7 @@ class AbstractImageMethod(ABC):
         Returns:
             (absolute route,relative route)
         """
-        image_file = str(num_image).zfill(6) + ".png"
+        image_file = str(num_image).zfill(6)+"."+self.format
         if (self.problem in ["classification","supervised"]):
             subfolder = str(int(y)).zfill(2)
         else:
@@ -220,12 +244,20 @@ class AbstractImageMethod(ABC):
         return abs_route, rlt_route
 
     def _save_image(self, img_matrix, y,num_image):
+        """
+        Save image data in file
+        Args:
+            img_matrix: image matrix
+            y: target value
+            num_image: image number
+
+        """
         abs_route,rtv_route=self.__get_image_routes(y,num_image)
-        self._img_to_file(img_matrix,abs_route,"png")
+        self._img_to_file(img_matrix,abs_route)
         self.__imgs_routes.append({"images":rtv_route,"value":y})
         self.__update_progress_bar(progress=self.bar_transform_step)
 
-    def __create_csv(self,X,y):
+    def __create_csv(self,X):
         """
         Create csv file to save the images routes
         """
@@ -233,12 +265,14 @@ class AbstractImageMethod(ABC):
         df = pd.concat([pd.DataFrame(data=self.__imgs_routes),X], axis=1)
         df.to_csv(filepath, index=False)
 
-    def _features_pos_to_csv(self,columns,features_positions):
-        filepath = self.folder + "/features_positions.csv"
-        df = pd.DataFrame({"feature":columns,"row":features_positions[:,0],"column":features_positions[:,1]})
-        df.to_csv(filepath, index=False)
 
     def __update_progress_bar(self,progress=None,text=None):
+        """
+        Update progress bar and/or message
+        Args:
+            progress: quantity to add to the progress bar
+            text: message to display
+        """
         if(self.verbose):
             if(progress != None):
                 self.__progress = self.__progress + progress
@@ -248,6 +282,11 @@ class AbstractImageMethod(ABC):
                 self.bar.set_description(text,refresh=True)
 
     def _write_message(self,message):
+        """
+        Print message to stdout
+        Args:
+            message: message value
+        """
         if(self.verbose):
             self.bar.write(message)
 
@@ -268,5 +307,5 @@ class AbstractImageMethod(ABC):
         raise NotImplementedError("Subclasses must implement _transform_alg.")
 
     @abstractmethod
-    def _img_to_file(self, image_matrix, file,extension):
+    def _img_to_file(self, image_matrix, file):
         raise NotImplementedError("Subclasses must implement _img_to_file method.")

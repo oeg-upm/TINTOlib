@@ -6,7 +6,6 @@ import platform
 import subprocess
 
 # Third-party library imports
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.manifold import MDS
@@ -18,15 +17,15 @@ from typing import Optional, Union
 from sklearn.preprocessing import MinMaxScaler
 
 # Local application/library imports
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-from TINTOlib.utils import Toolbox, CustomTransformer
+from TINTOlib.mappingMethod import MappingMethod
+from TINTOlib.utils import Toolbox
 
 
 ###########################################################
 ################    REFINED    ##############################
 ###########################################################
 
-class REFINED(AbstractImageMethod):
+class REFINED(MappingMethod):
     """
     REFINED: A method to transform high-dimensional feature vectors into 2D images 
     optimized for CNNs. It uses Bayesian Metric Multidimensional Scaling (BMDS) 
@@ -53,6 +52,12 @@ class REFINED(AbstractImageMethod):
     zoom : int, optional
         Multiplication factor determining the size of the saved image relative to the original size. 
         Default is 1. Valid values: integer > 0.
+    format : str, optional
+        Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+        Default is images with format 'png'.
+    cmap : str, optional
+        color map to use with matplotlib.
+        Default is viridis
     random_seed : int, optional
         Seed for reproducibility. 
         Default is 1. Valid values: integer.
@@ -63,18 +68,22 @@ class REFINED(AbstractImageMethod):
 
     default_zoom = 1  # Default zoom level for saving images
     default_random_seed = 1  # Default seed for reproducibility
+    default_cmap='viridis' #Default cmap image output
+    default_format='png'   # Default output format
 
     def __init__(
         self,
         problem: Optional[str] = None,
-        transformer: Optional[CustomTransformer] = MinMaxScaler(),
+        transformer = MinMaxScaler(),
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
         zoom: Optional[int] = default_zoom,
+        format=default_format,
+        cmap=default_cmap,
         random_seed: Optional[int] = default_random_seed,
     ):   
-        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
         if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
         
@@ -84,23 +93,17 @@ class REFINED(AbstractImageMethod):
         self.zoom = zoom
         self.random_seed = random_seed
 
-    def _img_to_file(self,image_matrix,file,extension):
-        shape = int(math.sqrt(image_matrix.shape[0]))
-        data = image_matrix.reshape(shape, shape)
-        plt.axis('off')
-        plt.imshow(data, cmap='viridis', interpolation="nearest")
-        plt.savefig(file,pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        
     def __saveImages(self,gene_names,coords,map_in_int, X, Y, nn):
 
         gene_names_MDS, coords_MDS, map_in_int_MDS=(gene_names,coords,map_in_int)
         X_REFINED_MDS = Toolbox.REFINED_Im_Gen(X, nn, map_in_int_MDS, gene_names_MDS, coords_MDS)
 
-        if self.verbose:
-            print("SAVING")
+        self._write_message("SAVING")
 
         for i in range(len(X_REFINED_MDS)):
-            self._save_image(X_REFINED_MDS[i],Y[i],i)
+            shape = int(math.sqrt(X_REFINED_MDS[i].shape[0]))
+            data = X_REFINED_MDS[i].reshape(shape, shape)
+            self._save_image(data,Y[i],i)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()
@@ -109,8 +112,7 @@ class REFINED(AbstractImageMethod):
 
         original_input = pd.DataFrame(data=X)  # The MDS input should be in a dataframe format with rows as samples and columns as features
         feature_names_list = original_input.columns.tolist()  # Extracting feature_names_list (gene_names or descriptor_names)
-        if self.verbose:
-            print(">>>> Data  is loaded")
+        self._write_message(">>>> Data  is loaded")
 
         nn = math.ceil(np.sqrt(len(feature_names_list)))  # Image dimension
         Nn = original_input.shape[1]  # Number of features
@@ -121,13 +123,10 @@ class REFINED(AbstractImageMethod):
 
         embedding = MDS(n_components=2, random_state=self.random_seed)  # Reduce the dimensionality by MDS into 2 components
         mds_xy = embedding.fit_transform(transposed_input)  # Apply MDS
-
-        if self.verbose:
-            print(">>>> MDS dimensionality reduction is done")
+        self._write_message(">>>> MDS dimensionality reduction is done")
 
         eq_xy = Toolbox.two_d_eq(mds_xy, Nn)
         Img = Toolbox.Assign_features_to_pixels(eq_xy, nn,verbose=self.verbose)  # Img is the none-overlapping coordinates generated by MDS
-
         Desc = original_input.columns.tolist()                              # Drug descriptors name
         Dist = pd.DataFrame(data = Euc_Dist, columns = Desc, index = Desc)	# Generating a distance matrix which includes the Euclidean distance between each and every descriptor
         data = (Desc, Dist, Img	)  											# Preparing the hill climbing inputs
@@ -155,7 +154,8 @@ class REFINED(AbstractImageMethod):
 
         with open(mapping_pickle_file,'rb') as file:
             self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS = pickle.load(file)
-    
+
+        self._build_features_mapping(x.columns,self.coords_MDS)
         os.remove(init_pickle_file)
         os.remove(mapping_pickle_file)
         os.remove(evolution_csv_file)
@@ -168,3 +168,4 @@ class REFINED(AbstractImageMethod):
         feature_names_list = original_input.columns.tolist()  # Extracting feature_names_list (gene_names or descriptor_names)
         nn = math.ceil(np.sqrt(len(feature_names_list)))  # Image dimension
         self.__saveImages(self.gene_names_MDS, self.coords_MDS, self.map_in_int_MDS, X, Y, nn)
+        self._features_mapping_to_csv()

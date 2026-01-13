@@ -16,15 +16,14 @@ from typing import List, Optional, Union
 from sklearn.preprocessing import MinMaxScaler
 
 # Local application/library imports
-from TINTOlib.abstractImageMethod import AbstractImageMethod
-from TINTOlib.utils.CustomTransformer import CustomTransformer
+from TINTOlib.mappingMethod import MappingMethod
 
 
 ###########################################################
 ################    IGTD    ###############################
 ###########################################################
 
-class IGTD(AbstractImageMethod):
+class IGTD(MappingMethod):
     """
     IGTD: Transforms tabular data into compact 2D images for CNNs by assigning features to pixels 
     based on similarity. It minimizes feature-pixel ranking differences, preserving neighborhood 
@@ -70,6 +69,12 @@ class IGTD(AbstractImageMethod):
     zoom : int, optional
         Multiplication factor determining the size of the saved image relative to the original size. 
         Default is 1. Valid values: integer > 0.
+    format : str, optional
+        Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+        Default is images with format 'png'.
+    cmap : str, optional
+        color map to use with matplotlib.
+        Default is gray
     random_seed : int, optional
         Seed for reproducibility. 
         Default is 1. Valid values: integer.    
@@ -91,11 +96,13 @@ class IGTD(AbstractImageMethod):
     
     default_zoom = 1                            # The default multiplication value to save the image
     default_random_seed = 1                     # default seed for reproducibility
+    default_cmap='gray'                         # Default cmap image output
+    default_format='png'                        # Default output format
 
     def __init__(
         self,
         problem: Optional[str] = None,
-        transformer: Optional[CustomTransformer] = MinMaxScaler(),
+        transformer = MinMaxScaler(),
         verbose: Optional[bool] = None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
@@ -106,9 +113,11 @@ class IGTD(AbstractImageMethod):
         switch_t: Optional[int] = default_switch_t,
         min_gain: Optional[float] = default_min_gain,
         zoom: Optional[int] = default_zoom,
+        format=default_format,
+        cmap=default_cmap,
         random_seed: Optional[int] = default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
 
         self.scale = scale
         self.fea_dist_method = fea_dist_method
@@ -557,16 +566,6 @@ class IGTD(AbstractImageMethod):
 
         return index_record, err_record, run_time
 
-    def _img_to_file(self,image_matrix,file,extension):
-        fig = plt.figure(figsize=(self.scale[1], self.scale[0]))
-        fig.set_dpi(self.zoom)
-        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        plt.imshow(image_matrix, cmap='gray', vmin=0, vmax=255, interpolation="nearest")
-        plt.axis('off')
-        fig.canvas.draw()
-        fig.savefig(fname=file, pad_inches=0, bbox_inches='tight', dpi=self.zoom)
-        plt.close(fig)
-
     def __generate_image_data(self, data, index, num_row, num_column, coord, labels):
         '''
         This function generates the data in image format according to rearrangement indices. It saves the data
@@ -611,9 +610,7 @@ class IGTD(AbstractImageMethod):
 
         image_data = np.empty((num_row, num_column, data_2.shape[0]))
         image_data.fill(np.nan)
-        total = data_2.shape[0]
 
-        fig,ax = plt.subplots()
 
         for i in range(data_2.shape[0]):
             data_i = np.empty((num_row, num_column))
@@ -645,6 +642,7 @@ class IGTD(AbstractImageMethod):
         self.index, err, time = self.__training(source=ranking_feature, target=ranking_image)
 
         self.min_id = np.argmin(err)
+        self._build_features_mapping(x.columns,np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
@@ -664,4 +662,4 @@ class IGTD(AbstractImageMethod):
             coord=self.coordinate,
             labels=Y
         )
-        self._features_pos_to_csv(x.columns,np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))
+        self._features_mapping_to_csv()

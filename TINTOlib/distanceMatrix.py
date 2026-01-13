@@ -52,7 +52,7 @@ class DistanceMatrix(AbstractImageMethod):
 
         self.zoom = zoom
 
-    def _img_to_file(self, image_matrix, file, extension):
+    def _img_to_file(self, image_matrix, file):
         img = Image.fromarray(np.uint8(np.squeeze(image_matrix) * 255))
         img.save(file)
 

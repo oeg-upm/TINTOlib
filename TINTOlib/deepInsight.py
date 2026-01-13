@@ -15,6 +15,10 @@ default_assignment_method = 'bin'
 default_random_seed = 23,
 default_algorithm_opt = 'lsa'
 default_group_method = 'avg'
+default_zoom=1
+default_format = 'png'  # Default output format
+default_cmap = 'gray'  # Default cmap image output
+
 
 class DeepInsight(ParamImageMethod):
     """
@@ -45,6 +49,12 @@ class DeepInsight(ParamImageMethod):
         Optimization algorithm that could be apply in pixels assignment stage.
     group_method : str, optional
         Using to apply different techniques to calculate pixels values that share multiples features. Default is 'avg'.
+    format : str, optional
+        Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+        Default is images with format 'png'.
+    cmap : str, optional
+        color map to use with matplotlib.
+        Default is gray
     random_seed : int, optional
         Seed for reproducibility.
         Default is 1. Valid values: integer.
@@ -62,6 +72,9 @@ class DeepInsight(ParamImageMethod):
             relocate=False,
             algorithm_opt=default_algorithm_opt,
             group_method=default_group_method,
+            zoom=default_zoom,
+            format=default_format,
+            cmap=default_cmap,
             random_seed=default_random_seed
     ):
         if (algorithm_rd not in ["PCA", "t-SNE", 'KPCA']):
@@ -69,13 +82,21 @@ class DeepInsight(ParamImageMethod):
 
         if(algorithm_rd != "PCA"): relocate = False
 
-        super().__init__( image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,random_seed)
+        super().__init__( image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
 
         self.__algorithm_rd = algorithm_rd
 
 
 
     def __apply_dimensionality_reduction(self,x):
+        """
+        Apply a dimensionality reduction technique to get features coordinates
+        Args:
+            x: features tabular data
+
+        Returns:
+            features coordinate matrix
+        """
         match self.__algorithm_rd:
             case 'PCA':
                 return PCA(n_components=2,random_state=self._random_seed).fit_transform(x)
@@ -86,6 +107,14 @@ class DeepInsight(ParamImageMethod):
 
 
     def _get_features_coords(self, x):
+        """
+                This method computes the features coordinates matrix
+                Args:
+                    x: features tabular data
+
+                Returns:
+                    features coordinate matrix
+        """
         features_coord = self.__apply_dimensionality_reduction(x)
         # Apply Convex Hull algorithm to get limit points, calculate mimimun rectangle area and rotate
         rotmat, rect_coords, limit_points = get_minimum_rectangle(features_coord)

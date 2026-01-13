@@ -3,9 +3,7 @@ import gc
 import math
 import os
 
-# Third-party library imports
-import matplotlib
-import matplotlib.image
+# Third-party library import
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -17,14 +15,14 @@ from typing import Union
 from sklearn.preprocessing import MinMaxScaler
 
 # Local application/library imports
-from TINTOlib.abstractImageMethod import AbstractImageMethod
+from TINTOlib.mappingMethod import MappingMethod
 
 ###########################################################
 ################    TINTO    ##############################
 ###########################################################
 
 
-class TINTO(AbstractImageMethod):
+class TINTO(MappingMethod):
     """
     TINTO: A class for transforming tabular data into synthetic images by projecting it into a two-dimensional space 
     and applying visualization techniques.
@@ -72,6 +70,12 @@ class TINTO(AbstractImageMethod):
         Multiplication factor determining the size of the saved image relative to the original size. 
         Values greater than 1 increase the image size proportionally. 
         Default is 1. Valid values: integer.
+    format : str, optional
+        Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+        Default is images with format 'png'.
+    cmap : str, optional
+        color map to use with matplotlib. If images with unique channel is required this parameter must be None
+        Default is binary
     random_seed : int, optional
         Seed for reproducibility. 
         Default is 1. Valid values: integer.
@@ -98,6 +102,8 @@ class TINTO(AbstractImageMethod):
 
     default_random_seed = 1  # Seed for reproducibility
     default_zoom = 1  # Zoom level
+    default_cmap='binary' #Default cmap image output
+    default_format='png'   # Default output format
 
     def __init__(
         self,
@@ -115,9 +121,11 @@ class TINTO(AbstractImageMethod):
         times=default_times,
         train_m=default_train_m,
         zoom=default_zoom,
+        format=default_format,
+        cmap=default_cmap,
         random_seed=default_random_seed,
     ):
-        super().__init__(problem=problem, verbose=verbose, transformer=transformer)
+        super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
 
         self.pixels = pixels
 
@@ -375,8 +383,7 @@ class TINTO(AbstractImageMethod):
             for j in range(X.shape[1]):
                 matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
 
-            matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
-            self._save_image(matrix_a, Y[i], i)
+            self._save_image(matrix_a*255, Y[i], i)
 
             # Verbose
             if self.verbose:
@@ -461,6 +468,7 @@ class TINTO(AbstractImageMethod):
         self.__obtainCoord(X)
         self.__areaDelimitation()
         self.__matrixPositions()
+        self._build_features_mapping(x.columns, self.pos_pixel_caract)
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         if not self.blur:
@@ -471,7 +479,4 @@ class TINTO(AbstractImageMethod):
         if (y is None):
             y = np.zeros(x.shape[0])
         self.__createImage(x, y, self.folder)
-        self._features_pos_to_csv(x.columns,self.pos_pixel_caract)
-
-    def _img_to_file(self, image_matrix, file,extension):
-        matplotlib.image.imsave(file, image_matrix, cmap='binary', format=extension, dpi=self.zoom)
+        self._features_mapping_to_csv()

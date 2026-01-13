@@ -77,7 +77,7 @@ class BarGraph(AbstractImageMethod):
 
         self.zoom = zoom
 
-    def _img_to_file(self, image_matrix, file,extension):
+    def _img_to_file(self, image_matrix, file):
         img = Image.fromarray(np.uint8(np.squeeze(image_matrix) * 255))
         img = img.resize(size=(img.size[0] * self.zoom, img.size[1] * self.zoom), resample=Image.Resampling.NEAREST)
         img.save(file)

@@ -11,6 +11,10 @@ from TINTOlib.paramImageMethod import ParamImageMethod
 default_assignment_method = 'binDigitize'
 default_random_seed = 1,
 default_algorithm_opt = 'lsa'
+default_zoom=1
+default_format = 'png'  # Default output format
+default_cmap = 'gray'  # Default cmap image output
+
 
 class Fotomics(ParamImageMethod):
     """
@@ -49,10 +53,15 @@ class Fotomics(ParamImageMethod):
         Optimization algorithm that could be apply in pixels assignment stage.
     group_method : str, optional
         Using to apply different techniques to calculate pixels values that share multiples features. Default is 'avg'.
+    format : str, optional
+        Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+        Default is images with format 'png'.
+    cmap : str, optional
+        color map to use with matplotlib.
+        Default is gray
     random_seed : int, optional
         Seed for reproducibility.
         Default is 1. Valid values: integer.
-
     """
 
     def __init__(self,
@@ -68,9 +77,12 @@ class Fotomics(ParamImageMethod):
             relocate=False,
             algorithm_opt=default_algorithm_opt,
             group_method="avg",
+            zoom=default_zoom,
+            format=default_format,
+            cmap=default_cmap,
             random_seed=default_random_seed
             ):
-        super().__init__(image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,random_seed)
+        super().__init__(image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
         self.__min_percentile = min_percentile
         self.__max_percentile = max_percentile
         self.__outliers = outliers
@@ -113,6 +125,14 @@ class Fotomics(ParamImageMethod):
 
 
     def __clean_outliers(self,x):
+        """
+        This method adjust outliers using avg, max/min or zero substitutions methods for features coordinates
+        Args:
+            x: features real/imaginary values
+
+        Returns:
+            features real/imaginary values with outliers adjusted
+        """
         percentiles = np.percentile(x,[self.__min_percentile,self.__max_percentile],axis=0).T
         iqrs = (percentiles[:, 1] - percentiles[:, 0])
         iqrs = iqrs * 1.5
@@ -135,6 +155,14 @@ class Fotomics(ParamImageMethod):
         return x_t.T
 
     def _get_features_coords(self,x):
+        """
+        This method computes the features coordinates matrix
+        Args:
+            x: features tabular data
+
+        Returns:
+            features coordinate matrix
+        """
         features_coord = self.__fourier_transform(x)
         # Apply Convex Hull algorithm to get limit points, calculate mimimun rectangle area and rotate
         rotmat, rect_coords, limit_points = get_minimum_rectangle(features_coord)

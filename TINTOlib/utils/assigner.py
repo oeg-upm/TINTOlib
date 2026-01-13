@@ -11,6 +11,16 @@ import pandas as pd
 class AssignerFactory():
     @staticmethod
     def get_assigner(name,algorithm=None,random_state=23):
+        """
+
+        Args:
+            name: Name of assigner to retrieve
+            algorithm: Using in assigners that mapping each pixel with a unique feature. Allow use optimal algorithm or greedy algorithm
+            random_state: seed to replicate process
+
+        Returns:
+            Assigner to mapping pixel and features
+        """
         match name:
             case 'bin':
                 return BinAssigner(name)
@@ -31,6 +41,15 @@ class Assigner(ABC):
         return self.__name
 
     def _scaled_features(self, features_coord,dim):
+        """
+        Scale features coordinates to range [0,dim]
+        Args:
+            features_coord: 2D Array features coordinates
+            dim: Max value of features coordinates
+
+        Returns:
+        2D Array features coordinates scaled
+        """
         min = features_coord.min(axis=0)
         max = features_coord.max(axis=0)
         scaled = (features_coord - min) / (max - min)
@@ -58,6 +77,15 @@ class BinDigitizeAssigner(DirectAssigner):
         super().__init__(name)
 
     def _discretize(self,features_data,dim):
+        """
+            Discretize features coordinates into bins using image dimension
+        Args:
+            features_data:features coordinates
+            dim:image dim
+
+        Returns:
+            Array with image features positions
+        """
         x_column = features_data[:, 0]
         y_column = features_data[:, 1]
         features_positions = np.stack(
@@ -75,6 +103,15 @@ class BinAssigner(DirectAssigner):
         super().__init__(name)
 
     def _discretize(self,features_data,dim):
+        """
+            Scale features coordinates and discretize into bins using image dimension
+        Args:
+            features_data:features coordinates
+            dim:image dim
+
+        Returns:
+            Array with image features positions
+        """
         features_coord=self._scaled_features(features_data,dim)
         features_positions=np.floor(features_coord).astype(int)
         features_positions[:, 0][features_positions[:, 0] == dim] = dim - 1
@@ -87,6 +124,15 @@ class QuantileAssigner(DirectAssigner):
         super().__init__(name)
 
     def _discretize(self,features_data,dim):
+        """
+              Transform features coordinates in uniform distribution, Scale and discretize into bins using image dimension
+          Args:
+              features_data:features coordinates
+              dim:image dim
+
+          Returns:
+              Array with image features positions
+          """
         features_data[:, 0] = quantile_transform(features_data[:, 0,None],n_quantiles=dim,output_distribution='uniform').flatten()
         features_data[:, 1]= quantile_transform(features_data[:, 1,None],n_quantiles=dim,output_distribution='uniform').flatten()
         features_coord=self._scaled_features(features_data,dim)
@@ -98,6 +144,7 @@ class QuantileAssigner(DirectAssigner):
 
 
 class OptimizeAssigner(Assigner):
+
     def __init__(self, name,scale=False,algorithm='lsa'):
         super().__init__(name)
         self.__name = name
@@ -105,6 +152,16 @@ class OptimizeAssigner(Assigner):
         self.__scale=scale
 
     def assign(self,features_data,dim):
+        """
+            Optional Scale features coordinates, compute cost table for each mapping combinations between pixels and features and use an algorithm (optimal/suboptimal) to
+            optimize a function mapping pixel and features
+        Args:
+            features_data: Features coordinates/positions and/or relevance by feature
+            dim:image dim
+
+        Returns:
+        Array with image features positions
+        """
         if(self.__scale):
             features_data = self._scaled_features(features_data,dim)
         empty_pixels=self._get_empty_pixels(features_data,dim)
@@ -125,6 +182,14 @@ class OptimizeAssigner(Assigner):
         raise NotImplementedError("Subclasses must implement get_features_positions.")
 
     def __optimize(self, cost_table):
+        """
+        Get a cost table for optimize using lsa or greedy algorithm
+        Args:
+            cost_table: Table with the cost of assign each pixel to each feature
+
+        Returns:
+            Pixel-feature combinations optimized
+        """
         match self.__algorithm:
             case 'lsa':
                 return linear_sum_assignment(cost_table)
@@ -142,6 +207,16 @@ class PixelsCentroidsAssigner(OptimizeAssigner):
         self.__random_state = random_state
 
     def _compute_cost_table(self,features_coord,empty_pixels):
+        """
+        Create cost table for assigning each pixel to each feature. Using distance between features coord and pixel centroids. If the number of pixels available is
+        lower than the number of features to mapping use a cluster algorithm to group features
+        Args:
+            features_coord:features coordinates
+            empty_pixels:Array with empty pixels positions and centroids
+
+        Returns:
+            Cost table for assigning each pixel to each feature
+        """
         if(features_coord.shape[0]>empty_pixels.shape[0]):
             self.__clusters_labels,clusters_centers=self.__cluster_features(features_coord,empty_pixels.shape[0])
             cost_table=cdist(clusters_centers,empty_pixels[:,2:],metric='euclidean')
@@ -151,10 +226,28 @@ class PixelsCentroidsAssigner(OptimizeAssigner):
         return cost_table
 
     def __cluster_features(self,features_coord,num_pixels):
+        """
+        Cluster features based on number of pixels
+        Args:
+            features_coord:features coordinates
+            num_pixels:Number of pixels to cluster coordinates
+
+        Returns:
+        Cluster by feature and clusters centers
+        """
         kmeans=BisectingKMeans(n_clusters=num_pixels,random_state=self.__random_state).fit(features_coord)
         return kmeans.labels_,kmeans.cluster_centers_
 
     def _get_empty_pixels(self, features_data,dim):
+        """
+        Create structure with empty pixels according to dimension and centroids
+        Args:
+            features_data: features information
+            dim:image dim
+
+        Returns:
+        Array with empty pixels positions and centroids
+        """
         image_matrix = np.zeros((dim, dim))
         empty_pixels_idxs = np.argwhere(image_matrix == 0)
         pixels_centroids = empty_pixels_idxs + 0.5
@@ -162,6 +255,17 @@ class PixelsCentroidsAssigner(OptimizeAssigner):
         return empty_pixels
 
     def _get_features_positions(self,features_data,empty_pixels,row_idxs,pixels_idxs):
+        """
+        Get features positions array according to features coordinates, empty pixels array and mapping between pixel and features optimized
+        Args:
+            features_data: features coordinates
+            empty_pixels: Array with empty pixels positions and centroids
+            row_idxs: Index of features/clusters
+            pixels_idxs: Index of pixels
+
+        Returns:
+        Array with image features positions
+        """
         features_positions=np.zeros((features_data.shape[0],2))
         empty_pixels=empty_pixels[:,:2]
         if(self.__clusters_labels is not None):
@@ -176,6 +280,16 @@ class RelevanceAssigner(OptimizeAssigner):
         super().__init__(name,False,algorithm)
 
     def _compute_cost_table(self,features_data,empty_pixels):
+        """
+        Create cost table for assigning each pixel to each feature that need to be relocate. Using the features relevance and the number of pixels
+         between feature origin pixel assigned and each pixel available.
+        Args:
+            features_data:features original positions
+            empty_pixels:Array with empty pixels positions
+
+        Returns:
+            Cost table for assigning each pixel to each feature
+        """
         self.__features_overlapping = self.__get_features_overlapping(features_data)
         cost_table = np.zeros((self.__features_overlapping.shape[0], empty_pixels.shape[0]))
         i = 0
@@ -186,6 +300,15 @@ class RelevanceAssigner(OptimizeAssigner):
         return cost_table
 
     def __get_features_overlapping(self,features_data):
+        """
+        Compute the features that need to be relocated using the features original positions and the relevance of each feature. If a pixel is shared by several features,
+         the mapping is maintained with the most relevant feature and the others must be relocated.
+        Args:
+            features_data: Array with features original positions
+
+        Returns:
+        Array with the index of features that need to be relocated and its relevance
+        """
         df_rev = pd.DataFrame(features_data, columns=['row', 'col', 'rev'])
         df_rev['count'] = df_rev.groupby(['row', 'col'], as_index=False).transform('count')
         df_rev = df_rev[df_rev['count'] > 1]
@@ -197,6 +320,15 @@ class RelevanceAssigner(OptimizeAssigner):
         return features_overlapping
 
     def _get_empty_pixels(self, features_data,dim):
+        """
+        Create structure with empty pixels according to dimension
+        Args:
+            features_data: features information
+            dim:image dim
+
+        Returns:
+        Array with empty pixels positions
+        """
         image_matrix = np.zeros((dim, dim))
         for i, j in zip(features_data[:, 0], features_data[:, 1]):
             image_matrix[int(i), int(j)] += 1
@@ -204,6 +336,17 @@ class RelevanceAssigner(OptimizeAssigner):
         return empty_pixels
 
     def _get_features_positions(self,features_data,empty_pixels,row_idxs,pixels_idxs):
+        """
+        Get features positions array according to features coordinates, empty pixels array and mapping between pixel and features optimized
+        Args:
+            features_data: features original positions
+            empty_pixels: Array with empty pixels positions
+            row_idxs: Index of features
+            pixels_idxs: Index of pixels
+
+        Returns:
+        Array with image features positions
+        """
         idxs=self.__features_overlapping[row_idxs,3].astype(int)
         features_data=features_data[:,:2]
         features_data[idxs] = empty_pixels[pixels_idxs]

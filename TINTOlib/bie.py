@@ -105,5 +105,5 @@ class BIE(AbstractImageMethod):
         matrices = self.__convert_samples_to_binary(x)
         self.__save_images(matrices, y, num_elems=x.shape[0])
 
-    def _img_to_file(self, image_matrix, file,extension):
-        matplotlib.image.imsave(file, image_matrix, cmap='gray', format=extension, dpi=self.zoom, vmin=0, vmax=1)
+    def _img_to_file(self, image_matrix, file):
+        matplotlib.image.imsave(file, image_matrix, cmap='gray', format='png', dpi=self.zoom, vmin=0, vmax=1)

@@ -5,8 +5,7 @@ Created on Sat Aug 10 18:04:36 2019
 @author: Ruibzhan
 """
 
-
-from mpi4py import MPI 
+from mpi4py import MPI
 import paraHill
 import pickle
 import numpy as np
@@ -92,7 +91,7 @@ if my_rank == 0:
         pickle.dump([gene_names,coords,map_in_int],file)
     #print("Consumed time:",start - time.time())
     Endtime = datetime.datetime.now()
-    print("Time now at the end: ", Endtime)
+    #print("Time now at the end: ", Endtime)
     import pandas as pd
     pd.Series(corr_evol).to_csv(args.evolution)    
 else:
@@ -108,9 +107,5 @@ else:
             centr_list = comm.recv(source = 0)
             each_swap_dict = paraHill.evaluate_centroids_in_list(centr_list,dist_matr,map_in_int)
             comm.send(each_swap_dict,dest = 0)
-    #result = dict()
-    #for each in data:
-    #    result.update({each: -each})
-    #comm.send(result,dest = 0)
 
 MPI.Finalize
