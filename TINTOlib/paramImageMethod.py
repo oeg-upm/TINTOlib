@@ -3,22 +3,19 @@ from typing import Union
 import numpy as np
 import pandas as pd
 from TINTOlib.utils.assigner import AssignerFactory
-
+import TINTOlib.utils.constants as constants
 from TINTOlib.mappingMethod import MappingMethod
-
 
 ###########################################################
 ################    ParamImageMethod    ##############################
 ###########################################################
 
-default_assignment_method = 'bin'
 default_random_seed = 1,
-default_algorithm_opt = 'lsa'
-default_group_method = 'avg'
 default_zoom=1
-default_format='png'
 default_cmap = 'gray'  # Default cmap image output
-
+group_methods_allowed=[constants.avg_option,constants.relevance_option]
+opt_algorithms_allowed=[constants.linear_sum_assigner,constants.greedy_assigner]
+assigners_allowed=[constants.bin_assigner,constants.bin_digitize_assigner,constants.quantile_assigner,constants.pixel_centroids_assigner,constants.relevance_assigner]
 
 class ParamImageMethod(MappingMethod):
     """
@@ -62,23 +59,23 @@ class ParamImageMethod(MappingMethod):
             problem=None,
             transformer=None,
             verbose=None,
-            assignment_method=default_assignment_method,
+            assignment_method=constants.bin_assigner,
             relocate=False,
-            algorithm_opt=default_algorithm_opt,
-            group_method=default_group_method,
+            algorithm_opt=constants.linear_sum_assigner,
+            group_method=constants.avg_option,
             zoom=default_zoom,
-            format=default_format,
+            format=constants.png_format,
             cmap=default_cmap,
             random_seed=default_random_seed
     ):
-        if (assignment_method not in ["bin", "quantile_transform", "PixelCentroidsAssigner","binDigitize"]):
-            raise ValueError("Algorithm_rd parameter must be in [bin,quantile_transform,PixelCentroidsAssigner,binDigitize]")
+        if (assignment_method not in assigners_allowed):
+            raise ValueError(f"Algorithm_rd parameter must be in {assigners_allowed}")
 
-        if (algorithm_opt not in ["lsa", "greedy"]):
-            raise ValueError("Algorithm_rd parameter must be in [lsa,greedy]")
+        if (algorithm_opt not in opt_algorithms_allowed):
+            raise ValueError(f"Algorithm_rd parameter must be in {opt_algorithms_allowed}")
 
-        if (group_method not in ["avg", "rev"]):
-            raise ValueError("Group method must be in ['avg', 'rev']")
+        if (group_method not in group_methods_allowed):
+            raise ValueError(f"Group method must be in {group_methods_allowed}")
 
         super().__init__(problem=problem, verbose=verbose, transformer=transformer,format=format, zoom=zoom, cmap=cmap)
         self._image_dim = dim
@@ -112,7 +109,7 @@ class ParamImageMethod(MappingMethod):
         self._features_relevance = self._compute_relevance(self._features_coord, self._features_positions)
         if (self._relocate):
             if (self._duplicated(self._features_positions)):
-                optimizer = AssignerFactory.get_assigner('RelevanceAssigner', algorithm=self._algorithm_opt)
+                optimizer = AssignerFactory.get_assigner(constants.relevance_assigner, algorithm=self._algorithm_opt)
                 self._features_positions = optimizer.assign(self._features_relevance, self._image_dim)
 
 
@@ -162,12 +159,12 @@ class ParamImageMethod(MappingMethod):
             x: Dataset
 
         Returns:
-
+            imgs_coord: Matrix with pixel values by averaging features values
         """
         match self._group_method:
-            case 'avg':
+            case constants.avg_option:
                 return self._avg_features_by_pixels(x)
-            case 'rev':
+            case constants.relevance_option:
                 return self._rev_features_by_pixels(x)
             case _:
                 return self._avg_features_by_pixels(x)

@@ -9,7 +9,8 @@ authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},
     { name= "DavidGonzalezFernandez", email="david.g.f.2@gmail.com"},
-    { name= "JiayunLiu", email="jiayun.liu@upm.es"}
+    { name= "JiayunLiu", email="jiayun.liu@upm.es"},
+    { name="JavierLopez", email="javilecrin19@gmail.com"}
 ]
 description = "Converting tabular data into images"
 readme = "README.md"

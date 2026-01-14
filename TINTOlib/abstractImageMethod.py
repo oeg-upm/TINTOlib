@@ -10,13 +10,14 @@ import pandas as pd
 from tqdm import tqdm
 # Typing imports
 from typing import Optional, Union
+import TINTOlib.utils.constants as constants
+
 
 # Default configuration values
-default_problem = "classification"  # Define the type of task [classification, unsupervised, regression]
+default_problem = constants.classification  # Define the type of task [classification, unsupervised, regression]
 default_verbose = False         # Verbose: if True, shows the compilation text
 default_hyperparameters_filename = 'objs.pkl'
-allowed_values_for_problem = ["classification","supervised", "unsupervised", "regression"]
-default_format='png'
+default_format=constants.png_format
 
 class AbstractImageMethod(ABC):
     """
@@ -35,10 +36,10 @@ class AbstractImageMethod(ABC):
             problem = default_problem
         elif (not isinstance(problem, str)):
             raise TypeError(f"problem must be of type str (got {type(problem)})")
-        elif(problem not in allowed_values_for_problem):
-            raise ValueError(f"Allowed values for problem are {allowed_values_for_problem}. Instead got {problem}")
+        elif(problem not in constants.allowed_values_for_problem):
+            raise ValueError(f"Allowed values for problem are {constants.allowed_values_for_problem}. Instead got {problem}")
 
-        if(problem == "supervised"):
+        if(problem == constants.supervised):
             warnings.warn("Problem type supervised will be deprecated. Instead use classification.",FutureWarning)
         # Validate `verbose`
         if verbose is None:
@@ -46,8 +47,8 @@ class AbstractImageMethod(ABC):
         if not isinstance(verbose, bool):
             raise TypeError(f"verbose must be of type bool (got {type(verbose)})")
 
-        if(format not in ["png","npy"]):
-            raise ValueError(f"Allowed values for format are png or npy")
+        if(format not in constants.format_values_allowed):
+            raise ValueError(f"Allowed values for format are {constants.format_values_allowed}")
 
         self.transformer=transformer
         self.problem = problem
@@ -128,7 +129,7 @@ class AbstractImageMethod(ABC):
         - folder: Path to folder where the images will be saved.
         """
         if not self._fitted:
-            raise RuntimeError("The model must be fitted before calling 'transform'. Please call 'fit' first.")
+            raise RuntimeError(constants.untrained_model_message)
         with (tqdm(total=100) if self.verbose==True else nullcontext()) as self.bar :
             self.__imgs_routes=[]
             self.__progress=0
@@ -142,11 +143,11 @@ class AbstractImageMethod(ABC):
             if self.transformer != None:
                 x = pd.DataFrame(self.transformer.transform(x), columns=x.columns)
 
-            self.__update_progress_bar(progress=10, text='Generating and saving the synthetic images')
+            self.__update_progress_bar(progress=10, text=constants.generating_images_message)
             self.folder = folder
             self._transformAlg(x, y)
             self.__create_csv(x_original)
-            self.__update_progress_bar(progress=(100-self.__progress), text='Images generated and saved')
+            self.__update_progress_bar(progress=(100-self.__progress), text=constants.images_generated_message)
             self._write_message("Transform process completed.")
 
     def fit_transform(self, data, folder):
@@ -172,13 +173,13 @@ class AbstractImageMethod(ABC):
             if self.transformer!=None:
                 x = pd.DataFrame(self.transform.fit_transform(x), columns=x.columns)
 
-            self.__update_progress_bar(progress=10, text='Generating and saving the synthetic images')
+            self.__update_progress_bar(progress=10, text=constants.generating_images_message)
             self.folder = folder
             self._fitAlg(x, y)
-            self.__update_progress_bar(progress=20, text='Generating and saving the synthetic images')
+            self.__update_progress_bar(progress=20, text=constants.generating_images_message)
             self._transformAlg(x, y)
             self._fitted = True  # Mark as fitted after both operations
-            self.__update_progress_bar(progress=(100-self.__progress), text='Images generated and saved')
+            self.__update_progress_bar(progress=(100-self.__progress), text=constants.images_generated_message)
             self._write_message("Fit-Transform process completed.")
 
     def _load_data(self, data: Union[str, pd.DataFrame]) -> pd.DataFrame:
@@ -191,7 +192,7 @@ class AbstractImageMethod(ABC):
         elif isinstance(data, pd.DataFrame):
             dataset = data
         else:
-            raise TypeError("data must be a string (file path) or a pandas DataFrame.")
+            raise TypeError(constants.invalid_input_data_message)
 
         if(dataset.select_dtypes(exclude=["number"]).shape[1]!=0):
             raise TypeError("There are non-numeric features in data")
@@ -207,7 +208,7 @@ class AbstractImageMethod(ABC):
         """
         Splits dataset into features and targets based on the problem type.
         """
-        if self.problem in ["classification","supervised", "regression"]:
+        if self.problem in [constants.classification,constants.supervised, constants.regression]:
             x = dataset.drop(columns=dataset.columns[-1])
             y = dataset[dataset.columns[-1]]
         else:
@@ -226,10 +227,10 @@ class AbstractImageMethod(ABC):
             (absolute route,relative route)
         """
         image_file = str(num_image).zfill(6)+"."+self.format
-        if (self.problem in ["classification","supervised"]):
+        if (self.problem in [constants.classification,constants.supervised]):
             subfolder = str(int(y)).zfill(2)
         else:
-            subfolder = "images"
+            subfolder = constants.images_subfolder_name
 
         folder_route = os.path.join(self.folder, subfolder)
         abs_route = os.path.join(self.folder, subfolder, image_file)
@@ -254,7 +255,7 @@ class AbstractImageMethod(ABC):
         """
         abs_route,rtv_route=self.__get_image_routes(y,num_image)
         self._img_to_file(img_matrix,abs_route)
-        self.__imgs_routes.append({"images":rtv_route,"value":y})
+        self.__imgs_routes.append({constants.images_subfolder_name:rtv_route,constants.target_column_name:y})
         self.__update_progress_bar(progress=self.bar_transform_step)
 
     def __create_csv(self,X):

@@ -19,7 +19,7 @@ from sklearn.preprocessing import MinMaxScaler
 # Local application/library imports
 from TINTOlib.mappingMethod import MappingMethod
 from TINTOlib.utils import Toolbox
-
+import TINTOlib.utils.constants as constants
 
 ###########################################################
 ################    REFINED    ##############################
@@ -69,7 +69,7 @@ class REFINED(MappingMethod):
     default_zoom = 1  # Default zoom level for saving images
     default_random_seed = 1  # Default seed for reproducibility
     default_cmap='viridis' #Default cmap image output
-    default_format='png'   # Default output format
+    default_format=constants.png_format   # Default output format
 
     def __init__(
         self,

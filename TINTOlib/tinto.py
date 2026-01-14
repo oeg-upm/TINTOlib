@@ -16,6 +16,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Local application/library imports
 from TINTOlib.mappingMethod import MappingMethod
+import TINTOlib.utils.constants as constants
+
 
 ###########################################################
 ################    TINTO    ##############################
@@ -88,7 +90,7 @@ class TINTO(MappingMethod):
     ###### default values ###############
     default_pixels = 20  # Image's Pixels (one side)
 
-    default_algorithm = "PCA"  # Dimensionality reduction algorithm (PCA or t-SNE)
+    default_algorithm = constants.pca_algorithm  # Dimensionality reduction algorithm (PCA or t-SNE)
     default_blur = False  # Activate blurring option
 
     default_submatrix = True  # Use or not use submatrix
@@ -103,7 +105,7 @@ class TINTO(MappingMethod):
     default_random_seed = 1  # Seed for reproducibility
     default_zoom = 1  # Zoom level
     default_cmap='binary' #Default cmap image output
-    default_format='png'   # Default output format
+    default_format=constants.png_format   # Default output format
 
     def __init__(
         self,
@@ -408,9 +410,9 @@ class TINTO(MappingMethod):
         if self.verbose:
             self.bar.write("Selected algorithm: " + self.algorithm)
 
-        if self.algorithm == 'PCA':
+        if self.algorithm == constants.pca_algorithm:
             X_embedded = PCA(n_components=2, random_state=self.random_seed).fit(X_trans).transform(X_trans)
-        elif self.algorithm == 't-SNE':
+        elif self.algorithm == constants.tsne_algorithm:
             for i in range(self.times):
                 X_trans = np.append(X_trans, X_trans, axis=0)
                 labels = np.append(labels, labels, axis=0)

@@ -4,19 +4,15 @@ from sklearn.manifold import TSNE
 from TINTOlib.utils.geometry import get_minimum_rectangle
 from TINTOlib.paramImageMethod import ParamImageMethod
 from sklearn.preprocessing import MinMaxScaler
+import TINTOlib.utils.constants as constants
 
 ###########################################################
 ################    DeepInsight    ##############################
 ###########################################################
 
 
-default_algorithm_rd = 'PCA'
-default_assignment_method = 'bin'
 default_random_seed = 23,
-default_algorithm_opt = 'lsa'
-default_group_method = 'avg'
 default_zoom=1
-default_format = 'png'  # Default output format
 default_cmap = 'gray'  # Default cmap image output
 
 
@@ -70,20 +66,20 @@ class DeepInsight(ParamImageMethod):
             problem=None,
             transformer=MinMaxScaler(),
             verbose=None,
-            algorithm_rd=default_algorithm_rd,
-            assignment_method=default_assignment_method,
+            algorithm_rd=constants.pca_algorithm,
+            assignment_method=constants.bin_assigner,
             relocate=False,
-            algorithm_opt=default_algorithm_opt,
-            group_method=default_group_method,
+            algorithm_opt=constants.linear_sum_assigner,
+            group_method=constants.avg_option,
             zoom=default_zoom,
-            format=default_format,
+            format=constants.png_format,
             cmap=default_cmap,
             random_seed=default_random_seed
     ):
-        if (algorithm_rd not in ["PCA", "t-SNE", 'KPCA']):
-            raise TypeError("Algorithm_rd parameter must be in [PCA,t-SNE,KPCA]")
+        if (algorithm_rd not in [constants.pca_algorithm, constants.tsne_algorithm,constants.kpca_algorithm]):
+            raise TypeError(f"Algorithm_rd parameter must be in {[constants.pca_algorithm, constants.tsne_algorithm,constants.kpca_algorithm]}")
 
-        if(algorithm_rd != "PCA"): relocate = False
+        if(algorithm_rd != constants.pca_algorithm): relocate = False
 
         super().__init__( image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
 
@@ -101,11 +97,11 @@ class DeepInsight(ParamImageMethod):
             features coordinate matrix
         """
         match self.__algorithm_rd:
-            case 'PCA':
+            case constants.pca_algorithm:
                 return PCA(n_components=2,random_state=self._random_seed).fit_transform(x)
-            case 't-SNE':
+            case constants.tsne_algorithm:
                 return TSNE(n_components=2,metric='cosine',random_state=self._random_seed,perplexity=self._image_dim).fit_transform(x)
-            case 'KPCA':
+            case constants.kpca_algorithm:
                 return KernelPCA(n_components=2,kernel='rbf',random_state=self._random_seed).fit_transform(x)
 
 

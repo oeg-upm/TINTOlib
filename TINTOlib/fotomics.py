@@ -3,18 +3,16 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 from TINTOlib.utils.LogScaler import LogScaler
 from TINTOlib.utils.geometry import get_minimum_rectangle
 from TINTOlib.paramImageMethod import ParamImageMethod
+import TINTOlib.utils.constants as constants
 
 ###########################################################
 ################    Fotomics    ##############################
 ###########################################################
 
-default_assignment_method = 'binDigitize'
 default_random_seed = 1,
-default_algorithm_opt = 'lsa'
 default_zoom=1
-default_format = 'png'  # Default output format
 default_cmap = 'gray'  # Default cmap image output
-
+outliers_treatment_allowed=[constants.zero_option,constants.max_min_option,constants.avg_option]
 
 class Fotomics(ParamImageMethod):
     """
@@ -75,13 +73,13 @@ class Fotomics(ParamImageMethod):
             outliers=True,
             min_percentile=10,
             max_percentile=90,
-            outliers_treatment="zero",
-            assignment_method=default_assignment_method,
+            outliers_treatment=constants.zero_option,
+            assignment_method=constants.bin_digitize_assigner,
             relocate=False,
-            algorithm_opt=default_algorithm_opt,
-            group_method="avg",
+            algorithm_opt=constants.linear_sum_assigner,
+            group_method=constants.avg_option,
             zoom=default_zoom,
-            format=default_format,
+            format=constants.png_format,
             cmap=default_cmap,
             random_seed=default_random_seed
             ):
@@ -90,8 +88,8 @@ class Fotomics(ParamImageMethod):
         self.__max_percentile = max_percentile
         self.__outliers = outliers
 
-        if (outliers_treatment not in ["zero", "avg", "max/min"]):
-            raise ValueError("Type of outliers treatment must be in [zero,avg,max/min]")
+        if (outliers_treatment not in outliers_treatment_allowed):
+            raise ValueError(f"Type of outliers treatment must be in {outliers_treatment_allowed}")
         else:
             self.__outliers_treatment = outliers_treatment
 
@@ -143,16 +141,16 @@ class Fotomics(ParamImageMethod):
         upper_limits = (percentiles[:, 1] + iqrs).reshape(-1, 1)
         x_t = x.T
         match self.__outliers_treatment:
-            case "avg":
+            case constants.avg_option:
                 subs = np.tile(np.mean(x, axis=0), (x.shape[0], 1)).T
                 x_t = np.where(x_t >= lower_limits, x_t, subs)
                 x_t = np.where(x_t <= upper_limits, x_t, subs)
-            case "max/min":
+            case constants.max_min_option:
                 max = np.tile(lower_limits.T, (x.shape[0], 1)).T
                 min = np.tile(upper_limits.T, (x.shape[0], 1)).T
                 x_t = np.where(x_t >= lower_limits, x_t, max)
                 x_t = np.where(x_t <= upper_limits, x_t, min)
-            case "zero":
+            case constants.zero_option:
                 x_t = np.where(x_t >= lower_limits, x_t, 0)
                 x_t = np.where(x_t <= upper_limits, x_t, 0)
         return x_t.T

@@ -6,7 +6,7 @@ from scipy.spatial.distance import cdist
 from scipy.optimize import linear_sum_assignment
 from asymmetric_greedy_search import AsymmetricGreedySearch
 import pandas as pd
-
+import TINTOlib.utils.constants as constants
 
 class AssignerFactory():
     @staticmethod
@@ -22,15 +22,15 @@ class AssignerFactory():
             Assigner to mapping pixel and features
         """
         match name:
-            case 'bin':
+            case constants.bin_assigner:
                 return BinAssigner(name)
-            case 'binDigitize':
+            case constants.bin_digitize_assigner:
                 return BinDigitizeAssigner(name)
-            case 'quantile_transform':
+            case constants.quantile_assigner:
                 return QuantileAssigner(name)
-            case 'PixelCentroidsAssigner':
+            case constants.pixel_centroids_assigner:
                 return PixelsCentroidsAssigner(name,algorithm,random_state)
-            case 'RelevanceAssigner':
+            case constants.relevance_assigner:
                 return RelevanceAssigner(name,algorithm)
 
 class Assigner(ABC):
