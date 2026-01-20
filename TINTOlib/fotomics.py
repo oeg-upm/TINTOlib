@@ -169,6 +169,17 @@ class Fotomics(ParamImageMethod):
         rotmat, rect_coords, limit_points = get_minimum_rectangle(features_coord)
         return np.dot(rotmat, features_coord.T).T
 
+    def _compute_relevance(self, x,features_coord):
+        """
+
+        Args:
+            x: features dataset not transposed
+            features_coord: features coordinates retrieved using a features extraction method
+        Returns:
+            Array that contains features relevance
+        """
+        return np.linalg.norm(features_coord, axis=1).reshape(-1, 1) + 1
+
 
 
 

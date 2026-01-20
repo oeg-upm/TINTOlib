@@ -5,6 +5,7 @@ import pandas as pd
 from TINTOlib.utils.assigner import AssignerFactory
 import TINTOlib.utils.constants as constants
 from TINTOlib.mappingMethod import MappingMethod
+from sklearn.preprocessing import MinMaxScaler
 
 ###########################################################
 ################    ParamImageMethod    ##############################
@@ -98,19 +99,21 @@ class ParamImageMethod(MappingMethod):
                """
         x_transposed = x.T
         self._features_coord=self._get_features_coords(x_transposed)
+        if(self._relocate or self._group_method==constants.relevance_option):
+            self._features_relevance = self._compute_relevance(x,self._features_coord)
+
         # Mapping features coordinates with image
-        self._mapping_features()
+        self._mapping_features(x)
         self._build_features_mapping(x.columns,self._features_positions)
 
-    def _mapping_features(self):
+    def _mapping_features(self,x):
         assigner = AssignerFactory.get_assigner(self._assignment_method,
                                                 algorithm=self._algorithm_opt)
         self._features_positions = assigner.assign(self._features_coord, self._image_dim)
-        self._features_relevance = self._compute_relevance(self._features_coord, self._features_positions)
         if (self._relocate):
             if (self._duplicated(self._features_positions)):
                 optimizer = AssignerFactory.get_assigner(constants.relevance_assigner, algorithm=self._algorithm_opt)
-                self._features_positions = optimizer.assign(self._features_relevance, self._image_dim)
+                self._features_positions = optimizer.assign(np.hstack((self._features_positions,self._features_relevance)), self._image_dim)
 
 
     def _duplicated(self, features_positions):
@@ -125,18 +128,7 @@ class ParamImageMethod(MappingMethod):
         df_feature_pos = pd.DataFrame(features_positions)
         return df_feature_pos.duplicated().any()
 
-    def _compute_relevance(self, features_coord, features_positions):
-        """
 
-        Args:
-            features_coord: features coordinates retrieved using a features extraction method
-            features_positions: array with pixels positions by feature
-
-        Returns:
-            Array that contains features positions with norm by feature computed using features coordinates
-        """
-        norm = np.linalg.norm(features_coord, axis=1).reshape(-1, 1) + 1
-        return np.hstack((features_positions, norm))
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         """
@@ -192,11 +184,13 @@ class ParamImageMethod(MappingMethod):
         Returns:
 
         """
-        features_dot_rev=(x.T)*(self._features_relevance[:,2].reshape(-1,1))
-        rev_sum = (pd.DataFrame(self._features_relevance).groupby([0, 1], as_index=False).transform('sum')).to_numpy()
+
+        features_info=np.hstack((self._features_positions, self._features_relevance))
+        features_dot_rev=(x.T)*(features_info[:,2].reshape(-1,1))
+        rev_sum = (pd.DataFrame(features_info).groupby([0, 1], as_index=False).transform('sum')).to_numpy()
         features_rev=features_dot_rev/rev_sum
         pixels_sum=(pd.DataFrame(np.hstack((self._features_positions, features_rev))).groupby([0, 1], as_index=False).sum()).to_numpy()
-        rev_count = (pd.DataFrame(self._features_relevance).groupby([0, 1], as_index=False).count()).to_numpy()
+        rev_count = (pd.DataFrame(features_info).groupby([0, 1], as_index=False).count()).to_numpy()
         pixels_values=pixels_sum[:,2:]/rev_count[:,2].reshape(-1,1)
         imgs_coord=pd.DataFrame(np.hstack((pixels_sum[:,:2], pixels_values)))
         return imgs_coord
@@ -222,3 +216,7 @@ class ParamImageMethod(MappingMethod):
     @abstractmethod
     def _get_features_coords(self,x):
         raise NotImplementedError("Subclasses must implement _fit_alg.")
+
+    @abstractmethod
+    def _compute_relevance(self, x=None,features_coord=None):
+        raise NotImplementedError("Subclasses must implement _compute_relevance.")

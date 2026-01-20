@@ -104,6 +104,18 @@ class DeepInsight(ParamImageMethod):
             case constants.kpca_algorithm:
                 return KernelPCA(n_components=2,kernel='rbf',random_state=self._random_seed).fit_transform(x)
 
+    def _compute_relevance(self, x=None,features_coord=None):
+        """
+
+               Args:
+                   x: features dataset not transposed
+                   features_coord: features coordinates retrieved using a features extraction method
+               Returns:
+                   Array that contains features relevance
+        """
+        pca_fitted=PCA(n_components=2,random_state=self._random_seed).fit(x)
+        features_relevance = MinMaxScaler().fit_transform(pca_fitted.components_[0,:].reshape(-1,1)) + 1
+        return features_relevance
 
     def _get_features_coords(self, x):
         """
