@@ -27,6 +27,14 @@ class MappingMethod(AbstractImageMethod):
        verbose : bool, optional
            Show execution details in the terminal.
            Default is False. Valid values: [True, False].
+        zoom : int, optional
+            Multiplication factor determining the size of the saved image relative to the original size.
+            Default is 1. Valid values: integer > 0.
+       format : str, optional
+           Output format using images with matplotlib with [0,255] range for pixel or using npy format.
+           Default is images with format 'png'.
+       cmap : str, optional
+           color map to use with matplotlib.
 
        Attributes:
        ----------
@@ -38,6 +46,8 @@ class MappingMethod(AbstractImageMethod):
         self._features_mapping = None
         self.cmap=cmap
         self.zoom=zoom
+        if(self.cmap!=None and self.cmap not in plt.colormaps()):
+            raise Exception('cmap must be in matplotlib colormaps')
 
     def _build_features_mapping(self, features, features_positions):
         """
