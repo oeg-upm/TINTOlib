@@ -143,10 +143,10 @@ class REFINED(MappingMethod):
         )
         
         if 'Windows' == platform.system():
-            command = f'mpiexec -np {self.n_processors} python {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpiexec -np {self.n_processors} python "{script_path}" --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
         else:
-            command = f'mpirun --allow-run-as-root --use-hwthread-cpus -np {self.n_processors} python3 {script_path} --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
+            command = f'mpirun --allow-run-as-root --use-hwthread-cpus -np {self.n_processors} python3 "{script_path}" --init "{init_pickle_file}" --mapping "{mapping_pickle_file}"  --evolution "{evolution_csv_file}" --num {self.hcIterations}'
             result = subprocess.run(command, shell=True, text=True, capture_output=True)
 
         if result.returncode != 0:

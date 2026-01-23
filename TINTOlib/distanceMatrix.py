@@ -82,4 +82,4 @@ class DistanceMatrix(AbstractImageMethod):
             image_norm = (imgI - np.min(imgI)) / (np.max(imgI) - np.min(imgI))
             image = np.repeat(np.repeat(image_norm, self.zoom, axis=0), self.zoom, axis=1)
 
-            self._save_image(image,y[ins],ins)
+            self._save_image(image,Y[ins],ins)
