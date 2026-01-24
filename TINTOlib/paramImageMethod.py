@@ -16,7 +16,7 @@ default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
 group_methods_allowed=[constants.avg_option,constants.relevance_option]
 opt_algorithms_allowed=[constants.linear_sum_assigner,constants.greedy_assigner]
-assigners_allowed=[constants.bin_assigner,constants.bin_digitize_assigner,constants.quantile_assigner,constants.pixel_centroids_assigner,constants.relevance_assigner]
+assigners_allowed=[constants.bin_assigner,constants.bin_digitize_assigner,constants.quantile_assigner,constants.pixel_centroids_assigner]
 
 class ParamImageMethod(MappingMethod):
     """

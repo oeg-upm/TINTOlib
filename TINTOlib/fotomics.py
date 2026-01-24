@@ -42,7 +42,7 @@ class Fotomics(ParamImageMethod):
     max_percentile : int, optional
         Maximum percentile for outlier detection. Default is 90.
     outliers_treatment: str, optional
-        Using to apply different techniques to treat outlier. Default is avg
+        Using to apply different techniques to treat outlier. Default is zero
     assignment_method : str, optional
         Using to apply different techniques to mapping features with pixels. Default is 'bin'.
     relocate: bool, optional

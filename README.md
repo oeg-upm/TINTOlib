@@ -138,7 +138,7 @@ TINTOlib includes a variety of methods for generating synthetic images. Below is
 |       [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87)       |   `FeatureWrap()`    |                                                                               `problem` `transformer` `verbose` `size` `bins` `zoom`                                                                                |
 |                   [BIE](https://ieeexplore.ieee.org/document/10278393)                    |       `BIE()`        |                                                                                `problem` `transformer` `verbose` `precision` `zoom`                                                                                 |
 |          [Fotomics](https://www.biorxiv.org/content/10.1101/2022.07.08.499309v2)          |     `Fotomic()`      | `image_dim` `problem` `transformer` `verbose` `outliers` `min_percentile` `max_percentile`  `outliers_treatment` `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed` |
-|             [DeepInsight](https://www.nature.com/articles/s41598-024-63630-7)             |   `DeepInsight()`    |                                  `image_dim` `problem` `transformer` `verbose`  `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed`                                  |
+|             [DeepInsight](https://www.nature.com/articles/s41598-019-47765-6)             |   `DeepInsight()`    |                                  `image_dim` `problem` `transformer` `verbose`  `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed`                                  |
 
 ---
 

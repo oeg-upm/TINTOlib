@@ -26,10 +26,10 @@ invalid_input_data_message="data must be a string (file path) or a pandas DataFr
 
 #Assigner
 bin_assigner='bin'
-bin_digitize_assigner='BinDigitize'
+bin_digitize_assigner='bin_digitize'
 quantile_assigner='quantile_transform'
-pixel_centroids_assigner='PixelCentroidsAssigner'
-relevance_assigner='RelevanceAssigner'
+pixel_centroids_assigner='pixel_centroids_assigner'
+relevance_assigner='relevance_assigner'
 
 #Optimizer Algorithms
 linear_sum_assigner='lsa'
