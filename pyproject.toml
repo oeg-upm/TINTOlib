@@ -9,7 +9,8 @@ authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},
     { name= "DavidGonzalezFernandez", email="david.g.f.2@gmail.com"},
-    { name= "JiayunLiu", email="jiayun.liu@upm.es"}
+    { name= "JiayunLiu", email="jiayun.liu@upm.es"},
+    { name="JavierLopez", email="javilecrin19@gmail.com"}
 ]
 description = "Converting tabular data into images"
 readme = "README.md"
@@ -18,11 +19,15 @@ requires-python = ">=3.8"
 dependencies = [
     "bitstring==4.3.0",
     "matplotlib==3.9.4",
-    "numpy==2.0.2",
+    "numpy==1.26.4",
     "pandas==2.2.3",
     "scikit-learn==1.6.1",
     "opencv-python==4.11.0.86",
-    "mpi4py==4.0.3"
+    "mpi4py==4.0.3",
+    "scipy==1.15.0",
+    "tqdm==4.67.1",
+    "asymmetric-greedy-search==0.1.0",
+    "numba==0.62.0"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
