@@ -9,7 +9,7 @@ import TINTOlib.utils.constants as constants
 ################    Fotomics    ##############################
 ###########################################################
 
-default_random_seed = 1,
+default_random_seed = 1
 default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
 outliers_treatment_allowed=[constants.zero_option,constants.max_min_option,constants.avg_option]

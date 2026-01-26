@@ -11,7 +11,7 @@ import TINTOlib.utils.constants as constants
 ###########################################################
 
 
-default_random_seed = 23,
+default_random_seed = 1
 default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
 

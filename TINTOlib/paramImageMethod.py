@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 ################    ParamImageMethod    ##############################
 ###########################################################
 
-default_random_seed = 1,
+default_random_seed = 1
 default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
 group_methods_allowed=[constants.avg_option,constants.relevance_option]
@@ -141,6 +141,8 @@ class ParamImageMethod(MappingMethod):
             y: Pandas Dataframe with class tabular data
 
         """
+        print(x.shape)
+        print(y.shape)
         imgs_coord = self._calculate_pixels_values(x)
         # Create and Save Images
         self._create_images(imgs_coord, y)
@@ -210,6 +212,8 @@ class ParamImageMethod(MappingMethod):
         Returns:
 
         """
+        print(y.shape)
+        print(imgs_coord.shape[1])
         for m in range(2,imgs_coord.shape[1]):
             i=m-2
             img=np.zeros((self._image_dim,self._image_dim))
