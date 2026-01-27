@@ -167,6 +167,7 @@ class AbstractImageMethod(ABC):
 
             dataset = self._load_data(data)
             x, y = self._split_features_targets(dataset)
+            x_original = x
             self.bar_transform_step=(70/x.shape[0])
 
             # Transform features if required
@@ -178,6 +179,7 @@ class AbstractImageMethod(ABC):
             self._fitAlg(x, y)
             self.__update_progress_bar(progress=20, text=constants.generating_images_message)
             self._transformAlg(x, y)
+            self.__create_csv(x_original)
             self._fitted = True  # Mark as fitted after both operations
             self.__update_progress_bar(progress=(100-self.__progress), text=constants.images_generated_message)
             self._write_message("Fit-Transform process completed.")
@@ -262,8 +264,10 @@ class AbstractImageMethod(ABC):
         """
         Create csv file to save the images routes
         """
+        X=X.reset_index(drop=True)
+        df_routes=pd.DataFrame(data=self.__imgs_routes).reset_index(drop=True)
         filepath = self.folder + "/" + self.problem + ".csv"
-        df = pd.concat([pd.DataFrame(data=self.__imgs_routes),X], axis=1)
+        df = pd.concat([df_routes,X], axis=1)
         df.to_csv(filepath, index=False)
 
 
