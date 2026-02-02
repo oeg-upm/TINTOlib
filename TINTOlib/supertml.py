@@ -100,7 +100,7 @@ class SuperTML(AbstractImageMethod):
             feature_importances = self.feature_importances
             max_feature_importances = max(feature_importances.tolist())
 
-            img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3]), 'RGB')
+            img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3], dtype=np.uint8), 'RGB')
             draw = ImageDraw.Draw(img)
 
             sorted_features = sorted(zip(event, feature_importances), key=lambda x: x[1], reverse=True)
