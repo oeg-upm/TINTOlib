@@ -172,7 +172,7 @@ class AbstractImageMethod(ABC):
 
             # Transform features if required
             if self.transformer!=None:
-                x = pd.DataFrame(self.transform.fit_transform(x), columns=x.columns)
+                x = pd.DataFrame(self.transformer.fit_transform(x), columns=x.columns)
 
             self.__update_progress_bar(progress=10, text=constants.generating_images_message)
             self.folder = folder
