@@ -11,7 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 ################    ParamImageMethod    ##############################
 ###########################################################
 
-default_random_seed = 1,
+default_random_seed = 1
 default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
 group_methods_allowed=[constants.avg_option,constants.relevance_option]

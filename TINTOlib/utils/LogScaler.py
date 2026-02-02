@@ -28,8 +28,8 @@ class LogScaler(CustomTransformer):
         """
 
         self.__min_by_feature = X.min(axis=0)
-        self.__x_normalized = np.log(X+np.abs(self.__min_by_feature)+1)
-        self.__max_by_feature_normalized = np.max(self.__x_normalized)
+        x_normalized = np.log(X+np.abs(self.__min_by_feature)+1)
+        self.__max_by_feature_normalized = np.max(x_normalized)
 
         self.__fitted = True
         return self
@@ -51,5 +51,5 @@ class LogScaler(CustomTransformer):
         if(X.shape[1] != self.__min_by_feature.shape[0]):
             raise ValueError(f"The number of features not match with fitting set")
 
-        x_norm_clipped = self.__x_normalized.clip(0,None)
+        x_norm_clipped = np.log(X+np.abs(self.__min_by_feature)+1).clip(0,None)
         return (x_norm_clipped / self.__max_by_feature_normalized).clip(0,1)
