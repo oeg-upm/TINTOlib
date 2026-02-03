@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TINTOlib"
-version = "1.0.6"
+version = "1.1.0"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},
@@ -23,7 +23,6 @@ dependencies = [
     "pandas==2.2.3",
     "scikit-learn==1.6.1",
     "opencv-python==4.11.0.86",
-    "mpi4py==4.0.3",
     "scipy==1.15.0",
     "tqdm==4.67.1",
     "asymmetric-greedy-search==0.1.0",
