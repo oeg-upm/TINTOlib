@@ -2,7 +2,7 @@
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-View%20Documentation-brightgreen?logo=github)](https://oeg-upm.github.io/TINTOlib/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
-[![Python Version](https://shields.io/badge/python-3.11+-blue)](https://pypi.python.org/pypi/)
+[![Python Version](https://shields.io/badge/python-3.8+-blue)](https://pypi.python.org/pypi/)
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
 [![Open In Colab-CNN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN.ipynb)
 [![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN%2BMLP.ipynb)
@@ -105,7 +105,7 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 - Designed for tidy data (**target column last**)
 - Output: grayscale images from reduction and transformation methods
 - Compatible with **Linux, Windows, macOS**
-- Requires **Python 3.7+**
+- Requires **Python 3.8+**
 
 ---
 
@@ -129,6 +129,7 @@ TINTOlib includes a variety of methods for generating synthetic images. Below is
 
 ---
 
+<a id="platform-specific-notes"></a>
 ## ⚠️ Platform-Specific Requirements for Certain Transformation Methods
 
 Some transformation methods in TINTOlib have specific system requirements or limitations when used on platforms such as Google Colab, Windows, Linux, or macOS.
@@ -185,6 +186,7 @@ TINTOlib already includes all necessary dependencies, so there’s no need to in
 However, if you prefer manual installation or want to explore the full environment:
 
 - The repository includes a `requirements.txt` file listing the **core dependencies** required to use TINTOlib. You can directly run the **TINTOlib-example.ipynb** notebook located in the examples/ folder using the dependencies listed in `requirements.txt`.
+- **mpi4py** is only required if you use the **REFINED** method; see the [platform-specific notes](#platform-specific-notes).
 - **Other notebooks**, which include training deep learning models on the generated images, require additional libraries. To run them, install the extended dependencies from `requirements-example.txt`:
 
 ---
@@ -267,7 +269,7 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 - The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
 
     ```python
-      model = TINTO(problem="supervised", pixel=30, algorithm="t-SNE", steps=5, blur=True)
+      model = TINTO(problem="supervised", pixels=30, algorithm="t-SNE", steps=5, blur=True)
       model.fit_transform("iris.csv", "synthetic_images")
     ```
 
