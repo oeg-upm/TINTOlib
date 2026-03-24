@@ -4,8 +4,6 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, normalize
 from scipy.spatial.distance import cdist
 from PIL import Image
 
-import os
-
 import numpy as np
 import pandas as pd
 
@@ -28,7 +26,7 @@ class Clusters(AbstractImageMethod):
     problem : str, optional
         The type of problem, defining how the images are grouped. 
         
-        Default is 'supervised'. Valid values: ['supervised', 'unsupervised', 'regression'].
+        Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
     normalize : bool, optional
         If True, normalizes input data using MinMaxScaler. 
         
@@ -202,7 +200,7 @@ class Clusters(AbstractImageMethod):
                 "For these algorithms ('kde', 'aggloKNN'), the 'auto' option to automatically select the optimal number of clusters is not enabled."
             )
         
-        super().__init__(problem=problem, verbose=verbose, normalize=normalize)
+        super().__init__(problem=problem, verbose=verbose)
         self.algorithm=algorithm
         self.n_clusters=n_clusters
         self.random_seed=random_seed
@@ -218,43 +216,10 @@ class Clusters(AbstractImageMethod):
         self.metric=metric
         self.RBFKmeans=RBFKmeans
     
-    def __saveSupervised(self, y, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = str(int(y)).zfill(2)  # subfolder for grouping the results of each class
-        name_image = str(i).zfill(6)
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image + '.' + extension)
-        # Subfolder check
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        img = Image.fromarray(np.uint8(np.squeeze(image)))
-        img.save(route_complete)
-
-        route_relative = os.path.join(subfolder, name_image+ '.' + extension)
-        return route_relative
-
-    def __saveRegressionOrUnsupervised(self, i, image):
-        extension = 'png'  # eps o pdf
-        subfolder = "images"
-        name_image = str(i).zfill(6) + '.' + extension
-        route = os.path.join(self.folder, subfolder)
-        route_complete = os.path.join(route, name_image)
-        if not os.path.isdir(route):
-            try:
-                os.makedirs(route)
-            except:
-                print("Error: Could not create subfolder")
-
-        img = Image.fromarray(np.uint8(np.squeeze(image)))
-        img.save(route_complete)
-
-        route_relative = os.path.join(subfolder, name_image)
-        return route_relative
-
+    def _img_to_file(self, image_matrix, file):
+        img = Image.fromarray(np.uint8(np.squeeze(image_matrix)))
+        img.save(file)
+    
     def __initialValues(self):
         
         self.modelList=[]
@@ -423,40 +388,18 @@ class Clusters(AbstractImageMethod):
         
         """
         This function createImage(self, x, y, folder) takes tabular/numerical data (x) and converts it into “images” (2D matrices or 3D RGB-like tensors) 
-        for each sample. It saves them to disk (via the private methods __saveSupervised / __saveRegressionOrUnsupervised) and finally generates a CSV 
-        file that maps image paths to their corresponding label/value (when applicable).
+        for each sample. It saves them to disk (via method _save_image) and finally generates a CSV file that maps image paths to their corresponding 
+        label/value (when applicable).
             - Call xTranforImage. 
             - Save each image and record its file path.
         """
-        imagesRoutesArr = [] 
         Y = y.values if y is not None else None
         
         x=self.__xTransforImage(x)
         
         for i,sample in enumerate(x):
+            self._save_image(sample,Y[i],i)
             
-            if self.problem == "supervised":
-                route = self.__saveSupervised(Y[i], i, sample)
-                imagesRoutesArr.append(route)
-            elif self.problem == "unsupervised" or self.problem == "regression":
-                route = self.__saveRegressionOrUnsupervised(i, sample)
-                imagesRoutesArr.append(route)
-            else:
-                print("Wrong problem definition. Please use 'supervised', 'unsupervised' or 'regression'")
-        
-        if self.problem == "supervised":
-            data = {'images': imagesRoutesArr, 'class': Y}
-            supervisedCSV = pd.DataFrame(data=data)
-            supervisedCSV.to_csv(self.folder + "/supervised.csv", index=False)
-        elif self.problem == "unsupervised":
-            data = {'images': imagesRoutesArr}
-            unsupervisedCSV = pd.DataFrame(data=data)
-            unsupervisedCSV.to_csv(self.folder + "/unsupervised.csv", index=False)
-        elif self.problem == "regression":
-            data = {'images': imagesRoutesArr, 'values': Y}
-            regressionCSV = pd.DataFrame(data=data)
-            regressionCSV.to_csv(self.folder + "/regression.csv", index=False)    
-        
     def __kmeans(self,X,clustersIni, seedIni, typeProc=None):
         
         """
@@ -837,7 +780,6 @@ class Clusters(AbstractImageMethod):
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         
         X = x.values
-        Y = y.values if y is not None else None
         x=self.scale.fit_transform(X)
         
         if self.n_clusters=="auto" or isinstance(self.n_clusters,list):
