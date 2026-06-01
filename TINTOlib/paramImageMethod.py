@@ -174,6 +174,7 @@ class ParamImageMethod(MappingMethod):
         Returns:
             imgs_coord: Matrix with pixel values by averaging features values
         """
+        print(self._features_positions)
         imgs_coord = (pd.DataFrame(np.vstack((self._features_positions.T,x)).T)
                       .groupby([0, 1], as_index=False).mean())
         return imgs_coord
@@ -187,16 +188,12 @@ class ParamImageMethod(MappingMethod):
         Returns:
 
         """
-
         features_info=np.hstack((self._features_positions, self._features_relevance))
         features_dot_rev=(x.T)*(features_info[:,2].reshape(-1,1))
         rev_sum = (pd.DataFrame(features_info).groupby([0, 1], as_index=False).transform('sum')).to_numpy()
         features_rev=features_dot_rev/rev_sum
-        pixels_sum=(pd.DataFrame(np.hstack((self._features_positions, features_rev))).groupby([0, 1], as_index=False).sum()).to_numpy()
-        rev_count = (pd.DataFrame(features_info).groupby([0, 1], as_index=False).count()).to_numpy()
-        pixels_values=pixels_sum[:,2:]/rev_count[:,2].reshape(-1,1)
-        imgs_coord=pd.DataFrame(np.hstack((pixels_sum[:,:2], pixels_values)))
-        return imgs_coord
+        pixels_sum=(pd.DataFrame(np.hstack((self._features_positions, features_rev))).groupby([0, 1], as_index=False).sum())
+        return pixels_sum
 
 
     def _create_images(self,imgs_coord,y):
