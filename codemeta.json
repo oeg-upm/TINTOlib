@@ -1,0 +1,200 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": [
+    "SoftwareSourceCode",
+    "SoftwareApplication"
+  ],
+  "identifier": "https://doi.org/10.5281/zenodo.18467607",
+  "name": "TINTOlib",
+  "description": "Python package for transforming tabular data into synthetic images for deep neural networks.",
+  "codeRepository": "https://github.com/oeg-upm/TINTOlib",
+  "issueTracker": "https://github.com/oeg-upm/TINTOlib/issues",
+  "url": "https://tintolib.readthedocs.io/",
+  "sameAs": [
+    "https://doi.org/10.5281/zenodo.18467607",
+    "https://pypi.org/project/TINTOlib/"
+  ],
+  "license": "https://spdx.org/licenses/Apache-2.0",
+  "dateCreated": "2023-02-09",
+  "dateModified": "2026-05-14",
+  "datePublished": "2026-02-03",
+  "softwareVersion": "1.1.0",
+  "version": "v1.1.0",
+  "developmentStatus": "active",
+  "isAccessibleForFree": true,
+  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/archive/refs/tags/v1.1.0.zip",
+  "installUrl": "https://pypi.org/project/TINTOlib/",
+  "readme": "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
+  "buildInstructions": [
+    "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
+    "https://tintolib.readthedocs.io/"
+  ],
+  "softwareHelp": {
+    "@type": "CreativeWork",
+    "name": "TINTOlib documentation",
+    "url": "https://tintolib.readthedocs.io/"
+  },
+  "logo": "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/imgs/logo.svg",
+  "applicationCategory": "Machine learning",
+  "keywords": [
+    "hybrid-neural-network",
+    "synthetic-data",
+    "synthetic-image",
+    "tabular-to-image",
+    "tabular2image",
+    "deep-learning",
+    "spatial-encoding"
+  ],
+  "programmingLanguage": "Python",
+  "runtimePlatform": "Python >=3.8",
+  "operatingSystem": [
+    "Linux",
+    "Windows",
+    "macOS"
+  ],
+  "softwareRequirements": [
+    "bitstring==4.3.0",
+    "matplotlib==3.9.4",
+    "numpy==1.26.4",
+    "pandas==2.2.3",
+    "scikit-learn==1.6.1",
+    "opencv-python==4.11.0.86",
+    "scipy==1.15.0",
+    "tqdm==4.67.1",
+    "asymmetric-greedy-search==0.1.0",
+    "numba==0.62.0"
+  ],
+  "author": [
+    {
+      "@type": "Organization",
+      "@id": "https://github.com/oeg-upm",
+      "name": "Ontology Engineering Group, Universidad Polit\u00e9cnica de Madrid",
+      "url": "https://github.com/oeg-upm"
+    },
+    {
+      "@type": "Person",
+      "name": "BorjaRei",
+      "email": "borjareinoso@gmail.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Manuel",
+      "familyName": "Castillo-Cara",
+      "name": "Manuel Castillo-Cara",
+      "email": "jcastillo@fi.upm.es",
+      "identifier": "https://orcid.org/0000-0002-2990-7090"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Ra\u00fal",
+      "familyName": "Garc\u00eda-Castro",
+      "name": "Ra\u00fal Garc\u00eda-Castro",
+      "identifier": "https://orcid.org/0000-0002-0421-452X"
+    },
+    {
+      "@type": "Person",
+      "givenName": "David",
+      "familyName": "Gonz\u00e1lez-Fern\u00e1ndez",
+      "name": "David Gonz\u00e1lez-Fern\u00e1ndez",
+      "email": "david.g.f.2@gmail.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Jiayun",
+      "familyName": "Liu",
+      "name": "Jiayun Liu",
+      "email": "jiayun.liu@upm.es",
+      "identifier": "https://orcid.org/0009-0008-0740-4936"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Javier",
+      "familyName": "L\u00f3pez",
+      "name": "Javier L\u00f3pez",
+      "email": "javilecrin19@gmail.com"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Jiayun",
+      "familyName": "Liu",
+      "name": "Jiayun Liu",
+      "email": "jiayun.liu@upm.es",
+      "identifier": "https://orcid.org/0009-0008-0740-4936"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Manuel",
+      "familyName": "Castillo-Cara",
+      "name": "Manuel Castillo-Cara",
+      "email": "jcastillo@fi.upm.es",
+      "identifier": "https://orcid.org/0000-0002-2990-7090"
+    }
+  ],
+  "releaseNotes": "TINTOlib v1.1.0 Release Notes\n\nWHAT'S NEW\n==========\n\n- Two new synthetic image methods: Fotomics and DeepInsight\n- Customizable transformer system for flexible data preprocessing\n- New three-level class hierarchy (AbstractImageMethod -> MappingMethod -> ParamImageMethod)\n- Feature-to-pixel mapping with explicit CSV export\n- Support for multiple pixel assignment strategies and relevance scoring\n\nBREAKING CHANGES\n================\n\nProblem parameter updated:\n  OLD: problem=\"supervised\"\n  NEW: problem=\"classification\"\n\nDeprecated value still works with FutureWarning for backward compatibility.\n\nBUG FIXES\n=========\n\n- Fix LogScaler Class (#18)\n- Fix abstractImageMethod transformer reference in fit_transform()\n- Fix SuperTML uint8 rendering (#16)\n- Fix Random State for reproducibility\n- Fix CSV file generation\n\nDEPENDENCY CHANGES\n==================\n\n- numpy: 2.0.2 -> 1.26.4\n- mpi4py: now optional, only needed for REFINED method\n- Added: numba==0.62.0\n\nVERSION INFO\n============\n\n- Version: 1.0.6 -> 1.1.0\n- Status: Stable Release\n\nRESOURCES\n=========\n\nGitHub: https://github.com/oeg-upm/TINTOlib\nDocumentation: https://tintolib.readthedocs.io/\nPyPI: https://pypi.org/project/TINTOlib/\nIssues: https://github.com/oeg-upm/TINTOlib/issues",
+  "referencePublication": [
+    {
+      "@type": "ScholarlyArticle",
+      "identifier": "https://doi.org/10.1016/j.softx.2025.102444",
+      "name": "TINTOlib: A Python library for transforming tabular data into synthetic images for deep neural networks",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Jiayun",
+          "familyName": "Liu",
+          "name": "Jiayun Liu",
+          "identifier": "https://orcid.org/0009-0008-0740-4936"
+        },
+        {
+          "@type": "Person",
+          "givenName": "David",
+          "familyName": "Gonz\u00e1lez-Fern\u00e1ndez",
+          "name": "David Gonz\u00e1lez-Fern\u00e1ndez"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Manuel",
+          "familyName": "Castillo-Cara",
+          "name": "Manuel Castillo-Cara",
+          "identifier": "https://orcid.org/0000-0002-2990-7090"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Ra\u00fal",
+          "familyName": "Garc\u00eda-Castro",
+          "name": "Ra\u00fal Garc\u00eda-Castro",
+          "identifier": "https://orcid.org/0000-0002-0421-452X"
+        }
+      ],
+      "datePublished": "2025",
+      "isPartOf": {
+        "@type": "Periodical",
+        "name": "SoftwareX",
+        "issn": "2352-7110"
+      },
+      "volumeNumber": "32",
+      "pagination": "102444",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2352711025004108"
+    },
+    {
+      "@type": "ScholarlyArticle",
+      "identifier": "https://doi.org/10.1016/j.inffus.2025.104088",
+      "name": "A comprehensive benchmark of spatial encoding methods for tabular data with deep neural networks",
+      "datePublished": "2026",
+      "isPartOf": {
+        "@type": "Periodical",
+        "name": "Information Fusion"
+      },
+      "volumeNumber": "130",
+      "pagination": "104088"
+    }
+  ],
+  "creditText": "Liu, J., Gonz\u00e1lez-Fern\u00e1ndez, D., Castillo-Cara, M., and Garc\u00eda-Castro, R. (2025). TINTOlib: A Python library for transforming tabular data into synthetic images for deep neural networks. SoftwareX, 32, 102444. https://doi.org/10.1016/j.softx.2025.102444",
+  "relatedLink": [
+    "https://tintolib.readthedocs.io/",
+    "https://oeg-upm.github.io/TINTOlib/",
+    "https://pypi.org/project/TINTOlib/",
+    "https://zenodo.org/records/18467607"
+  ]
+}

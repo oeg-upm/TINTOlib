@@ -35,7 +35,11 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/oeg-upm/TINTOlib-Documentation"
+"Homepage" = "https://github.com/oeg-upm/TINTOlib"
+"Documentation" = "https://tintolib.readthedocs.io/"
+"Benchmarks" = "https://oeg-upm.github.io/TINTOlib/"
+"Repository" = "https://github.com/oeg-upm/TINTOlib"
+"Issues" = "https://github.com/oeg-upm/TINTOlib/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["TINTOlib"]
