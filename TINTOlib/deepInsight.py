@@ -78,8 +78,10 @@ class DeepInsight(ParamImageMethod):
     ):
         if (algorithm_rd not in [constants.pca_algorithm, constants.tsne_algorithm,constants.kpca_algorithm]):
             raise TypeError(f"Algorithm_rd parameter must be in {[constants.pca_algorithm, constants.tsne_algorithm,constants.kpca_algorithm]}")
+        
+        if(algorithm_rd != constants.pca_algorithm and (relocate == True or group_method == constants.relevance_option or assignment_method == constants.relevance_assigner)): 
+            raise TypeError(f"PCA extract method is required to optimize or group using features relevance based on loadings")
 
-        if(algorithm_rd != constants.pca_algorithm): relocate = False
 
         super().__init__( image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
 
@@ -106,7 +108,7 @@ class DeepInsight(ParamImageMethod):
 
     def _compute_relevance(self, x=None,features_coord=None):
         """
-
+               Compute features relevance considering the values of the eigenvector associated with the largest eigenvalue in a PCA transformation.
                Args:
                    x: features dataset not transposed
                    features_coord: features coordinates retrieved using a features extraction method
@@ -114,7 +116,7 @@ class DeepInsight(ParamImageMethod):
                    Array that contains features relevance
         """
         pca_fitted=PCA(n_components=2,random_state=self._random_seed).fit(x)
-        features_relevance = MinMaxScaler().fit_transform(pca_fitted.components_[0,:].reshape(-1,1)) + 1
+        features_relevance = MinMaxScaler().fit_transform(np.absolute(pca_fitted.components_[0,:].reshape(-1,1))) + 1
         return features_relevance
 
     def _get_features_coords(self, x):
