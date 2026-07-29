@@ -174,26 +174,25 @@ class ParamImageMethod(MappingMethod):
         Returns:
             imgs_coord: Matrix with pixel values by averaging features values
         """
-        print(self._features_positions)
         imgs_coord = (pd.DataFrame(np.vstack((self._features_positions.T,x)).T)
                       .groupby([0, 1], as_index=False).mean())
         return imgs_coord
 
     def _rev_features_by_pixels(self,x):
         """
-        Calculate the pixel values by weighted sum of the value of each feature and its relevance
+        Calculate the pixel values by relevance weighted average of the features values
         Args:
             x:Dataset
 
         Returns:
-
+            pixel_values: Dataframe with pixel values calculated and its positions
         """
         features_info=np.hstack((self._features_positions, self._features_relevance))
         features_dot_rev=(x.T)*(features_info[:,2].reshape(-1,1))
         rev_sum = (pd.DataFrame(features_info).groupby([0, 1], as_index=False).transform('sum')).to_numpy()
         features_rev=features_dot_rev/rev_sum
-        pixels_sum=(pd.DataFrame(np.hstack((self._features_positions, features_rev))).groupby([0, 1], as_index=False).sum())
-        return pixels_sum
+        pixels_values=(pd.DataFrame(np.hstack((self._features_positions, features_rev))).groupby([0, 1], as_index=False).sum())
+        return pixels_values
 
 
     def _create_images(self,imgs_coord,y):
