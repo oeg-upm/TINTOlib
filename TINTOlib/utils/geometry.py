@@ -50,3 +50,8 @@ def get_minimum_rectangle(features_coord):
         rect_coords[3] = np.dot([x1, y1], rotmat)
 
         return rotmat,rect_coords,limits_points
+
+
+def tropical_distance(u, v):
+  diff = u - v
+  return np.max(diff) - np.min(diff)
