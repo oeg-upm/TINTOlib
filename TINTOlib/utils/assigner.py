@@ -4,7 +4,6 @@ from sklearn.preprocessing import quantile_transform
 from sklearn.cluster import BisectingKMeans
 from scipy.spatial.distance import cdist
 from scipy.optimize import linear_sum_assignment
-from asymmetric_greedy_search import AsymmetricGreedySearch
 import pandas as pd
 import TINTOlib.utils.constants as constants
 
@@ -21,17 +20,16 @@ class AssignerFactory():
         Returns:
             Assigner to mapping pixel and features
         """
-        match name:
-            case constants.bin_assigner:
-                return BinAssigner(name)
-            case constants.bin_digitize_assigner:
-                return BinDigitizeAssigner(name)
-            case constants.quantile_assigner:
-                return QuantileAssigner(name)
-            case constants.pixel_centroids_assigner:
-                return PixelsCentroidsAssigner(name,algorithm,random_state)
-            case constants.relevance_assigner:
-                return RelevanceAssigner(name,algorithm)
+        if name == constants.bin_assigner:
+            return BinAssigner(name)
+        elif name == constants.bin_digitize_assigner:
+            return BinDigitizeAssigner(name)
+        elif name == constants.quantile_assigner:
+            return QuantileAssigner(name)
+        elif name == constants.pixel_centroids_assigner:
+            return PixelsCentroidsAssigner(name, algorithm, random_state)
+        elif name == constants.relevance_assigner:
+            return RelevanceAssigner(name, algorithm)
 
 class Assigner(ABC):
     def __init__(self,name):
@@ -190,12 +188,18 @@ class OptimizeAssigner(Assigner):
         Returns:
             Pixel-feature combinations optimized
         """
-        match self.__algorithm:
-            case 'lsa':
-                return linear_sum_assignment(cost_table)
-            case 'greedy':
-                ags = AsymmetricGreedySearch(backend='numba')
-                return ags.optimize(cost_table, minimize=True, shuffle=True)
+        if self.__algorithm == 'lsa':
+            return linear_sum_assignment(cost_table)
+        elif self.__algorithm == 'greedy':
+            try:
+                from asymmetric_greedy_search import AsymmetricGreedySearch
+            except ImportError as exc:
+                raise ImportError(
+                    "The greedy assignment algorithm requires optional dependencies. "
+                    "Install them with: pip install 'TINTOlib[greedy]'"
+                ) from exc
+            ags = AsymmetricGreedySearch(backend='numba')
+            return ags.optimize(cost_table, minimize=True, shuffle=True)
 
 
 

@@ -138,7 +138,10 @@ class SuperTML(AbstractImageMethod):
             rows = math.ceil(len(event) / self.columns)
             cell_height = self.image_pixels // rows
             font = ImageFont.truetype("arial.ttf", self.font_size)
-            img = Image.fromarray(np.zeros([self.image_pixels, self.image_pixels, 3]), 'RGB')
+            img = Image.fromarray(
+                np.zeros([self.image_pixels, self.image_pixels, 3], dtype=np.uint8),
+                'RGB'
+            )
             draw = ImageDraw.Draw(img)
             for i, f in enumerate(event):
                 x = ((i % self.columns)) * cell_width

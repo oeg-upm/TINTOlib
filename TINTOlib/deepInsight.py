@@ -98,13 +98,21 @@ class DeepInsight(ParamImageMethod):
         Returns:
             features coordinate matrix
         """
-        match self.__algorithm_rd:
-            case constants.pca_algorithm:
-                return PCA(n_components=2,random_state=self._random_seed).fit_transform(x)
-            case constants.tsne_algorithm:
-                return TSNE(n_components=2,metric='cosine',random_state=self._random_seed,perplexity=self._image_dim).fit_transform(x)
-            case constants.kpca_algorithm:
-                return KernelPCA(n_components=2,kernel='rbf',random_state=self._random_seed).fit_transform(x)
+        if self.__algorithm_rd == constants.pca_algorithm:
+            return PCA(n_components=2, random_state=self._random_seed).fit_transform(x)
+        elif self.__algorithm_rd == constants.tsne_algorithm:
+            return TSNE(
+                n_components=2,
+                metric='cosine',
+                random_state=self._random_seed,
+                perplexity=self._image_dim
+            ).fit_transform(x)
+        elif self.__algorithm_rd == constants.kpca_algorithm:
+            return KernelPCA(
+                n_components=2,
+                kernel='rbf',
+                random_state=self._random_seed
+            ).fit_transform(x)
 
     def _compute_relevance(self, x=None,features_coord=None):
         """
