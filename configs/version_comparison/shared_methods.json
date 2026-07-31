@@ -1,0 +1,58 @@
+{
+  "parameters": {
+    "TINTO": {
+      "method": "TINTO",
+      "pixels": 20,
+      "blur": true,
+      "option": "maximum",
+      "random_seed": 64
+    },
+    "IGTD": {
+      "method": "IGTD",
+      "auto_scale": true,
+      "fea_dist_method": "Euclidean",
+      "image_dist_method": "Euclidean",
+      "error": "abs",
+      "max_step": 30000,
+      "val_step": 500,
+      "random_seed": 64
+    },
+    "REFINED": {
+      "method": "REFINED",
+      "hcIterations": 5,
+      "n_processors": 2,
+      "random_seed": 64
+    },
+    "BarGraph": {
+      "method": "BarGraph",
+      "pixel_width": 1,
+      "gap": 1,
+      "zoom": 1
+    },
+    "DistanceMatrix": {
+      "method": "DistanceMatrix",
+      "zoom": 1
+    },
+    "Combination": {
+      "method": "Combination",
+      "zoom": 1
+    },
+    "SuperTML": {
+      "method": "SuperTML",
+      "pixels": 20,
+      "font_size": 10,
+      "random_seed": 64
+    },
+    "FeatureWrap": {
+      "method": "FeatureWrap",
+      "auto_size": true,
+      "bins": 10,
+      "zoom": 1
+    },
+    "BIE": {
+      "method": "BIE",
+      "precision": 64,
+      "zoom": 1
+    }
+  }
+}
