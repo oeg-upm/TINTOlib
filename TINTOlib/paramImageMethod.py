@@ -156,13 +156,12 @@ class ParamImageMethod(MappingMethod):
         Returns:
             imgs_coord: Matrix with pixel values by averaging features values
         """
-        match self._group_method:
-            case constants.avg_option:
-                return self._avg_features_by_pixels(x)
-            case constants.relevance_option:
-                return self._rev_features_by_pixels(x)
-            case _:
-                return self._avg_features_by_pixels(x)
+        if self._group_method == constants.avg_option:
+            return self._avg_features_by_pixels(x)
+        elif self._group_method == constants.relevance_option:
+            return self._rev_features_by_pixels(x)
+        else:
+            return self._avg_features_by_pixels(x)
 
 
     def _avg_features_by_pixels(self,x):

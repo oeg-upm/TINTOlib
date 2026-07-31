@@ -140,19 +140,18 @@ class Fotomics(ParamImageMethod):
         lower_limits = (percentiles[:, 0] - iqrs).reshape(-1, 1)
         upper_limits = (percentiles[:, 1] + iqrs).reshape(-1, 1)
         x_t = x.T
-        match self.__outliers_treatment:
-            case constants.avg_option:
-                subs = np.tile(np.mean(x, axis=0), (x.shape[0], 1)).T
-                x_t = np.where(x_t >= lower_limits, x_t, subs)
-                x_t = np.where(x_t <= upper_limits, x_t, subs)
-            case constants.max_min_option:
-                max = np.tile(lower_limits.T, (x.shape[0], 1)).T
-                min = np.tile(upper_limits.T, (x.shape[0], 1)).T
-                x_t = np.where(x_t >= lower_limits, x_t, max)
-                x_t = np.where(x_t <= upper_limits, x_t, min)
-            case constants.zero_option:
-                x_t = np.where(x_t >= lower_limits, x_t, 0)
-                x_t = np.where(x_t <= upper_limits, x_t, 0)
+        if self.__outliers_treatment == constants.avg_option:
+            subs = np.tile(np.mean(x, axis=0), (x.shape[0], 1)).T
+            x_t = np.where(x_t >= lower_limits, x_t, subs)
+            x_t = np.where(x_t <= upper_limits, x_t, subs)
+        elif self.__outliers_treatment == constants.max_min_option:
+            max = np.tile(lower_limits.T, (x.shape[0], 1)).T
+            min = np.tile(upper_limits.T, (x.shape[0], 1)).T
+            x_t = np.where(x_t >= lower_limits, x_t, max)
+            x_t = np.where(x_t <= upper_limits, x_t, min)
+        elif self.__outliers_treatment == constants.zero_option:
+            x_t = np.where(x_t >= lower_limits, x_t, 0)
+            x_t = np.where(x_t <= upper_limits, x_t, 0)
         return x_t.T
 
     def _get_features_coords(self,x):

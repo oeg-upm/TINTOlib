@@ -1,0 +1,11 @@
+{
+  "categorical_cols": ["CHAS", "RAD"],
+  "numerical_cols": ["CRIM", "ZN", "INDUS", "NOX", "RM", "AGE", "DIS", "TAX", "PTRATIO", "B", "LSTAT"],
+  "encoding": {
+    "categorical_features": "onehot",
+    "numerical_features": "minmax",
+    "target": "MEDV"
+  },
+  "batch_size": 16,
+  "epochs": 100
+}

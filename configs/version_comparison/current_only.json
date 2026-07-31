@@ -1,0 +1,35 @@
+{
+  "parameters": {
+    "DeepInsight_PCA": {
+      "method": "DeepInsight",
+      "image_dim": 8,
+      "algorithm_rd": "PCA",
+      "assignment_method": "bin",
+      "relocate": false,
+      "algorithm_opt": "lsa",
+      "group_method": "avg",
+      "random_seed": 64
+    },
+    "Fotomics": {
+      "method": "Fotomics",
+      "image_dim": 8,
+      "outliers": true,
+      "outliers_treatment": "zero",
+      "assignment_method": "bin_digitize",
+      "relocate": false,
+      "algorithm_opt": "lsa",
+      "group_method": "avg",
+      "random_seed": 64
+    },
+    "Clusters_kmeans": {
+      "method": "Clusters",
+      "algorithm": "kmeans",
+      "n_clusters": 16,
+      "random_seed": 64,
+      "n_init": 10,
+      "max_iter": 300,
+      "algorithmMethod": "lloyd",
+      "RBFKmeans": false
+    }
+  }
+}

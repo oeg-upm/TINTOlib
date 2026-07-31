@@ -2,7 +2,7 @@
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-View%20Documentation-brightgreen?logo=github)](https://oeg-upm.github.io/TINTOlib/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
-[![Python Version](https://shields.io/badge/python-3.8+-blue)](https://pypi.python.org/pypi/)
+[![Python Version](https://shields.io/badge/python-3.9+-blue)](https://pypi.python.org/pypi/)
 [![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
 [![Open In Colab-CNN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN.ipynb)
 [![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN%2BMLP.ipynb)
@@ -105,7 +105,7 @@ And use-case developed in **[INFFUS Paper](https://doi.org/10.1016/j.inffus.2022
 - Designed for tidy data (**target column last**)
 - Output: grayscale images from reduction and transformation methods
 - Compatible with **Linux, Windows, macOS**
-- Requires **Python 3.8+**
+- Requires **Python 3.9+**
 
 ---
 
@@ -150,12 +150,12 @@ This method relies on `mpi4py`, which enables parallel computation using MPI (Me
   Once MPI is installed:
 
     ```bash
-      pip install mpi4py
+      pip install "TINTOlib[refined]"
     ```
 - **MacOS / Windows:** Direct installation is usually supported:
 
     ```bash
-      pip install mpi4py
+      pip install "TINTOlib[refined]"
     ```
 
 ### SuperTML
@@ -184,10 +184,18 @@ On **Google Colab**, installing additional fonts is not permitted due to adminis
 
 TINTOlib already includes all necessary dependencies, so there’s no need to install them individually.
 
+Optional methods can be installed using dependency extras:
+
+```bash
+pip install "TINTOlib[greedy]"  # Greedy feature-to-pixel assignment
+pip install "TINTOlib[refined]" # REFINED and mpi4py
+pip install "TINTOlib[all]"     # All optional methods
+```
+
 However, if you prefer manual installation or want to explore the full environment:
 
-- The repository includes a `requirements.txt` file listing the **core dependencies** required to use TINTOlib. You can directly run the **TINTOlib-example.ipynb** notebook located in the examples/ folder using the dependencies listed in `requirements.txt`.
-- **mpi4py** is only required if you use the **REFINED** method; see the [platform-specific notes](#platform-specific-notes).
+- The repository includes a `requirements.txt` file that installs TINTOlib and its core dependencies in editable mode for local development.
+- **mpi4py** is installed by the `refined` extra and is only required for **REFINED**; an MPI runtime must also be installed as described in the [platform-specific notes](#platform-specific-notes).
 - **Other notebooks**, which include training deep learning models on the generated images, require additional libraries. To run them, install the extended dependencies from `requirements-example.txt`:
 
 ---

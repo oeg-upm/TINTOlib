@@ -1,0 +1,11 @@
+{
+  "categorical_cols": ["Wifes_education", "Husbands_education", "Wifes_religion", "Wifes_now_working%3F", "Husbands_occupation", "Standard-of-living_index", "Media_exposure"],
+  "numerical_cols": ["Wifes_age", "Number_of_children_ever_born"],
+    "encoding": {
+    "categorical_features": "onehot",
+    "numerical_features": "minmax",
+    "target": "label"
+  },
+  "batch_size": 32,
+  "epochs": 100
+}
