@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.distance import pdist, squareform
-from scipy.stats import rankdata, spearmanr
+from scipy.stats import rankdata, spearmanr, rankdata, wasserstein_distance
+from sklearn.manifold import Isomap
+from sklearn.metrics.pairwise import pairwise_distances
 
 # Typing imports
 from typing import List, Optional, Union
@@ -17,6 +19,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Local application/library imports
 from TINTOlib.mappingMethod import MappingMethod
+from TINTOlib.utils.geometry import tropical_distance
 
 
 ###########################################################
@@ -187,6 +190,24 @@ class IGTD(MappingMethod):
             corr1 = np.dot(np.transpose(data), data)
             corr2 = data.shape[0] - np.dot(np.transpose(1 - data), 1 - data)
             corr = corr1 / corr2
+        elif self.fea_dist_method == 'Wasserstein':
+            corr = squareform(pdist(np.transpose(data), lambda u, v: wasserstein_distance(u, v)))
+            corr = np.max(corr) - corr
+            corr = corr / np.max(corr)
+        elif self.fea_dist_method == 'Jensen':
+            corr = squareform(pdist(np.transpose(data), metric='jensenshannon'))
+            corr = np.max(corr) - corr
+            corr = corr / np.max(corr)
+        elif self.fea_dist_method == 'Geodesic':
+            isomap = Isomap(n_components = 3)
+            embedding = isomap.fit_transform(np.transpose(data))
+            corr = pairwise_distances(embedding, metric = 'euclidean')
+            corr = np.max(corr) - corr
+            corr = corr / np.max(corr)
+        elif self.fea_dist_method == 'Tropical':
+            corr = squareform(pdist(np.transpose(data), metric= tropical_distance))
+            corr = np.max(corr) - corr
+            corr = corr / np.max(corr)
 
         corr = 1 - corr
         corr = np.around(a=corr, decimals=10)
