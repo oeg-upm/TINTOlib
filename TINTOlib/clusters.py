@@ -102,8 +102,8 @@ class Clusters(AbstractImageMethod):
             - For 'kmedoids' and 'kde' : ['euclidean', 'manhattan', 'chebyshev'].
             - For 'aggloKNN' : ['euclidean', 'manhattan', 'cosine'].
             - For 'mixMethod' : ['euclidean', 'manhattan']
-    RBFKmeans: boolean, optional
-        If the k-means algorithm is used, we can choose whether the image is formed using the distances from the instances to each of the clusters, or by transforming these distances based on RBF. If this parameter is True, the conversion will be applied; if it is False, it will not be applied.
+    RBFMethod: boolean, optional
+        If the k-means or k-medoids algorithms is used, we can choose whether the image is formed using the distances from the instances to each of the clusters, or by transforming these distances based on RBF. If this parameter is True, the conversion will be applied; if it is False, it will not be applied.
         
         Default False.
     """
@@ -126,7 +126,9 @@ class Clusters(AbstractImageMethod):
     KERNEL_TYPES={'gaussian', 'tophat', 'epanechnikov', 'exponential', 'linear', 'cosine'}
     METRICS_TYPES = {'euclidean', 'manhattan', 'chebyshev'}
     default_metric='euclidean'
-    default_RBFKmeans = False
+    default_RBFMethod = False
+    sigma = None
+    sigmaArray = [0,0,0]
     
     def __init__(
         self,
@@ -144,16 +146,16 @@ class Clusters(AbstractImageMethod):
         bandwidth = None,
         kernel = None,
         metric = None,
-        RBFKmeans = None
+        RBFMethod = None
         
     ):
         
-        # kmeans 
+        # kmeans
         # --------------------------------------------------
         if algorithm == 'kmeans' and (covariance_type or ensamMethod or bandwidth or kernel or metric):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
-                f"The accepted hyperparameters for this algorithm are: n_clusters, random_seed, n_init, max_iter, algorithmMethod and RBFKmeans."
+                f"The accepted hyperparameters for this algorithm are: n_clusters, random_seed, n_init, max_iter, algorithmMethod and RBFMethod."
             )
         else:
             if algorithm == 'kmeans':
@@ -167,13 +169,13 @@ class Clusters(AbstractImageMethod):
                     max_iter = self.default_max_iter
                 if algorithmMethod is None:
                     algorithmMethod = self.default_algorithmMethod
-                if RBFKmeans is None:
-                    RBFKmeans = self.default_RBFKmeans
+                if RBFMethod is None:
+                    RBFMethod = self.default_RBFMethod
         # --------------------------------------------------
         
         # gaussianMix
         # --------------------------------------------------
-        if algorithm == 'gaussianMix' and (algorithmMethod or ensamMethod or bandwidth or kernel or metric or RBFKmeans):
+        if algorithm == 'gaussianMix' and (algorithmMethod or ensamMethod or bandwidth or kernel or metric or RBFMethod):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
                 f"The accepted hyperparameters for this algorithm are: n_clusters, random_seed, n_init, max_iter and covariance_type."
@@ -194,7 +196,7 @@ class Clusters(AbstractImageMethod):
         
         # aggloKNN
         # --------------------------------------------------
-        if algorithm == 'aggloKNN' and (covariance_type or ensamMethod or bandwidth or kernel or random_seed or n_init or max_iter or algorithmMethod or RBFKmeans):
+        if algorithm == 'aggloKNN' and (covariance_type or ensamMethod or bandwidth or kernel or random_seed or n_init or max_iter or algorithmMethod or RBFMethod):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
                 f"The accepted hyperparameters for this algorithm are: n_clusters and metric."
@@ -209,7 +211,7 @@ class Clusters(AbstractImageMethod):
         
         # kde
         # --------------------------------------------------
-        if algorithm == 'kde' and (n_clusters or covariance_type or ensamMethod or random_seed or n_init or max_iter or algorithmMethod or RBFKmeans):
+        if algorithm == 'kde' and (n_clusters or covariance_type or ensamMethod or random_seed or n_init or max_iter or algorithmMethod or RBFMethod):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
                 f"The accepted hyperparameters for this algorithm are: metric, kernel and bandwidth."
@@ -226,10 +228,10 @@ class Clusters(AbstractImageMethod):
         
         # kmedoids
         # --------------------------------------------------
-        if algorithm == 'kmedoids' and (covariance_type or ensamMethod or n_init or algorithmMethod or RBFKmeans or kernel or bandwidth):
+        if algorithm == 'kmedoids' and (covariance_type or ensamMethod or n_init or algorithmMethod or kernel or bandwidth):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
-                f"The accepted hyperparameters for this algorithm are: metric, n_clusters, max_iter and random_seed."
+                f"The accepted hyperparameters for this algorithm are: metric, n_clusters, max_iter, RBFMethod and random_seed."
             )
         else:
             if algorithm == 'kmedoids':
@@ -241,11 +243,13 @@ class Clusters(AbstractImageMethod):
                     random_seed = self.default_random_seed
                 if metric is None:
                     metric = self.default_metric
+                if RBFMethod is None:
+                    RBFMethod = self.default_RBFMethod
         # --------------------------------------------------
         
         # factor
         # --------------------------------------------------
-        if algorithm == 'factor' and (metric or max_iter or covariance_type or ensamMethod or n_init or algorithmMethod or RBFKmeans or kernel or bandwidth):
+        if algorithm == 'factor' and (metric or max_iter or covariance_type or ensamMethod or n_init or algorithmMethod or RBFMethod or kernel or bandwidth):
             raise ValueError(
                 f"Incorrect hyperparameters for the algorithm: '{algorithm}'. "
                 f"The accepted hyperparameters for this algorithm are: n_clusters and random_seed."
@@ -263,16 +267,16 @@ class Clusters(AbstractImageMethod):
         if algorithm == 'mixMethod':
             if ensamMethod is None:
                 ensamMethod = self.default_ensamMethod
-            hiperAll={'n_clusters','random_seed','n_init','max_iter','algorithmMethod','RBFKmeans','covariance_type','metric','ensamMethod','bandwidth','kernel'}
+            hiperAll={'n_clusters','random_seed','n_init','max_iter','algorithmMethod','RBFMethod','covariance_type','metric','ensamMethod','bandwidth','kernel'}
             hiperOK=set()
             if 'kmeans' in ensamMethod:
-                hiperOK.update(['n_clusters','random_seed','n_init','max_iter','algorithmMethod','RBFKmeans'])
+                hiperOK.update(['n_clusters','random_seed','n_init','max_iter','algorithmMethod','RBFMethod'])
             if 'gaussianMix' in ensamMethod:
                 hiperOK.update(['n_clusters','random_seed','n_init','max_iter','covariance_type'])
             if 'aggloKNN' in ensamMethod:
                 hiperOK.update(['n_clusters','metric'])
             if 'kmedoids' in ensamMethod:
-                hiperOK.update(['n_clusters','metric','random_seed','max_iter'])
+                hiperOK.update(['n_clusters','metric','random_seed','max_iter','RBFMethod'])
             if 'factor' in ensamMethod:
                 hiperOK.update(['n_clusters','random_seed'])
             hiperOK.update(['ensamMethod'])
@@ -299,8 +303,8 @@ class Clusters(AbstractImageMethod):
                         max_iter = self.default_max_iter
                     if algorithmMethod is None:
                         algorithmMethod = self.default_algorithmMethod
-                    if RBFKmeans is None:
-                        RBFKmeans = self.default_RBFKmeans
+                    if RBFMethod is None:
+                        RBFMethod = self.default_RBFMethod
                 if 'gaussianMix' in ensamMethod:
                     if n_clusters is None:
                         n_clusters = self.default_n_clusters
@@ -326,6 +330,8 @@ class Clusters(AbstractImageMethod):
                         random_seed = self.default_random_seed
                     if metric is None:
                         metric = self.default_metric
+                    if RBFMethod is None:
+                        RBFMethod = self.default_RBFMethod
                 if 'factor' in ensamMethod:
                     if n_clusters is None:
                         n_clusters = self.default_n_clusters
@@ -411,7 +417,7 @@ class Clusters(AbstractImageMethod):
         if metric=="manhattan":
             metric="cityblock"
         self.metric=metric
-        self.RBFKmeans=RBFKmeans
+        self.RBFMethod=RBFMethod
     
     def _img_to_file(self, image_matrix, file):
         img = Image.fromarray(np.uint8(np.squeeze(image_matrix)))
@@ -622,17 +628,17 @@ class Clusters(AbstractImageMethod):
         if typeProc is None:
             self.model=kmeans.fit(X)
             auxX = self.model.transform(X)
-            if self.RBFKmeans:
-                sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*sigma**2))            
+            if self.RBFMethod:
+                self.sigma = np.mean(auxX)
+                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))            
             self.minmax=MinMaxScaler(feature_range=(0,255))
             self.minmax=self.minmax.fit(auxX)
         else:
             self.modelList.append(kmeans.fit(X))
             auxX = self.modelList[len(self.modelList)-1].transform(X)
-            if self.RBFKmeans:
-                sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*sigma**2))                
+            if self.RBFMethod:
+                self.sigma = np.mean(auxX)
+                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))                
             self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
             self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)        
         
@@ -736,7 +742,7 @@ class Clusters(AbstractImageMethod):
             self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
             self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)
     
-    def __mixMethod(self,X,clustersIni, seedIni):
+    def __mixMethod(self,X,clustersIni, seedIni, final = None):
         
         """
         For each position in the ensamMethod hyperparameter list, a model is generated according to the algorithm chain specified at that position.
@@ -746,15 +752,19 @@ class Clusters(AbstractImageMethod):
                 "The number of clusters cannot be greater than the number of features for the factor algorithm."
             )
             
-        for methodIn in self.ensamMethod:
+        for (indexLoop,methodIn) in enumerate(self.ensamMethod):
             if (methodIn=="aggloKNN"):
                self.__aggloKNN(X,clustersIni,"mix")
             elif (methodIn=="kmeans"):
-               self.__kmeans(X,clustersIni,seedIni,"mix") 
+               self.__kmeans(X,clustersIni,seedIni,"mix")
+               if (final=="FINAL") and (self.RBFMethod==True):
+                   self.sigmaArray[indexLoop]=self.sigma
             elif (methodIn=="gaussianMix"):
                self.__gaussianMix(X,clustersIni,seedIni,"mix")
             elif (methodIn=="kmedoids"):
                self.__kmedoids(X,clustersIni,seedIni,"mix")
+               if (final=="FINAL") and (self.RBFMethod==True):
+                   self.sigmaArray[indexLoop]=self.sigma
             elif (methodIn=="factor"):
                self.__factor(X,clustersIni,seedIni,"mix")
     
@@ -835,11 +845,17 @@ class Clusters(AbstractImageMethod):
         if typeProc is None:
             self.model=X[medoid_indices]
             auxX = cdist(X, self.model, metric=self.metric)
+            if self.RBFMethod:
+                self.sigma = np.mean(auxX)
+                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))
             self.minmax=MinMaxScaler(feature_range=(0,255))
             self.minmax=self.minmax.fit(auxX)
         else:
             self.modelList.append(X[medoid_indices])
             auxX = cdist(X, self.modelList[len(self.modelList)-1], metric=self.metric)
+            if self.RBFMethod:
+                self.sigma = np.mean(auxX)
+                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))
             self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
             self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)
         
@@ -919,7 +935,7 @@ class Clusters(AbstractImageMethod):
                 if method=="kmeans":
                     self.__kmeans(xOpt, K, seed)
                     XEX = self.model.transform(xOpt)
-                    if self.RBFKmeans:
+                    if self.RBFMethod:
                         sigma = np.mean(XEX)
                         XEX = np.exp(-(XEX**2)/(2*sigma**2))
                 elif method=="gaussianMix":
@@ -931,13 +947,16 @@ class Clusters(AbstractImageMethod):
                 elif method=="kmedoids":
                     self.__kmedoids(xOpt, K, seed)
                     XEX = cdist(xOpt, self.model, metric=self.metric)
+                    if self.RBFMethod:
+                        sigma = np.mean(XEX)
+                        XEX = np.exp(-(XEX**2)/(2*sigma**2))
                 elif method=="mixMethod":
                     self.__mixMethod(xOpt, K, seed)
                     self.predictMix=[]
                     for i,k in enumerate(self.ensamMethod):
                         if k=="kmeans":
                             XEX=self.modelList[i].transform(xOpt)
-                            if self.RBFKmeans:
+                            if self.RBFMethod:
                                 sigma = np.mean(XEX)
                                 XEX = np.exp(-(XEX**2)/(2*sigma**2))
                             self.predictMix.append(XEX)                            
@@ -949,7 +968,11 @@ class Clusters(AbstractImageMethod):
                             xNorm = normalize(xOpt, norm="l2")
                             self.predictMix.append(self.modelList[i].predict_proba(xNorm))
                         elif k=="kmedoids":
-                            self.predictMix.append(cdist(xOpt, self.modelList[i], metric=self.metric))
+                            XEX = cdist(xOpt, self.modelList[i], metric=self.metric)
+                            if self.RBFMethod:
+                                sigma = np.mean(XEX)
+                                XEX = np.exp(-(XEX**2)/(2*sigma**2))
+                            self.predictMix.append(XEX)
                     XEX = self.predictMix
                 
                 XEX=self.__xTransforImage(XEX)
@@ -976,6 +999,7 @@ class Clusters(AbstractImageMethod):
         
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         
+        self.sigmaArray = [0,0,0]
         X = x.values
         x=self.scale.fit_transform(X)
         
@@ -1010,7 +1034,7 @@ class Clusters(AbstractImageMethod):
         elif (self.algorithm=="kmedoids"):
             self.__kmedoids(x,self.n_clusters,self.random_seed)
         elif (self.algorithm=="mixMethod"):
-            self.__mixMethod(x,self.n_clusters,self.random_seed)
+            self.__mixMethod(x,self.n_clusters,self.random_seed,"FINAL")
         elif (self.algorithm=="factor"):
             if self.n_clusters > len(x[0])-1:
                 raise ValueError(
@@ -1025,9 +1049,9 @@ class Clusters(AbstractImageMethod):
         x = self.scale.transform(x.to_numpy())
         if (self.algorithm=="kmeans"):
             x = self.model.transform(x)
-            if self.RBFKmeans:
-                sigma = np.mean(x)
-                x = np.exp(-(x**2)/(2*sigma**2))
+            if self.RBFMethod:
+                # sigma = np.mean(x)
+                x = np.exp(-(x**2)/(2*self.sigma**2))
         elif (self.algorithm=="gaussianMix"):
             x = self.model.predict_proba(x)
         elif (self.algorithm=="factor"):
@@ -1064,14 +1088,17 @@ class Clusters(AbstractImageMethod):
             x=kdeData.to_numpy()
         elif (self.algorithm=="kmedoids"):
             x = cdist(x, self.model, metric=self.metric)
+            if self.RBFMethod:
+                # sigma = np.mean(x)
+                x = np.exp(-(x**2)/(2*self.sigma**2))
         elif (self.algorithm=="mixMethod"):
             self.predictMix=[]
             for i,k in enumerate(self.ensamMethod):
                 if k=="kmeans":
                     xIn=self.modelList[i].transform(x)
-                    if self.RBFKmeans:
-                        sigma = np.mean(xIn)
-                        xIn = np.exp(-(xIn**2)/(2*sigma**2))
+                    if self.RBFMethod:
+                        # sigma = np.mean(xIn)
+                        xIn = np.exp(-(xIn**2)/(2*self.sigmaArray[i]**2))
                     self.predictMix.append(xIn)
                 elif k=="gaussianMix":
                     self.predictMix.append(self.modelList[i].predict_proba(x))
@@ -1081,7 +1108,11 @@ class Clusters(AbstractImageMethod):
                     xNorm = normalize(x, norm="l2")
                     self.predictMix.append(self.modelList[i].predict_proba(xNorm))
                 elif k=="kmedoids":
-                    self.predictMix.append(cdist(x, self.modelList[i], metric=self.metric))
+                    xIn=cdist(x, self.modelList[i], metric=self.metric)
+                    if self.RBFMethod:
+                        # sigma = np.mean(xIn)
+                        xIn = np.exp(-(xIn**2)/(2*self.sigmaArray[i]**2))
+                    self.predictMix.append(xIn)
             x = self.predictMix
         if (y is None):
             y = np.zeros(x.shape[0])
