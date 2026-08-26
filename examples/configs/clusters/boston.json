@@ -34,7 +34,7 @@
         "n_init": 2,
         "max_iter": 100,
         "algorithmMethod": "elkan",
-        "RBFKmeans": false
+        "RBFMethod": false
       }
     },
     {
@@ -99,7 +99,7 @@
           "kmedoids"
         ],
         "metric": "euclidean",
-        "RBFKmeans": true
+        "RBFMethod": true
       }
     }
   ]

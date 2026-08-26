@@ -29,7 +29,7 @@
       "n_init": 10,
       "max_iter": 300,
       "algorithmMethod": "lloyd",
-      "RBFKmeans": false
+      "RBFMethod": false
     }
   }
 }

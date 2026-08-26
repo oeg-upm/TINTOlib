@@ -34,7 +34,7 @@
         "n_init": 2,
         "max_iter": 100,
         "algorithmMethod": "lloyd",
-        "RBFKmeans": true,
+        "RBFMethod": true,
         "verbose": true
       }
     },
@@ -100,7 +100,7 @@
           "aggloKNN"
         ],
         "metric": "manhattan",
-        "RBFKmeans": false
+        "RBFMethod": false
       }
     }
   ]
