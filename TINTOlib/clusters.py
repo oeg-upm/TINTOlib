@@ -116,7 +116,6 @@ class Clusters(AbstractImageMethod):
     default_random_seed = 1
     default_n_clusters = 16
     default_algorithm = "kmeans"
-    scale=StandardScaler()
     default_n_init = 'auto'
     default_max_iter = 300
     default_algorithmMethod = "lloyd"
@@ -404,6 +403,7 @@ class Clusters(AbstractImageMethod):
             )
         
         super().__init__(problem=problem, verbose=verbose)
+        self.scale = StandardScaler()
         self.algorithm=algorithm
         self.n_clusters=n_clusters
         self.random_seed=random_seed
@@ -596,7 +596,20 @@ class Clusters(AbstractImageMethod):
             - Call xTranforImage. 
             - Save each image and record its file path.
         """
-        Y = y.values if y is not None else None
+        
+        if y is None:
+            Y = None
+        else:
+            Y = np.asarray(y)
+            if Y.ndim == 2 and Y.shape[1] == 1:
+                Y = Y[:, 0]
+            if Y.ndim != 1:
+                raise ValueError("y must be a one-dimensional array or a single-column table.")
+            n_samples = x[0].shape[0] if isinstance(x, list) else x.shape[0]
+            if len(Y) != n_samples:
+                raise ValueError(
+                    f"y length ({len(Y)}) does not match number of samples ({n_samples})."
+                )
         
         x=self.__xTransforImage(x)
         
@@ -674,7 +687,8 @@ class Clusters(AbstractImageMethod):
     def __factor(self,X,clustersIni, seedIni, typeProc=None):
         
         """
-        It trains a scikit-learn Factor Analysis and prepares a MinMaxScaler to map into [0, 255] using some “auxiliary features” that, in this case, are not distances but membership probabilities for each component.
+        It trains scikit-learn FactorAnalysis and scales its continuous latent factor scores
+        (returned by transform) to [0, 255]. These are not cluster membership probabilities.
         
         For the grayscale case it uses a single, simple model type; when using more than one channel and mixing multiple algorithms, it uses a list-type structure where each position stores one model per algorithm.
         """
@@ -1046,7 +1060,16 @@ class Clusters(AbstractImageMethod):
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         
-        x = self.scale.transform(x.to_numpy())
+        scale = self.__dict__.get("scale")
+        if scale is None or not hasattr(scale, "n_features_in_"):
+            raise RuntimeError(
+                "Modelo Clusters incompatible o sin ajustar: no contiene un "
+                "StandardScaler individual entrenado. Si fue guardado con "
+                "TINTOlib v1.3.1, vuelva a entrenarlo desde los datos originales "
+                "utilizando una instancia nueva de la versión corregida."
+            )
+
+        x = scale.transform(x.to_numpy())
         if (self.algorithm=="kmeans"):
             x = self.model.transform(x)
             if self.RBFMethod:
@@ -1114,6 +1137,7 @@ class Clusters(AbstractImageMethod):
                         xIn = np.exp(-(xIn**2)/(2*self.sigmaArray[i]**2))
                     self.predictMix.append(xIn)
             x = self.predictMix
-        if (y is None):
-            y = np.zeros(x.shape[0])
+        if y is None:
+            n_samples = x[0].shape[0] if isinstance(x, list) else x.shape[0]
+            y = np.zeros(n_samples)
         self.createImage(x, y, self.folder)
