@@ -105,6 +105,9 @@ class Clusters(AbstractImageMethod):
     RBFMethod: boolean, optional
         If the k-means or k-medoids algorithms is used, we can choose whether the image is formed using the distances from the instances to each of the clusters, or by transforming these distances based on RBF. If this parameter is True, the conversion will be applied; if it is False, it will not be applied.
         
+        A zero fitted bandwidth uses the zero-width Gaussian limit: similarity
+        is 1 at zero distance and 0 otherwise.
+
         Default False.
     """
     
@@ -419,6 +422,13 @@ class Clusters(AbstractImageMethod):
         self.metric=metric
         self.RBFMethod=RBFMethod
     
+    @staticmethod
+    def _rbf_transform(distances, sigma):
+        """Apply Gaussian RBF, using its zero-width limit when sigma is zero."""
+        if sigma == 0:
+            return (distances == 0).astype(float)
+        return np.exp(-(distances**2)/(2*sigma**2))
+
     def _img_to_file(self, image_matrix, file):
         img = Image.fromarray(np.uint8(np.squeeze(image_matrix)))
         img.save(file)
@@ -643,7 +653,7 @@ class Clusters(AbstractImageMethod):
             auxX = self.model.transform(X)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))            
+                auxX = self._rbf_transform(auxX, self.sigma)
             self.minmax=MinMaxScaler(feature_range=(0,255))
             self.minmax=self.minmax.fit(auxX)
         else:
@@ -651,7 +661,7 @@ class Clusters(AbstractImageMethod):
             auxX = self.modelList[len(self.modelList)-1].transform(X)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))                
+                auxX = self._rbf_transform(auxX, self.sigma)
             self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
             self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)        
         
@@ -861,7 +871,7 @@ class Clusters(AbstractImageMethod):
             auxX = cdist(X, self.model, metric=self.metric)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))
+                auxX = self._rbf_transform(auxX, self.sigma)
             self.minmax=MinMaxScaler(feature_range=(0,255))
             self.minmax=self.minmax.fit(auxX)
         else:
@@ -869,7 +879,7 @@ class Clusters(AbstractImageMethod):
             auxX = cdist(X, self.modelList[len(self.modelList)-1], metric=self.metric)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
-                auxX = np.exp(-(auxX**2)/(2*self.sigma**2))
+                auxX = self._rbf_transform(auxX, self.sigma)
             self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
             self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)
         
@@ -951,7 +961,7 @@ class Clusters(AbstractImageMethod):
                     XEX = self.model.transform(xOpt)
                     if self.RBFMethod:
                         sigma = np.mean(XEX)
-                        XEX = np.exp(-(XEX**2)/(2*sigma**2))
+                        XEX = self._rbf_transform(XEX, sigma)
                 elif method=="gaussianMix":
                     self.__gaussianMix(xOpt, K, seed)
                     XEX = self.model.predict_proba(xOpt)
@@ -963,7 +973,7 @@ class Clusters(AbstractImageMethod):
                     XEX = cdist(xOpt, self.model, metric=self.metric)
                     if self.RBFMethod:
                         sigma = np.mean(XEX)
-                        XEX = np.exp(-(XEX**2)/(2*sigma**2))
+                        XEX = self._rbf_transform(XEX, sigma)
                 elif method=="mixMethod":
                     self.__mixMethod(xOpt, K, seed)
                     self.predictMix=[]
@@ -972,7 +982,7 @@ class Clusters(AbstractImageMethod):
                             XEX=self.modelList[i].transform(xOpt)
                             if self.RBFMethod:
                                 sigma = np.mean(XEX)
-                                XEX = np.exp(-(XEX**2)/(2*sigma**2))
+                                XEX = self._rbf_transform(XEX, sigma)
                             self.predictMix.append(XEX)                            
                         elif k=="gaussianMix":
                             self.predictMix.append(self.modelList[i].predict_proba(xOpt))
@@ -985,7 +995,7 @@ class Clusters(AbstractImageMethod):
                             XEX = cdist(xOpt, self.modelList[i], metric=self.metric)
                             if self.RBFMethod:
                                 sigma = np.mean(XEX)
-                                XEX = np.exp(-(XEX**2)/(2*sigma**2))
+                                XEX = self._rbf_transform(XEX, sigma)
                             self.predictMix.append(XEX)
                     XEX = self.predictMix
                 
@@ -1073,8 +1083,7 @@ class Clusters(AbstractImageMethod):
         if (self.algorithm=="kmeans"):
             x = self.model.transform(x)
             if self.RBFMethod:
-                # sigma = np.mean(x)
-                x = np.exp(-(x**2)/(2*self.sigma**2))
+                x = self._rbf_transform(x, self.sigma)
         elif (self.algorithm=="gaussianMix"):
             x = self.model.predict_proba(x)
         elif (self.algorithm=="factor"):
@@ -1112,16 +1121,14 @@ class Clusters(AbstractImageMethod):
         elif (self.algorithm=="kmedoids"):
             x = cdist(x, self.model, metric=self.metric)
             if self.RBFMethod:
-                # sigma = np.mean(x)
-                x = np.exp(-(x**2)/(2*self.sigma**2))
+                x = self._rbf_transform(x, self.sigma)
         elif (self.algorithm=="mixMethod"):
             self.predictMix=[]
             for i,k in enumerate(self.ensamMethod):
                 if k=="kmeans":
                     xIn=self.modelList[i].transform(x)
                     if self.RBFMethod:
-                        # sigma = np.mean(xIn)
-                        xIn = np.exp(-(xIn**2)/(2*self.sigmaArray[i]**2))
+                        xIn = self._rbf_transform(xIn, self.sigmaArray[i])
                     self.predictMix.append(xIn)
                 elif k=="gaussianMix":
                     self.predictMix.append(self.modelList[i].predict_proba(x))
@@ -1133,8 +1140,7 @@ class Clusters(AbstractImageMethod):
                 elif k=="kmedoids":
                     xIn=cdist(x, self.modelList[i], metric=self.metric)
                     if self.RBFMethod:
-                        # sigma = np.mean(xIn)
-                        xIn = np.exp(-(xIn**2)/(2*self.sigmaArray[i]**2))
+                        xIn = self._rbf_transform(xIn, self.sigmaArray[i])
                     self.predictMix.append(xIn)
             x = self.predictMix
         if y is None:
