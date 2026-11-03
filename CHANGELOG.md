@@ -11,7 +11,6 @@
 
 ### Packaging
 
-- Add Salvador Martínez-Moreno to the software authors in the package metadata, citation file, CodeMeta, and README.
 - Declare `scikit-image` as a core dependency for automatic cluster selection.
 - Restrict NumPy to versions below 2.4 for the `refined` and `all` extras to retain REFINED compatibility. The core package keeps its existing NumPy range.
 - Synchronize package, citation, and CodeMeta versions and release links.
