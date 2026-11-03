@@ -137,7 +137,7 @@ Some transformation methods in TINTOlib have specific system requirements or lim
 
 ### REFINED
 
-This method relies on `mpi4py` and an MPI runtime for parallel computation. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
+This method relies on `mpi4py` and an MPI runtime for parallel computation. The `refined` and `all` extras select NumPy below 2.4 for REFINED compatibility. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
 
 - **Linux**:
   REFINED currently launches `mpirun` with Open MPI options. On Debian/Ubuntu, install Open MPI:
@@ -322,6 +322,7 @@ Using synthetic images, experiment with either vision models like CNNs or ViTs, 
 - For more detailed information, refer to the **[TINTOlib ReadTheDocs](https://tintolib.readthedocs.io/en/latest/)**.  
 - GitHub repository: **[TINTOlib Documentation](https://github.com/oeg-upm/TINTOlib-Documentation)**.
 - PyPI: **[PyPI](https://pypi.org/project/TINTOlib/)**.
+- Release notes: **[Changelog](https://github.com/oeg-upm/TINTOlib/blob/main/CHANGELOG.md)**.
 
 ---
 
