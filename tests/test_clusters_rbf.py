@@ -54,7 +54,7 @@ class ClustersRBFTests(unittest.TestCase):
                 for scaler in scalers:
                     self.assertTrue(np.isfinite(scaler.data_min_).all())
                     self.assertTrue(np.isfinite(scaler.data_max_).all())
-                    np.testing.assert_array_equal(scaler.data_min_, 1.0)
+                    np.testing.assert_array_equal(scaler.data_min_, 0.0)
                     np.testing.assert_array_equal(scaler.data_max_, 1.0)
 
                 filename = root / 'model.pkl'
@@ -70,7 +70,13 @@ class ClustersRBFTests(unittest.TestCase):
                 with Image.open(path) as left, Image.open(other) as right:
                     pixels = np.array(left)
                     np.testing.assert_array_equal(pixels, np.array(right))
-                    np.testing.assert_array_equal(pixels, 0)
+                    expected = np.zeros_like(pixels)
+                    if algorithm == 'mixMethod':
+                        for channel, scaler in enumerate(scalers):
+                            expected[:, :, channel].flat[:scaler.n_features_in_] = 255
+                    else:
+                        expected.flat[:scalers[0].n_features_in_] = 255
+                    np.testing.assert_array_equal(pixels, expected)
             self.assertEqual(
                 (root / 'first' / 'unsupervised.csv').read_bytes(),
                 (root / 'restored' / 'unsupervised.csv').read_bytes(),
@@ -80,6 +86,54 @@ class ClustersRBFTests(unittest.TestCase):
         for algorithm in ('kmeans', 'kmedoids', 'mixMethod'):
             with self.subTest(algorithm=algorithm):
                 self.check_constant_rows(algorithm)
+
+    def test_zero_bandwidth_scales_matching_and_different_new_rows(self):
+        training = pd.DataFrame(np.ones((16, 3)), columns=list('abc'))
+        new_data = pd.DataFrame([[1., 1., 1.], [2., 2., 2.]], columns=training.columns)
+        for algorithm in ('kmeans', 'kmedoids', 'mixMethod'):
+            with self.subTest(algorithm=algorithm), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                model = Clusters(problem='unsupervised', **self.parameters(algorithm))
+                with warnings.catch_warnings(), np.errstate(divide='raise', invalid='raise'):
+                    warnings.simplefilter('ignore', ConvergenceWarning)
+                    model.fit(training)
+                    scalers = model.minmaxList if algorithm == 'mixMethod' else [model.minmax]
+                    for scaler in scalers:
+                        similarities = np.array([[1., 1.], [0., 0.]])
+                        np.testing.assert_array_equal(
+                            scaler.transform(similarities), [[255., 255.], [0., 0.]],
+                        )
+                    model.transform(new_data, str(root / 'batch'))
+                    filename = root / 'model.pkl'
+                    model.saveHyperparameters(str(filename))
+                    restored = Clusters(problem='unsupervised', **self.parameters(algorithm))
+                    restored.loadHyperparameters(str(filename))
+                    restored.transform(new_data, str(root / 'restored'))
+
+                    batch = sorted((root / 'batch').rglob('*.png'))
+                    self.assertEqual(len(batch), 2)
+                    for index, path in enumerate(batch):
+                        with Image.open(path) as image:
+                            pixels = np.array(image)
+                        expected = np.zeros_like(pixels)
+                        if index == 0:
+                            if algorithm == 'mixMethod':
+                                expected[0, :, :2] = 255
+                            else:
+                                expected[0, :] = 255
+                        np.testing.assert_array_equal(pixels, expected)
+                        other = root / 'restored' / path.relative_to(root / 'batch')
+                        with Image.open(other) as image:
+                            np.testing.assert_array_equal(pixels, np.array(image))
+
+                        single = root / f'single_{index}'
+                        model.transform(new_data.iloc[[index]], str(single))
+                        with Image.open(next(single.rglob('*.png'))) as image:
+                            np.testing.assert_array_equal(pixels, np.array(image))
+                    self.assertEqual(
+                        (root / 'batch' / 'unsupervised.csv').read_bytes(),
+                        (root / 'restored' / 'unsupervised.csv').read_bytes(),
+                    )
 
     @unittest.skipUnless(importlib.util.find_spec('skimage'), 'requires scikit-image')
     def test_identical_rows_during_cluster_selection(self):

@@ -106,7 +106,9 @@ class Clusters(AbstractImageMethod):
         If the k-means or k-medoids algorithms is used, we can choose whether the image is formed using the distances from the instances to each of the clusters, or by transforming these distances based on RBF. If this parameter is True, the conversion will be applied; if it is False, it will not be applied.
         
         A zero fitted bandwidth uses the zero-width Gaussian limit: similarity
-        is 1 at zero distance and 0 otherwise.
+        is 1 at zero distance and 0 otherwise. These similarities use a fixed
+        [0, 1] to [0, 255] intensity scale. Positive bandwidths retain the
+        intensity range fitted on the training data.
 
         Default False.
     """
@@ -429,6 +431,12 @@ class Clusters(AbstractImageMethod):
             return (distances == 0).astype(float)
         return np.exp(-(distances**2)/(2*sigma**2))
 
+    def _fit_distance_scaler(self, values):
+        """Use the full similarity range for zero-width RBF models."""
+        if self.RBFMethod and self.sigma == 0:
+            values = np.vstack((np.zeros(values.shape[1]), np.ones(values.shape[1])))
+        return MinMaxScaler(feature_range=(0,255)).fit(values)
+
     def _img_to_file(self, image_matrix, file):
         img = Image.fromarray(np.uint8(np.squeeze(image_matrix)))
         img.save(file)
@@ -654,16 +662,14 @@ class Clusters(AbstractImageMethod):
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
                 auxX = self._rbf_transform(auxX, self.sigma)
-            self.minmax=MinMaxScaler(feature_range=(0,255))
-            self.minmax=self.minmax.fit(auxX)
+            self.minmax=self._fit_distance_scaler(auxX)
         else:
             self.modelList.append(kmeans.fit(X))
             auxX = self.modelList[len(self.modelList)-1].transform(X)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
                 auxX = self._rbf_transform(auxX, self.sigma)
-            self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
-            self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)        
+            self.minmaxList.append(self._fit_distance_scaler(auxX))
         
         if typeProc is None:
             centroids = self.model.cluster_centers_            
@@ -872,16 +878,14 @@ class Clusters(AbstractImageMethod):
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
                 auxX = self._rbf_transform(auxX, self.sigma)
-            self.minmax=MinMaxScaler(feature_range=(0,255))
-            self.minmax=self.minmax.fit(auxX)
+            self.minmax=self._fit_distance_scaler(auxX)
         else:
             self.modelList.append(X[medoid_indices])
             auxX = cdist(X, self.modelList[len(self.modelList)-1], metric=self.metric)
             if self.RBFMethod:
                 self.sigma = np.mean(auxX)
                 auxX = self._rbf_transform(auxX, self.sigma)
-            self.minmaxList.append(MinMaxScaler(feature_range=(0,255)))
-            self.minmaxList[len(self.minmaxList)-1]=self.minmaxList[len(self.minmaxList)-1].fit(auxX)
+            self.minmaxList.append(self._fit_distance_scaler(auxX))
         
         if typeProc is None:
             centroids = self.model            
