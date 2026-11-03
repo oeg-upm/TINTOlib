@@ -1,14 +1,14 @@
 # TINTOlib: Python Library to convert Tabular Data into Synthetic Images
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-View%20Documentation-brightgreen?logo=github)](https://oeg-upm.github.io/TINTOlib/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)
-[![Python Version](https://shields.io/badge/python-3.9+-blue)](https://pypi.python.org/pypi/)
-[![Documentation Status](https://readthedocs.org/projects/morph-kgc/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-View%20Benchmarks-brightgreen?logo=github)](https://oeg-upm.github.io/TINTOlib/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/oeg-upm/TINTOlib/blob/main/LICENSE)
+[![Python Version](https://shields.io/badge/python-3.9+-blue)](https://pypi.org/project/TINTOlib/)
+[![Documentation Status](https://app.readthedocs.org/projects/tintolib/badge/?version=latest)](https://tintolib.readthedocs.io/en/latest/)
 [![Open In Colab-CNN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN.ipynb)
 [![Open In Colab-CNN+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_CNN%2BMLP.ipynb)
 [![Open In Colab-ViT](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT.ipynb)
 [![Open In Colab-ViT+MLP](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/oeg-upm/TINTOlib-Crash_Course/blob/main/Notebooks/Challenge/Regression_ViT%2BMLP.ipynb)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/oeg-upm/TINTOlib)
+[![Ask DeepWiki](https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/imgs/deepwiki-badge.svg)](https://deepwiki.com/oeg-upm/TINTOlib)
 [![PyPI Downloads](https://static.pepy.tech/badge/tintolib)](https://pepy.tech/projects/tintolib)
 
 
@@ -124,9 +124,9 @@ TINTOlib includes a variety of methods for generating synthetic images. Below is
 |             [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)              |     `SuperTML()`     |                                                              `problem` `transformer` `verbose` `pixels` `feature_importance` `font_size` `random_seed`                                                              |
 |       [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87)       |   `FeatureWrap()`    |                                                                               `problem` `transformer` `verbose` `size` `bins` `zoom`                                                                                |
 |                   [BIE](https://ieeexplore.ieee.org/document/10278393)                    |       `BIE()`        |                                                                                `problem` `transformer` `verbose` `precision` `zoom`                                                                                 |
-|          [Fotomics](https://www.biorxiv.org/content/10.1101/2022.07.08.499309v2)          |     `Fotomic()`      | `image_dim` `problem` `transformer` `verbose` `outliers` `min_percentile` `max_percentile`  `outliers_treatment` `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed` |
+|          [Fotomics](https://www.biorxiv.org/content/10.1101/2022.07.08.499309v2)          |     `Fotomics()`      | `image_dim` `problem` `transformer` `verbose` `outliers` `min_percentile` `max_percentile`  `outliers_treatment` `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed` |
 |             [DeepInsight](https://www.nature.com/articles/s41598-019-47765-6)             |   `DeepInsight()`    |                                  `image_dim` `problem` `transformer` `verbose`  `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed`                                  |
-|             Clusters                                                                      |   `Clusters()`       |                                  `problem` `transformer` `verbose` `algorithm` `n_clusters` `random_seed` `n_init` `max_iter` `algorithmMethod` `covariance_type` `ensamMethod` `bandwidth` `kernel` `metric` `RBFMethod` `zoom`                                  |
+|             Clusters                                                                      |   `Clusters()`       |                                  `problem` `normalize` `verbose` `algorithm` `n_clusters` `random_seed` `n_init` `max_iter` `algorithmMethod` `covariance_type` `ensamMethod` `bandwidth` `kernel` `metric` `RBFMethod`                                  |
 
 ---
 
@@ -137,33 +137,34 @@ Some transformation methods in TINTOlib have specific system requirements or lim
 
 ### REFINED
 
-This method relies on `mpi4py`, which enables parallel computation using MPI (Message Passing Interface). However, `mpi4py` requires administrative permissions to utilize multiple processors, making it incompatible with platforms like Google Colab. 
+This method relies on `mpi4py` and an MPI runtime for parallel computation. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
 
 - **Linux**:
-  Ensure that the MPI environment is set up before installing `mpi4py`. Run the following commands:
+  REFINED currently launches `mpirun` with Open MPI options. On Debian/Ubuntu, install Open MPI:
 
     ```bash
-      sudo apt-get install python3
-      sudo apt install python3-pip
-      sudo apt install python3-mpi4py
+      sudo apt install openmpi-bin libopenmpi-dev
     ```
   Once MPI is installed:
 
     ```bash
       pip install "TINTOlib[refined]"
     ```
-- **MacOS / Windows:** Direct installation is usually supported:
+- **macOS:** Install Open MPI (for example, `brew install open-mpi`), then install `TINTOlib[refined]` in your Python environment.
+- **Windows:** Install an MPI runtime supported by `mpi4py`, such as Microsoft MPI, and ensure `mpiexec` is available on `PATH`. Then install the Python extra:
 
     ```bash
       pip install "TINTOlib[refined]"
     ```
 
+On **Google Colab** or other hosted notebooks, REFINED requires a compatible MPI runtime and permission to launch subprocesses. Availability depends on the notebook environment.
+
 ### SuperTML
 
-The **SuperTML** method generates text-based synthetic images and requires the **MS Sans Serif** font.
+The **SuperTML** method generates text-based synthetic images and loads the **Arial** font using `ImageFont.truetype("arial.ttf", ...)`. Ensure that `arial.ttf` is discoverable by Pillow.
 
-- On **Windows**, this font is typically available by default.
-- On **Linux** and **macOS**, it must be installed manually to avoid rendering issues.
+- On **Windows**, Arial is typically installed with the operating system.
+- On **Linux** and **macOS**, check that Arial is installed and that Pillow can locate the file under the name `arial.ttf`.
 
 #### Font Installation
 
@@ -173,7 +174,14 @@ The **SuperTML** method generates text-based synthetic images and requires the *
       sudo apt install ttf-mscorefonts-installer
     ```
 
-On **Google Colab**, installing additional fonts is not permitted due to administrative restrictions.
+You can check font availability in any environment, including **Google Colab**, with:
+
+```python
+from PIL import ImageFont
+ImageFont.truetype("arial.ttf", 10)
+```
+
+If this raises `OSError`, install Arial where permitted or place a legally obtained `arial.ttf` file in the working directory.
 
 ## 📄 Getting Started
 
@@ -182,7 +190,7 @@ On **Google Colab**, installing additional fonts is not permitted due to adminis
       pip install TINTOlib
     ```
 
-TINTOlib already includes all necessary dependencies, so there’s no need to install them individually.
+Installing TINTOlib installs its core Python dependencies automatically. Optional methods require the extras and system resources described below.
 
 Optional methods can be installed using dependency extras:
 
@@ -196,7 +204,7 @@ However, if you prefer manual installation or want to explore the full environme
 
 - The repository includes a `requirements.txt` file that installs TINTOlib and its core dependencies in editable mode for local development.
 - **mpi4py** is installed by the `refined` extra and is only required for **REFINED**; an MPI runtime must also be installed as described in the [platform-specific notes](#platform-specific-notes).
-- **Other notebooks**, which include training deep learning models on the generated images, require additional libraries. To run them, install the extended dependencies from `requirements-example.txt`:
+- **Other notebooks**, which include training deep learning models on the generated images, require additional libraries. From the repository root, install the extended dependencies with `pip install -r requirements-example.txt`.
 
 ---
 
@@ -213,10 +221,10 @@ However, if you prefer manual installation or want to explore the full environme
       from TINTOlib.tinto import TINTO
     ```
 
-- Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Models Section](#models)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
+- Create the model. If you don't set any hyperparameter, the model will use the default values, refer to the **[Methods Section](#-methods)** or the **[TINTO Documentation](https://tintolib.readthedocs.io/en/latest/)**.
 
     ```python
-      model = TINTO(problem="supervised", blur=True)
+      model = TINTO(problem="classification", blur=True)
     ```
 
 ---
@@ -278,7 +286,7 @@ For example, the following table shows a classic example of the [IRIS CSV datase
 - The following example shows how to execute TINTOlib using the TINTO method and then display the synthetic image generated for the first row:
 
     ```python
-      model = TINTO(problem="supervised", pixels=30, algorithm="t-SNE", steps=5, blur=True)
+      model = TINTO(problem="classification", pixels=30, algorithm="t-SNE", steps=5, blur=True)
       model.fit_transform("iris.csv", "synthetic_images")
     ```
 
@@ -353,7 +361,7 @@ If you use TINTOlib in your research, please cite our papers:
 
 ## 🛡️ License
 
-TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-upm/TINTOlib-Documentation/blob/main/LICENSE)**.
+TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-upm/TINTOlib/blob/main/LICENSE)**.
 
 ---
 

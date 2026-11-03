@@ -15,9 +15,9 @@ keywords:
   - "tabular-to-image"
   - "tabular2image"
 identifiers:
-  - type: doi
-    value: "10.5281/zenodo.18467607"
-    description: "Zenodo archive for TINTOlib v1.1.0"
+  - type: url
+    value: "https://github.com/oeg-upm/TINTOlib/tree/v1.3.1"
+    description: "Source code for TINTOlib v1.3.1"
 authors:
   - name: "Ontology Engineering Group (UPM)"
   - name: "BorjaRei"

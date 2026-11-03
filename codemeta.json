@@ -4,25 +4,24 @@
     "SoftwareSourceCode",
     "SoftwareApplication"
   ],
-  "identifier": "https://doi.org/10.5281/zenodo.18467607",
+  "identifier": "https://github.com/oeg-upm/TINTOlib/tree/v1.3.1",
   "name": "TINTOlib",
   "description": "Python package for transforming tabular data into synthetic images for deep neural networks.",
   "codeRepository": "https://github.com/oeg-upm/TINTOlib",
   "issueTracker": "https://github.com/oeg-upm/TINTOlib/issues",
   "url": "https://tintolib.readthedocs.io/",
   "sameAs": [
-    "https://doi.org/10.5281/zenodo.18467607",
-    "https://pypi.org/project/TINTOlib/"
+    "https://pypi.org/project/TINTOlib/1.3.1/"
   ],
   "license": "https://spdx.org/licenses/Apache-2.0",
   "dateCreated": "2023-02-09",
-  "dateModified": "2026-05-14",
-  "datePublished": "2026-02-03",
-  "softwareVersion": "1.1.0",
-  "version": "v1.1.0",
+  "dateModified": "2026-11-03",
+  "datePublished": "2026-08-26",
+  "softwareVersion": "1.3.1",
+  "version": "v1.3.1",
   "developmentStatus": "active",
   "isAccessibleForFree": true,
-  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/archive/refs/tags/v1.1.0.zip",
+  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/archive/refs/tags/v1.3.1.zip",
   "installUrl": "https://pypi.org/project/TINTOlib/",
   "readme": "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
   "buildInstructions": [
@@ -46,23 +45,21 @@
     "spatial-encoding"
   ],
   "programmingLanguage": "Python",
-  "runtimePlatform": "Python >=3.8",
+  "runtimePlatform": "Python >=3.9",
   "operatingSystem": [
     "Linux",
     "Windows",
     "macOS"
   ],
   "softwareRequirements": [
-    "bitstring==4.3.0",
-    "matplotlib==3.9.4",
-    "numpy==1.26.4",
-    "pandas==2.2.3",
-    "scikit-learn==1.6.1",
-    "opencv-python==4.11.0.86",
-    "scipy==1.15.0",
-    "tqdm==4.67.1",
-    "asymmetric-greedy-search==0.1.0",
-    "numba==0.62.0"
+    "bitstring>=4.0,<5",
+    "matplotlib>=3.7,<4",
+    "numpy>=1.24,<3",
+    "pandas>=2.0,<3",
+    "Pillow>=9.5,<13",
+    "scikit-learn>=1.2,<2",
+    "scipy>=1.10,<2",
+    "tqdm>=4.65,<5"
   ],
   "author": [
     {
@@ -132,7 +129,7 @@
       "identifier": "https://orcid.org/0000-0002-2990-7090"
     }
   ],
-  "releaseNotes": "TINTOlib v1.1.0 Release Notes\n\nWHAT'S NEW\n==========\n\n- Two new synthetic image methods: Fotomics and DeepInsight\n- Customizable transformer system for flexible data preprocessing\n- New three-level class hierarchy (AbstractImageMethod -> MappingMethod -> ParamImageMethod)\n- Feature-to-pixel mapping with explicit CSV export\n- Support for multiple pixel assignment strategies and relevance scoring\n\nBREAKING CHANGES\n================\n\nProblem parameter updated:\n  OLD: problem=\"supervised\"\n  NEW: problem=\"classification\"\n\nDeprecated value still works with FutureWarning for backward compatibility.\n\nBUG FIXES\n=========\n\n- Fix LogScaler Class (#18)\n- Fix abstractImageMethod transformer reference in fit_transform()\n- Fix SuperTML uint8 rendering (#16)\n- Fix Random State for reproducibility\n- Fix CSV file generation\n\nDEPENDENCY CHANGES\n==================\n\n- numpy: 2.0.2 -> 1.26.4\n- mpi4py: now optional, only needed for REFINED method\n- Added: numba==0.62.0\n\nVERSION INFO\n============\n\n- Version: 1.0.6 -> 1.1.0\n- Status: Stable Release\n\nRESOURCES\n=========\n\nGitHub: https://github.com/oeg-upm/TINTOlib\nDocumentation: https://tintolib.readthedocs.io/\nPyPI: https://pypi.org/project/TINTOlib/\nIssues: https://github.com/oeg-upm/TINTOlib/issues",
+  "releaseNotes": "https://github.com/oeg-upm/TINTOlib/compare/v1.3.0...v1.3.1",
   "referencePublication": [
     {
       "@type": "ScholarlyArticle",

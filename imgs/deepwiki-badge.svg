@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="116" height="20" role="img" aria-labelledby="title">
+  <title id="title">Ask DeepWiki</title>
+  <defs>
+    <linearGradient id="shine" x2="0" y2="100%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".1"/>
+      <stop offset="1" stop-opacity=".1"/>
+    </linearGradient>
+    <clipPath id="rounded"><rect width="116" height="20" rx="3"/></clipPath>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <path fill="#555" d="M0 0h44v20H0z"/>
+    <path fill="#007ec6" d="M44 0h72v20H44z"/>
+    <path fill="url(#shine)" d="M0 0h116v20H0z"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 5.5c2-.8 4-.8 6 .5 2-1.3 4-1.3 6-.5v9c-2-.8-4-.8-6 .5-2-1.3-4-1.3-6-.5z"/>
+    <path d="M11 6v9"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11">
+    <g fill="#010101" opacity=".3"><text x="30" y="15">Ask</text><text x="80" y="15">DeepWiki</text></g>
+    <text x="30" y="14">Ask</text><text x="80" y="14">DeepWiki</text>
+  </g>
+</svg>
