@@ -1,12 +1,5 @@
 # Changelog
 
-## 1.3.3 - 2026-11-03
-
-### Metadata
-
-- Add Salvador Martínez-Moreno to the software authors, without an email address, in the package metadata, citation file, CodeMeta, and README.
-- Retain all runtime fixes and dependency constraints from 1.3.2; no algorithm changes.
-
 ## 1.3.2 - 2026-11-03
 
 ### Fixed
@@ -18,6 +11,7 @@
 
 ### Packaging
 
+- Add Salvador Martínez-Moreno to the software authors in the package metadata, citation file, CodeMeta, and README.
 - Declare `scikit-image` as a core dependency for automatic cluster selection.
 - Restrict NumPy to versions below 2.4 for the `refined` and `all` extras to retain REFINED compatibility. The core package keeps its existing NumPy range.
 - Synchronize package, citation, and CodeMeta versions and release links.

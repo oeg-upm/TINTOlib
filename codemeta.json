@@ -4,24 +4,24 @@
     "SoftwareSourceCode",
     "SoftwareApplication"
   ],
-  "identifier": "https://github.com/oeg-upm/TINTOlib/tree/v1.3.3",
+  "identifier": "https://github.com/oeg-upm/TINTOlib/tree/v1.3.2",
   "name": "TINTOlib",
   "description": "Python package for transforming tabular data into synthetic images for deep neural networks.",
   "codeRepository": "https://github.com/oeg-upm/TINTOlib",
   "issueTracker": "https://github.com/oeg-upm/TINTOlib/issues",
   "url": "https://tintolib.readthedocs.io/",
   "sameAs": [
-    "https://pypi.org/project/TINTOlib/1.3.3/"
+    "https://pypi.org/project/TINTOlib/1.3.2/"
   ],
   "license": "https://spdx.org/licenses/Apache-2.0",
   "dateCreated": "2023-02-09",
   "dateModified": "2026-11-03",
   "datePublished": "2026-11-03",
-  "softwareVersion": "1.3.3",
-  "version": "v1.3.3",
+  "softwareVersion": "1.3.2",
+  "version": "v1.3.2",
   "developmentStatus": "active",
   "isAccessibleForFree": true,
-  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/archive/refs/tags/v1.3.3.zip",
+  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/archive/refs/tags/v1.3.2.zip",
   "installUrl": "https://pypi.org/project/TINTOlib/",
   "readme": "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
   "buildInstructions": [
@@ -136,7 +136,7 @@
       "identifier": "https://orcid.org/0000-0002-2990-7090"
     }
   ],
-  "releaseNotes": "https://github.com/oeg-upm/TINTOlib/blob/v1.3.3/CHANGELOG.md",
+  "releaseNotes": "https://github.com/oeg-upm/TINTOlib/blob/v1.3.2/CHANGELOG.md",
   "referencePublication": [
     {
       "@type": "ScholarlyArticle",
