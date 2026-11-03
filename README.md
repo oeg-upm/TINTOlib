@@ -372,6 +372,7 @@ TINTOlib is available under the **[Apache License 2.0](https://github.com/oeg-up
 - **[David González Fernández](https://github.com/DavidGonzalezFernandez)**
 - **[Jiayun Liu](https://github.com/DCY1117)**
 - **[Javier López](https://github.com/javilecrin)**
+- **Salvador Martínez-Moreno**
 ---
 
 ## 🏛️ Contributors
