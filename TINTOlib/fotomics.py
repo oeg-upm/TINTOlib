@@ -9,6 +9,8 @@ import TINTOlib.utils.constants as constants
 ################    Fotomics    ##############################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 default_random_seed = 1
 default_zoom=1
 default_cmap = 'gray'  # Default cmap image output
@@ -68,7 +70,7 @@ class Fotomics(ParamImageMethod):
     def __init__(self,
             image_dim,
             problem=None,
-            transformer=LogScaler(),
+            transformer=_DEFAULT_TRANSFORMER,
             verbose=False,
             outliers=True,
             min_percentile=10,
@@ -83,6 +85,10 @@ class Fotomics(ParamImageMethod):
             cmap=default_cmap,
             random_seed=default_random_seed
             ):
+
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = LogScaler()
+                
         super().__init__(image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
         self.__min_percentile = min_percentile
         self.__max_percentile = max_percentile
