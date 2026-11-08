@@ -209,7 +209,10 @@ class ParamImageMethod(MappingMethod):
             i=m-2
             img=np.zeros((self._image_dim,self._image_dim))
             img[imgs_coord[0].astype(int),imgs_coord[1].astype(int)]=imgs_coord[m]
-            self._save_image(img,y.iloc[i],i)
+            
+            # Support unsupervised problems
+            target = None if y is None else y.iloc[i]
+            self._save_image(img, target, i)
 
     @abstractmethod
     def _get_features_coords(self,x):
