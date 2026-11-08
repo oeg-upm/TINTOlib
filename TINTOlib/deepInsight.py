@@ -10,6 +10,7 @@ import TINTOlib.utils.constants as constants
 ################    DeepInsight    ##############################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
 
 default_random_seed = 1
 default_zoom=1
@@ -64,7 +65,7 @@ class DeepInsight(ParamImageMethod):
             self,
             image_dim,
             problem=None,
-            transformer=MinMaxScaler(),
+            transformer=_DEFAULT_TRANSFORMER,
             verbose=None,
             algorithm_rd=constants.pca_algorithm,
             assignment_method=constants.bin_assigner,
@@ -82,6 +83,8 @@ class DeepInsight(ParamImageMethod):
         if(algorithm_rd != constants.pca_algorithm and (relocate == True or group_method == constants.relevance_option or assignment_method == constants.relevance_assigner)): 
             raise TypeError(f"PCA extract method is required to optimize or group using features relevance based on loadings")
 
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
 
         super().__init__( image_dim,problem,transformer,verbose,assignment_method,relocate,algorithm_opt,group_method,zoom,format,cmap,random_seed)
 
