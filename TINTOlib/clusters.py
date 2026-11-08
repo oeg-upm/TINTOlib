@@ -7,6 +7,13 @@ from PIL import Image
 import numpy as np
 import pandas as pd
 
+import pickle
+
+import warnings
+
+from sklearn.utils.validation import check_is_fitted
+from sklearn.exceptions import NotFittedError
+
 # Typing imports
 from typing import Union
 
@@ -408,6 +415,14 @@ class Clusters(AbstractImageMethod):
             )
         
         super().__init__(problem=problem, verbose=verbose)
+        if normalize is not None:
+            warnings.warn(
+                "The 'normalize' parameter is deprecated and has no effect. "
+                "Clusters always applies StandardScaler preprocessing. "
+                "This parameter will be removed in a future version.",
+                FutureWarning,
+                stacklevel=2
+        )
         self.scale = StandardScaler()
         self.algorithm=algorithm
         self.n_clusters=n_clusters
@@ -430,6 +445,27 @@ class Clusters(AbstractImageMethod):
         if sigma == 0:
             return (distances == 0).astype(float)
         return np.exp(-(distances**2)/(2*sigma**2))
+    
+    
+    @staticmethod
+    def _to_uint8_safe(values):
+        """
+        Convert pixel intensities to uint8 safely.
+    
+        Finite values are rounded and clipped to [0, 255].
+        NaN and infinite values are rejected.
+        """
+        values = np.asarray(values)
+    
+        if not np.all(np.isfinite(values)):
+            raise ValueError(
+                "Non-finite pixel intensities detected "
+                "(NaN or infinity)."
+            )
+    
+        values = np.clip(np.rint(values), 0, 255)
+    
+        return values.astype(np.uint8)
 
     def _fit_distance_scaler(self, values):
         """Use the full similarity range for zero-width RBF models."""
@@ -482,7 +518,7 @@ class Clusters(AbstractImageMethod):
                 dim=int(np.ceil(np.sqrt(xTrans.shape[1])))
                 arrayIn=np.zeros((xTrans.shape[0],dim*dim))
                 arrayIn[:,:xTrans.shape[1]] = xTrans
-                xTrans=arrayIn.round().astype(np.uint8).reshape(-1,dim,dim)
+                xTrans = self._to_uint8_safe(arrayIn).reshape(-1, dim, dim)
                 listArrayIn.append(xTrans)
             for i in range(len(x),3):
                 listArrayIn.append(emptyChanel.round().astype(np.uint8).reshape(-1,dim,dim))
@@ -495,7 +531,7 @@ class Clusters(AbstractImageMethod):
             dim=int(np.ceil(np.sqrt(x.shape[1])))
             arrayIn=np.zeros((x.shape[0],dim*dim))
             arrayIn[:,:x.shape[1]] = x
-            x=arrayIn.round().astype(np.uint8).reshape(-1,dim,dim)
+            x = self._to_uint8_safe(arrayIn).reshape(-1, dim, dim)
         
         return x
     
@@ -605,34 +641,87 @@ class Clusters(AbstractImageMethod):
     
         return medoid_indices, labels
         
-    def createImage(self, x , y, folder):
-        
+    def createImage(self, x, y, folder):
         """
-        This function createImage(self, x, y, folder) takes tabular/numerical data (x) and converts it into “images” (2D matrices or 3D RGB-like tensors) 
-        for each sample. It saves them to disk (via method _save_image) and finally generates a CSV file that maps image paths to their corresponding 
-        label/value (when applicable).
-            - Call xTranforImage. 
-            - Save each image and record its file path.
+        Generate synthetic images from algorithm-transformed features.
+    
+        Parameters
+        ----------
+        x : numpy.ndarray or list of numpy.ndarray
+            Features already transformed by the selected CLUSTERS
+            algorithm, before the final image intensity scaling.
+    
+        y : array-like or None
+            Target values. None is allowed for unsupervised problems.
+    
+        folder : str or Path
+            Destination folder for generated images.
         """
-        
+    
+        # Validate input features
+        if isinstance(x, list):
+            if not x:
+                raise ValueError("x cannot be an empty list.")
+    
+            if not all(
+                isinstance(channel, np.ndarray)
+                and channel.ndim == 2
+                for channel in x
+            ):
+                raise ValueError(
+                    "Each channel in x must be a 2D numpy array."
+                )
+    
+            n_samples = x[0].shape[0]
+    
+            if any(
+                channel.shape[0] != n_samples
+                for channel in x
+            ):
+                raise ValueError(
+                    "All channels must have the same number of samples."
+                )
+    
+        else:
+            if not isinstance(x, np.ndarray) or x.ndim != 2:
+                raise ValueError(
+                    "x must be a 2D numpy array."
+                )
+    
+            n_samples = x.shape[0]
+    
+        # Validate target values
         if y is None:
             Y = None
+    
         else:
             Y = np.asarray(y)
+    
             if Y.ndim == 2 and Y.shape[1] == 1:
                 Y = Y[:, 0]
+    
             if Y.ndim != 1:
-                raise ValueError("y must be a one-dimensional array or a single-column table.")
-            n_samples = x[0].shape[0] if isinstance(x, list) else x.shape[0]
+                raise ValueError(
+                    "y must be a one-dimensional array "
+                    "or a single-column table."
+                )
+    
             if len(Y) != n_samples:
                 raise ValueError(
-                    f"y length ({len(Y)}) does not match number of samples ({n_samples})."
+                    f"y length ({len(Y)}) does not match "
+                    f"number of samples ({n_samples})."
                 )
-        
-        x=self.__xTransforImage(x)
-        
-        for i,sample in enumerate(x):
-            self._save_image(sample,Y[i],i)
+    
+        # Convert algorithm features into image matrices
+        x = self.__xTransforImage(x)
+    
+        # Generate images
+        for i, sample in enumerate(x):
+    
+            target = None if Y is None else Y[i]
+    
+            self._save_image(sample, target, i)
+
             
     def __kmeans(self,X,clustersIni, seedIni, typeProc=None):
         
@@ -1025,6 +1114,75 @@ class Clusters(AbstractImageMethod):
         
         return best_K, dict(zip(Ks, stability_by_K))
         
+    def loadHyperparameters(self, filename="objs.pkl"):
+        """
+        Load previously saved model state.
+    
+        Reject fitted legacy Clusters models that do not contain
+        a fitted, instance-specific StandardScaler.
+    
+        Validation is performed before modifying the current object.
+        Only load pickle files from trusted sources.
+        """
+    
+        with open(filename, "rb") as f:
+            variables = pickle.load(f)
+    
+        if not isinstance(variables, dict):
+            raise TypeError(
+                "Invalid Clusters hyperparameters file: "
+                "expected a dictionary."
+            )
+    
+        fitted = variables.get("_fitted", False)
+    
+        if not isinstance(fitted, (bool, np.bool_)):
+            raise ValueError(
+                "Invalid Clusters hyperparameters file: "
+                "'_fitted' must be a boolean."
+            )
+    
+        if fitted:
+    
+            scale = variables.get("scale")
+    
+            if not isinstance(scale, StandardScaler):
+                raise RuntimeError(
+                    "Incompatible Clusters model: the saved state "
+                    "does not contain an individual StandardScaler. "
+                    "This can occur with models saved using "
+                    "TINTOlib 1.3.1. The original fitted scaler "
+                    "cannot be recovered from this file. "
+                    "Retrain the model using the corrected version."
+                )
+    
+            try:
+                check_is_fitted(scale)
+    
+                if not hasattr(scale, "n_features_in_"):
+                    raise NotFittedError(
+                        "Missing n_features_in_."
+                    )
+    
+            except NotFittedError as exc:
+                raise RuntimeError(
+                    "Incompatible Clusters model: the saved "
+                    "StandardScaler is not fitted. "
+                    "Retrain the model using the corrected version."
+                ) from exc
+    
+        # All compatibility checks passed.
+        # Restore state only after successful validation.
+        for key, value in variables.items():
+            setattr(self, key, value)
+    
+        if self.verbose:
+            print(
+                f"Hyperparameters successfully loaded "
+                f"from {filename}."
+            )
+
+
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         
         self.sigmaArray = [0,0,0]
