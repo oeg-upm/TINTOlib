@@ -23,6 +23,7 @@ import TINTOlib.utils.constants as constants
 ################    TINTO    ##############################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
 
 class TINTO(MappingMethod):
     """
@@ -110,7 +111,7 @@ class TINTO(MappingMethod):
     def __init__(
         self,
         problem=None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose=None,
         pixels=default_pixels,
         algorithm=default_algorithm,
@@ -127,6 +128,10 @@ class TINTO(MappingMethod):
         cmap=default_cmap,
         random_seed=default_random_seed,
     ):
+        
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+            
         super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
 
         self.pixels = pixels
