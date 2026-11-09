@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use TINTOlib, please cite the SoftwareX article below."
 title: "TINTOlib"
-version: "1.3.2"
-date-released: "2026-11-03"
+version: "1.3.3"
+date-released: "2026-11-09"
 license: "Apache-2.0"
 type: software
 repository-code: "https://github.com/oeg-upm/TINTOlib"
@@ -16,8 +16,8 @@ keywords:
   - "tabular2image"
 identifiers:
   - type: url
-    value: "https://github.com/oeg-upm/TINTOlib/tree/v1.3.2"
-    description: "Source code for TINTOlib v1.3.2"
+    value: "https://github.com/oeg-upm/TINTOlib/tree/v1.3.3"
+    description: "Source code for TINTOlib v1.3.3"
 authors:
   - name: "Ontology Engineering Group (UPM)"
   - name: "BorjaRei"
