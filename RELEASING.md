@@ -1,27 +1,38 @@
 # Release format and process
 
-This convention follows the published **TINTOlib 1.3.2** release. Write release
-notes in English and describe changes relative to the previous release tag.
+This document is a maintainer guide, not the release history. Record changes
+for users in `CHANGELOG.md` and publish release announcements on GitHub.
+`RELEASING.md` is a conventional filename, not a Python packaging requirement.
+
+Write release notes in English and describe changes relative to the previous
+release tag. For new changelog entries, follow
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Preserve historical
+entries as published; releases through 1.3.3 used project-specific headings.
 
 ## Naming
 
 - Git tag: `vX.Y.Z`.
 - GitHub release title: `TINTOlib X.Y.Z`.
 - Changelog entry and release body start with `## X.Y.Z - YYYY-MM-DD`.
-- Use the actual release date. Keep the GitHub body identical to the matching
-  `CHANGELOG.md` entry.
+- Use the actual release date. Base the GitHub body on the matching changelog
+  entry; it may also include installation and validation information.
 
 ## Structure
 
-Start with a short paragraph explaining the user-visible result. Use the
-following sections in this order; omit sections that do not apply:
+Use the following Keep a Changelog categories; omit empty categories:
 
-1. `Fixed`: bug fixes, with the affected method and resulting behavior.
-2. `Added`: new functionality, when present.
-3. `Compatibility and dependencies`: deprecations, migration requirements,
-   dependency changes, and intentional changes to generated images.
-4. `Validation`: checks actually executed, their scope, and material limits.
-5. `Installation`: an exact-version installation command once available on PyPI.
+1. `Added`: new functionality.
+2. `Changed`: changes to existing functionality, including dependency changes.
+3. `Deprecated`: functionality scheduled for removal.
+4. `Removed`: removed functionality.
+5. `Fixed`: bug fixes, with the affected method and resulting behavior.
+6. `Security`: vulnerability fixes.
+
+Keep an `Unreleased` section at the top when accumulating changes for the next
+version. Explain migration requirements with the relevant change. For GitHub
+release announcements, optional `Validation` and `Installation` sections can
+follow the changelog content; these are project conventions, not Keep a
+Changelog categories.
 
 Do not claim tests passed merely because they were added. Distinguish tests
 already in the repository from temporary diagnostics. If comparison images
@@ -39,22 +50,12 @@ TINTOlib X.Y.Z fixes ...
 
 - Fix ... in `Method`, so that ...
 
-### Compatibility and dependencies
+### Changed
 
-- Describe any required migration or intentional behavior change.
-
-### Validation
-
-- State the commands/checks actually run and their outcomes.
-- State relevant coverage limits.
-
-### Installation
-
-```bash
-pip install TINTOlib==X.Y.Z
-```
+- Describe any dependency change or intentional behavior change.
 ````
 
+In a GitHub announcement, include only validation that was actually performed.
 If the GitHub release precedes PyPI publication, label the installation command
 as pending availability on PyPI. A GitHub release does not publish the Python
 package to PyPI.
@@ -77,10 +78,15 @@ package to PyPI.
    `chore(release): prepare X.Y.Z`; publish the commit through the repository's
    approved workflow. Do not overwrite existing tags or release artifacts.
 7. Create an annotated tag `vX.Y.Z` on that exact commit, then create the GitHub
-   release titled `TINTOlib X.Y.Z` using the changelog entry as its body.
+   release titled `TINTOlib X.Y.Z` using the changelog entry, with optional
+   validation and installation details.
 8. Publish the built artifacts to PyPI only when that action is authorized and
    credentials are available. Verify the published version in a fresh
    environment. GitHub and PyPI publication are separate steps.
 
-Published format reference:
-<https://github.com/oeg-upm/TINTOlib/releases/tag/v1.3.2>.
+## References
+
+- [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): user-facing change history.
+- [Python Packaging User Guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/): building and publishing distributions.
+- [pip release process](https://pip.pypa.io/en/stable/development/release-process/): an example of separate maintainer documentation.
+- [Pipenv repository](https://github.com/pypa/pipenv): an example using `RELEASING.md`.
