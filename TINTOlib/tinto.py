@@ -354,7 +354,6 @@ class TINTO(MappingMethod):
                 for eje_x, eje_y in coord:
                     matrix_a[int(eje_x), int(eje_y)] = next(iter_values_X)
 
-            matrix_a = np.repeat(np.repeat(matrix_a, self.zoom, axis=0), self.zoom, axis=1)
             self._save_image(matrix_a,Y[i], i)
 
         return matrix
@@ -390,7 +389,7 @@ class TINTO(MappingMethod):
             for j in range(X.shape[1]):
                 matrix_a[int(coord[j, 1]), int(coord[j, 0])] = X[i, j]
 
-            self._save_image(matrix_a*255, Y[i], i)
+            self._save_image(matrix_a, Y[i], i)
 
             # Verbose
             if self.verbose:
@@ -475,7 +474,8 @@ class TINTO(MappingMethod):
         self.__obtainCoord(X)
         self.__areaDelimitation()
         self.__matrixPositions()
-        self._build_features_mapping(x.columns, self.pos_pixel_caract)
+        positions = self.pos_pixel_caract if self.submatrix else self.pos_pixel_caract[:, ::-1]
+        self._build_features_mapping(x.columns,positions)
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         if not self.blur:
