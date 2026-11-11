@@ -618,7 +618,7 @@ class IGTD(MappingMethod):
         '''
 
         if isinstance(data, pd.DataFrame):
-            samples = data.index.map(np.str)
+            samples = data.index.map(str)
             data = data.values
         else:
             samples = [str(i) for i in range(data.shape[0])]
@@ -653,7 +653,7 @@ class IGTD(MappingMethod):
         numPixels = self.scale[0] * self.scale[1]
         numAttributes = x.shape[1]
         if numAttributes > numPixels:
-            Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
+            raise ValueError(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
 
         X = x.values
         Y = y.values if y is not None else None
@@ -663,14 +663,15 @@ class IGTD(MappingMethod):
         self.index, err, time = self.__training(source=ranking_feature, target=ranking_image)
 
         self.min_id = np.argmin(err)
-        self._build_features_mapping(x.columns,np.column_stack((self.index[self.min_id, :]//self.scale[1],self.index[self.min_id, :]%self.scale[1])))
+        cell_of_feature = np.argsort(self.index[self.min_id, :].astype(int))
+        self._build_features_mapping(x.columns,np.column_stack((cell_of_feature//self.scale[1],cell_of_feature%self.scale[1])))
 
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         # Check if the dimensions are correct ( Attributes => Scale[n,m].size )
         numPixels = self.scale[0] * self.scale[1]
         numAttributes = x.shape[1]
         if numAttributes > numPixels:
-            Exception(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
+            raise ValueError(f"Error: Attributes can't be wrapped in {self.scale}, scale. Please user higher scale.")
 
         X = x.values 
         Y = y.values if y is not None else None
