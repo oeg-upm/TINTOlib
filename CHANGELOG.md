@@ -1,8 +1,18 @@
 # Changelog
 
-## 1.3.3 - 2026-11-09
+## 1.3.3 - 2026-11-12
 
-TINTOlib 1.3.3 isolates default preprocessing between models, fixes unsupervised image export in DeepInsight and Fotomics, and strengthens Clusters image encoding and saved-state validation.
+TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate exports, isolates default preprocessing between models, and strengthens Clusters image encoding and saved-state validation. This replaces the GitHub-only 1.3.3 release from November 9 and includes PR #29.
+
+### Changed
+
+- Clusters clips transformed intensities outside the training range instead of wrapping during `uint8` conversion, so affected image pixels can change.
+- Retrain legacy fitted Clusters models that lack their fitted scaler; that preprocessing state cannot be recovered from the saved file.
+- Corrected TINTO zoom and non-submatrix intensity scaling can change image dimensions or intensities relative to the earlier GitHub-only 1.3.3 artifacts.
+
+### Deprecated
+
+- Emit a deprecation warning when Clusters receives `normalize`; it has no effect because Clusters always applies `StandardScaler`.
 
 ### Fixed
 
@@ -11,18 +21,15 @@ TINTOlib 1.3.3 isolates default preprocessing between models, fixes unsupervised
 - Round and clip Clusters pixel intensities to the range 0–255 before converting to `uint8`, and reject NaN or infinite intensities.
 - Validate Clusters image inputs and target lengths before export, including multi-channel input.
 - Reject fitted Clusters saved states without an individual fitted `StandardScaler`, before modifying the receiving model.
-
-### Compatibility and dependencies
-
-- Emit a deprecation warning when Clusters receives `normalize`; it has no effect because Clusters always applies `StandardScaler`.
-- Retrain legacy fitted Clusters models that lack their fitted scaler; that preprocessing state cannot be recovered from the saved file.
-- Clusters images may change when transformed intensities fall outside the training range: intensities are now clipped instead of wrapping during `uint8` conversion.
+- Fix IGTD feature-to-pixel coordinates by inverting the optimized feature permutation before exporting the mapping CSV.
+- Apply TINTO zoom once instead of twice in the submatrix image-generation path.
+- Correct TINTO feature-coordinate exports when `submatrix=False` and remove the extra multiplication by 255 in that image-generation path.
+- Raise `ValueError` when IGTD's pixel grid cannot hold all features, and replace removed NumPy `np.str` usage with Python `str` for DataFrame sample identifiers.
 
 ### Validation
 
 - All five existing Clusters regression tests passed.
-- Eight additional targeted diagnostic checks passed, covering independent default transformers, unsupervised export, safe intensity conversion, and rejection of incompatible fitted saved states. These diagnostics are not part of the committed test suite.
-- A reduced comparison against the pre-fix commit `8d30d8b`, using synthetic classification data and four methods, generated 144 images per version: 141 exact matches, three Clusters differences consistent with intensity clipping, no missing or additional images, and no shape mismatches.
+- Six targeted diagnostic checks passed for TINTO zoom, non-submatrix coordinates and intensity scale, IGTD coordinate exports, undersized-grid errors, and DataFrame identifiers. These diagnostics are not part of the committed test suite.
 - The full method/dataset comparison matrix and the PowerShell wrapper were not executed.
 
 ### Installation
