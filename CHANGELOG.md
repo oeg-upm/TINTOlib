@@ -2,7 +2,7 @@
 
 ## 1.3.3 - 2026-11-12
 
-TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate exports, isolates default preprocessing between models, and strengthens Clusters image encoding and saved-state validation. This replaces the GitHub-only 1.3.3 release from November 9 and includes PR #29.
+TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate exports, isolates default preprocessing between models, and strengthens Clusters image encoding and saved-state validation.
 
 ### Changed
 
