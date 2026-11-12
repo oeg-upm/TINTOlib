@@ -8,7 +8,7 @@ TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate expo
 
 - Clusters clips transformed intensities outside the training range instead of wrapping during `uint8` conversion, so affected image pixels can change.
 - Retrain legacy fitted Clusters models that lack their fitted scaler; that preprocessing state cannot be recovered from the saved file.
-- Corrected TINTO zoom and non-submatrix intensity scaling can change image dimensions or intensities relative to the earlier GitHub-only 1.3.3 artifacts.
+- Corrected TINTO zoom and non-submatrix intensity scaling can change image dimensions or intensities relative to earlier artifacts.
 
 ### Deprecated
 
@@ -25,12 +25,6 @@ TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate expo
 - Apply TINTO zoom once instead of twice in the submatrix image-generation path.
 - Correct TINTO feature-coordinate exports when `submatrix=False` and remove the extra multiplication by 255 in that image-generation path.
 - Raise `ValueError` when IGTD's pixel grid cannot hold all features, and replace removed NumPy `np.str` usage with Python `str` for DataFrame sample identifiers.
-
-### Validation
-
-- All five existing Clusters regression tests passed.
-- Six targeted diagnostic checks passed for TINTO zoom, non-submatrix coordinates and intensity scale, IGTD coordinate exports, undersized-grid errors, and DataFrame identifiers. These diagnostics are not part of the committed test suite.
-- The full method/dataset comparison matrix and the PowerShell wrapper were not executed.
 
 ### Installation
 
