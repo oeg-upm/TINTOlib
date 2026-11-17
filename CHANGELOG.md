@@ -1,24 +1,34 @@
 # Changelog
 
-## [Unreleased] — TINTOlib 1.3.4 (draft; not published)
+## 1.3.4 - 2026-11-17
 
-This entry describes changes in the locally audited candidate. It is not a release announcement or a claim of general cross-platform compatibility.
-
-### Fixed
-
-- Prevent reuse of a mutable default preprocessing transformer between independent model instances in IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap, SuperTML, and REFINED.
-- Handle missing target labels in supported unsupervised export paths, while explicitly rejecting missing targets for SuperTML VF.
-- In REFINED, use NumPy reductions in the parallel Hill-climbing helper and extract a scalar when assigning a tabular value to an image pixel.
+TINTOlib 1.3.4 is a maintenance release for collaborator testing. It includes
+corrections to tabular-to-image transformations and updates dependency constraints
+relative to TINTOlib 1.3.3.
 
 ### Changed
 
-- Use Python-version-specific NumPy/Numba dependency markers for the `greedy`, `refined`, and `all` extras in the audited candidate. Python 3.14 behavior has been checked only for specified macOS ARM64 environments; this is not a universal platform certification.
+- Updated REFINED's parallel Hill-climbing helper to use NumPy reductions. No
+  quantitative runtime improvement is claimed.
+- Updated optional dependency constraints for `greedy`, `refined` and `all` by
+  Python version, including NumPy `>=2.5,<2.6` for REFINED on Python 3.14 and
+  `<2.4` on earlier versions.
 
-### Verification scope (16 November 2026)
+### Fixed
 
-- Static package integrity, historical synthetic receipts, and 790/790 byte-identical paired REFINED NPY files across five datasets support the scoped assessment.
-- Neural predictive equivalence was not evaluated and is not part of the release acceptance criterion selected by the maintainer for image-output parity.
-- Historical TEST, BIN-02, and other frozen evaluations were not reopened.
+- Prevented sharing mutable default preprocessing transformers between model
+  instances of IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap,
+  SuperTML and REFINED.
+- Corrected missing-label handling in supported unsupervised export workflows;
+  SuperTML VF explicitly requires labels.
+- Adjusted REFINED's image-pixel assignment to extract a scalar tabular value.
+
+### Installation
+
+For this GitHub pre-release, download the version 1.3.4 wheel from the release
+assets and install that local wheel. Version 1.3.4 is not being uploaded to PyPI
+as part of the collaborator-testing phase. REFINED requires a system MPI runtime
+in addition to `mpi4py`; SuperTML requires an available Arial font.
 
 ## 1.3.3 - 2026-11-12
 
