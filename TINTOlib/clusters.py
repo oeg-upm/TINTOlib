@@ -34,10 +34,13 @@ class Clusters(AbstractImageMethod):
         The type of problem, defining how the images are grouped. 
         
         Default is 'classification'. Valid values: ['classification', 'unsupervised', 'regression'].
-    normalize : bool, optional
-        If True, normalizes input data using MinMaxScaler. 
-        
-        Default is True. Valid values: [True, False].
+    normalize : bool or None, optional
+        Deprecated since version 1.3.3 and retained for compatibility.
+        This parameter has no effect on preprocessing: CLUSTERS always
+        applies StandardScaler, even when normalize=False.
+        Passing True or False emits a FutureWarning.
+
+        Default is None. Valid values: [None, True, False].
     verbose : bool, optional
         Show execution details in the terminal. 
         
