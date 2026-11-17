@@ -18,6 +18,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ################    FeatureWrap    ########################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class FeatureWrap(AbstractImageMethod):
     """
     FeatureWrap: A method that transforms feature values into binary vectors and arranges them into 2D images.
@@ -62,12 +64,15 @@ class FeatureWrap(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose = None,
         size: tuple = default_size,
         bins: int = default_bins,
         zoom: int = default_zoom
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         # Validation for `size`
@@ -105,7 +110,8 @@ class FeatureWrap(AbstractImageMethod):
         for (i,matrix) in enumerate(matrices):
             # Scale the matrix
             matrix = np.repeat(np.repeat(matrix, self.zoom, axis=0), self.zoom, axis=1)
-            self._save_image(matrix,y[i],i)
+            target = None if y is None else y[i]
+            self._save_image(matrix,target,i)
 
     def _img_to_file(self,image,file):
         matplotlib.image.imsave(file, image, cmap='gray', format='png', dpi=self.zoom, vmin=0, vmax=255)

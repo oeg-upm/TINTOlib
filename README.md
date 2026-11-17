@@ -137,7 +137,7 @@ Some transformation methods in TINTOlib have specific system requirements or lim
 
 ### REFINED
 
-This method relies on `mpi4py` and an MPI runtime for parallel computation. The `refined` and `all` extras select NumPy below 2.4 for REFINED compatibility. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
+This method relies on `mpi4py` and an MPI runtime for parallel computation. In TINTOlib 1.3.4, the `refined` and `all` extras constrain NumPy to `<2.4` for Python below 3.14 and `>=2.5,<2.6` for Python 3.14 or later; these metadata constraints are not a universal compatibility guarantee. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
 
 - **Linux**:
   REFINED currently launches `mpirun` with Open MPI options. On Debian/Ubuntu, install Open MPI:
@@ -199,6 +199,41 @@ pip install "TINTOlib[greedy]"  # Greedy feature-to-pixel assignment
 pip install "TINTOlib[refined]" # REFINED and mpi4py
 pip install "TINTOlib[all]"     # All optional methods
 ```
+
+### Reproducing the tested Python 3.14 environment (TINTOlib 1.3.4)
+
+The package declares `requires-python = ">=3.9"` and currently lists Python 3.9-3.13 in its classifiers. The following is **tested environment evidence**, not a guarantee that every version, platform, method option, or workflow behaves identically:
+
+| Environment | Evidence available | Scope |
+| --- | --- | --- |
+| CPython 3.14.9, macOS ARM64, core dependencies | R13-S9, 16 November 2026: 12/12 small tabular-to-PNG `fit_transform` cases and 144/144 readable PNG files | TINTO, IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap, SuperTML-EF/VF, CLUSTERS-kmeans, DeepInsight-PCA and Fotomics; not every hyperparameter or CLUSTERS backend |
+| CPython 3.14.9, macOS ARM64, `refined` / `all` extras | G4-S3B/S3C, 16 November 2026: clean extra installations and successful synthetic REFINED fit/transform, with MPI invoked | Functional evidence for tested REFINED configurations; MPI worker count was not independently established from the receipts |
+
+The tested base profile used NumPy 2.5.5, pandas 2.3.3, SciPy 1.18.1, scikit-learn 1.9.1, Matplotlib 3.11.2, Pillow 12.3.0, bitstring 4.4.0, scikit-image 0.26.0 and tqdm 4.70.1. The tested REFINED extra also included mpi4py 4.1.2. These versions are **verified**, not proven *optimal* by a dependency-version comparison.
+
+For these two environments, the source repository provides complete *version-pin snapshots* (direct and transitive Python dependencies) in:
+
+- [`requirements-tested-py314-macos-arm64-base.txt`](https://github.com/oeg-upm/TINTOlib/blob/main/requirements-tested-py314-macos-arm64-base.txt)
+- [`requirements-tested-py314-macos-arm64-refined.txt`](https://github.com/oeg-upm/TINTOlib/blob/main/requirements-tested-py314-macos-arm64-refined.txt)
+
+From a checkout of the **1.3.4** source on a compatible macOS ARM64 system, these files can be used as *pip constraints* (they do not by themselves install TINTOlib):
+
+```bash
+python3.14 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e . -c requirements-tested-py314-macos-arm64-base.txt
+# OR, in a separate fresh environment after installing an MPI runtime:
+python -m pip install -e ".[refined]" -c requirements-tested-py314-macos-arm64-refined.txt
+python -m pip check
+```
+
+Choose one installation profile per fresh virtual environment. The commands above are installation guidance for a future checkout, **not a newly executed reproducibility test**. Exact Python-package versions reduce resolution variability but do not pin wheel hashes, operating-system libraries or MPI binaries. The two snapshots are version-controlled for source-checkout users; the current `pyproject.toml` source-distribution whitelist does not include them in the sdist or wheel. Ordinary users may install the released package with `pip install "TINTOlib[refined]"` and should consult the package metadata for supported version ranges.
+
+**REFINED / MPI:** REFINED needs `mpi4py` *and a separate working MPI runtime*, such as Open MPI on macOS (`brew install open-mpi`, `mpirun --version`). Python dependency files cannot install or configure that system runtime. The G4-S3C evidence confirms successful REFINED execution in the tested environments but does not establish a universal MPI version requirement. On Windows/Linux and hosted notebook services, verify the runtime and compatibility separately.
+
+**SuperTML / fonts:** The tested macOS ARM64 system had Arial available to Pillow at `/System/Library/Fonts/Supplemental/Arial.ttf`. SuperTML requests `arial.ttf` by name. Use a legally installed, discoverable font; do not redistribute font binaries with the package or test receipts.
+
+For Python **below 3.14**, the `refined` and `all` extras in 1.3.4 constrain NumPy to `<2.4`; for Python **3.14 or later**, their NumPy constraint is `>=2.5,<2.6`. These are dependency-resolution conditions, not a claim of runtime testing across every Python version or operating system. The release remains subject to its separate publication checklist.
 
 However, if you prefer manual installation or want to explore the full environment:
 

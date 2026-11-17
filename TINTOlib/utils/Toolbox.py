@@ -198,7 +198,7 @@ def REFINED_Im_Gen(X,nn, map_in_int, gene_names,coords):
 		X_REFINED = pd.DataFrame(data = data.reshape(1,len(data)), columns = gene_names)
 		Image = np.zeros(map_in_int.shape)
 		for j in range(len(coords)):
-			val = np.array(X_REFINED[gene_names[j]])
+			val = X_REFINED[gene_names[j]].iloc[0]
 			Image[coords[j,0],coords[j,1]] = val
 		Image = Image.reshape(nn**2)
 		X_Gen[i,:] = Image

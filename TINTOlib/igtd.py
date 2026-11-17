@@ -26,6 +26,8 @@ from TINTOlib.utils.geometry import tropical_distance
 ################    IGTD    ###############################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class IGTD(MappingMethod):
     """
     IGTD: Transforms tabular data into compact 2D images for CNNs by assigning features to pixels 
@@ -105,7 +107,7 @@ class IGTD(MappingMethod):
     def __init__(
         self,
         problem: Optional[str] = None,
-        transformer = MinMaxScaler(),
+        transformer = _DEFAULT_TRANSFORMER,
         verbose: Optional[bool] = None,
         scale: Optional[List[int]] = default_scale,
         fea_dist_method: Optional[str] = default_fea_dist_method,
@@ -120,6 +122,9 @@ class IGTD(MappingMethod):
         cmap=default_cmap,
         random_seed: Optional[int] = default_random_seed,
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
 
         self.scale = scale
@@ -644,7 +649,8 @@ class IGTD(MappingMethod):
             image_data[:, :, i] = data_i
             image_data[:, :, i] = 255 - image_data[:, :, i]
 
-            self._save_image(data_i,labels[i],i)
+            target = None if labels is None else labels[i]
+            self._save_image(data_i,target,i)
 
         return image_data, samples
 

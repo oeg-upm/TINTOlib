@@ -1,5 +1,25 @@
 # Changelog
 
+## [Unreleased] — TINTOlib 1.3.4 (draft; not published)
+
+This entry describes changes in the locally audited candidate. It is not a release announcement or a claim of general cross-platform compatibility.
+
+### Fixed
+
+- Prevent reuse of a mutable default preprocessing transformer between independent model instances in IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap, SuperTML, and REFINED.
+- Handle missing target labels in supported unsupervised export paths, while explicitly rejecting missing targets for SuperTML VF.
+- In REFINED, use NumPy reductions in the parallel Hill-climbing helper and extract a scalar when assigning a tabular value to an image pixel.
+
+### Changed
+
+- Use Python-version-specific NumPy/Numba dependency markers for the `greedy`, `refined`, and `all` extras in the audited candidate. Python 3.14 behavior has been checked only for specified macOS ARM64 environments; this is not a universal platform certification.
+
+### Verification scope (16 November 2026)
+
+- Static package integrity, historical synthetic receipts, and 790/790 byte-identical paired REFINED NPY files across five datasets support the scoped assessment.
+- Neural predictive equivalence was not evaluated and is not part of the release acceptance criterion selected by the maintainer for image-output parity.
+- Historical TEST, BIN-02, and other frozen evaluations were not reopened.
+
 ## 1.3.3 - 2026-11-12
 
 TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate exports, isolates default preprocessing between models, and strengthens Clusters image encoding and saved-state validation.

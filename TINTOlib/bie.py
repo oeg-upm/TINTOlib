@@ -24,6 +24,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 default_precision = 32
 default_zoom = 1
 
+_DEFAULT_TRANSFORMER = object()
+
 class BIE(AbstractImageMethod):
     """
     BIE: Generates 1-channel images by encoding the floating-point representation of numeric values.
@@ -57,11 +59,14 @@ class BIE(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose = None,
         precision: int = default_precision,
         zoom: int = default_zoom
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         if not isinstance(precision, int):
@@ -90,7 +95,8 @@ class BIE(AbstractImageMethod):
         for (i,matrix) in enumerate(matrices):
             # Scale the matrix
             matrix = np.repeat(np.repeat(matrix, self.zoom, axis=0), self.zoom, axis=1)
-            self._save_image(matrix,y[i],i)
+            target = None if y is None else y[i]
+            self._save_image(matrix,target,i)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         """

@@ -26,6 +26,8 @@ import TINTOlib.utils.constants as constants
 ################    REFINED    ##############################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class REFINED(MappingMethod):
     """
     REFINED: A method to transform high-dimensional feature vectors into 2D images 
@@ -75,7 +77,7 @@ class REFINED(MappingMethod):
     def __init__(
         self,
         problem: Optional[str] = None,
-        transformer = MinMaxScaler(),
+        transformer = _DEFAULT_TRANSFORMER,
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
@@ -84,6 +86,9 @@ class REFINED(MappingMethod):
         cmap=default_cmap,
         random_seed: Optional[int] = default_random_seed,
     ):   
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
         if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
@@ -104,7 +109,8 @@ class REFINED(MappingMethod):
         for i in range(len(X_REFINED_MDS)):
             shape = int(math.sqrt(X_REFINED_MDS[i].shape[0]))
             data = X_REFINED_MDS[i].reshape(shape, shape)
-            self._save_image(data,Y[i],i)
+            target = None if Y is None else Y[i]
+            self._save_image(data,target,i)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()

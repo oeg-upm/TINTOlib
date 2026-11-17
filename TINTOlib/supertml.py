@@ -23,6 +23,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ################    SuperTML    ###########################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class SuperTML(AbstractImageMethod):
     """
     SuperTML: A method for transforming tabular data into synthetic images inspired by natural language processing techniques.
@@ -69,13 +71,16 @@ class SuperTML(AbstractImageMethod):
     def __init__(
         self,
         problem=None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose=None,
         pixels=default_pixels,
         feature_importance=default_feature_importance,
         font_size=default_font_size,
         random_seed=default_random_seed,
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.image_pixels = pixels
@@ -199,6 +204,13 @@ class SuperTML(AbstractImageMethod):
         Y = y.values if y is not None else None
 
         if self.feature_importance:
+            # SuperTML-VF needs the targets to fit the Random Forest that provides the feature importances
+            if Y is None:
+                raise ValueError(
+                    "SuperTML with feature_importance=True (SuperTML-VF) requires targets (y) to compute "
+                    "the feature importances during fit; it cannot be used with problem='unsupervised'. "
+                    "Use feature_importance=False (SuperTML-EF) for data without targets."
+                )
             # Calculate the feature importance for SuperTML-VF
             self.calculate_feature_importances(X, Y)
         else:
@@ -211,7 +223,8 @@ class SuperTML(AbstractImageMethod):
 
         for i in range(X.shape[0]):
             image = self.__event2img(X[i])
-            self._save_image(image,Y[i],i)
+            target = None if Y is None else Y[i]
+            self._save_image(image,target,i)
 
     def _img_to_file(self,image,file):
         image.save(file)

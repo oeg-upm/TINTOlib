@@ -19,6 +19,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ################    Combination    ########################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class Combination(AbstractImageMethod):
     """
     Combination: Combines the Distance Matrix and BarGraph representations.
@@ -48,10 +50,13 @@ class Combination(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose = None,
         zoom=default_zoom,
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.zoom = zoom
@@ -123,4 +128,5 @@ class Combination(AbstractImageMethod):
             # Combine ALL img
             imgFinal = np.dstack((imgI1,imgI2,imgI3))
 
-            self._save_image(imgFinal,Y[ins],ins)
+            target = None if Y is None else Y[ins]
+            self._save_image(imgFinal,target,ins)
