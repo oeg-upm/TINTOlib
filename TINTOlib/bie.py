@@ -81,6 +81,8 @@ class BIE(AbstractImageMethod):
         
         self.ones, self.zeros = 255, 0
 
+        self.__columns_sorted = []
+
     def __convert_samples_to_binary(self, data: np.ndarray) -> Iterator[List[List[int]]]:
         def process_sample(sample):
             return [[self.ones if b=='1' else self.zeros for b in bitstring.BitArray(float=feat, length=self.precision).bin] for feat in sample]
@@ -94,14 +96,33 @@ class BIE(AbstractImageMethod):
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         """
-        Fit method for stateless transformers. Does nothing and returns self.
+        Calculate the order of features recursively according to pearson correlation only when target exist
         """
+        if y is not None:
+            df = pd.concat([x, y], axis=1)
+            corr = df.corr().abs().to_numpy()
+            n_features = x.shape[1]
+            # After concat the target is the last column
+            target_col = n_features
+            # Start from the feature most correlated with the target
+            order = [int(np.argmax(corr[:n_features, target_col]))]
+            visited = np.zeros(n_features, dtype=bool)
+            visited[order[0]] = True
+            feat_corr = corr[:n_features, :n_features]
+            for _ in range(n_features - 1):
+                last = order[-1]
+                cand = feat_corr[:, last].copy()
+                cand[visited] = -1.0  
+                order.append(int(np.argmax(cand)))
+                visited[order[-1]] = True
+            self.__columns_sorted = [x.columns[i] for i in order]
         return self
     
     def _transformAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
+        if(len(self.__columns_sorted)>0):
+            x = x[self.__columns_sorted]
         x = x.values
         y = y.values if y is not None else None
-
         matrices = self.__convert_samples_to_binary(x)
         self.__save_images(matrices, y, num_elems=x.shape[0])
 
