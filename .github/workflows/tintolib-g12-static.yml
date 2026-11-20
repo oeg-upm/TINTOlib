@@ -1,19 +1,25 @@
-# CANDIDATE ONLY - NOT INSTALLED IN THE REPOSITORY.
-# Requires an explicit, limited GO for any Git commit, push, or workflow run.
-# One push event, one matrix run: no duplicate pull_request trigger.
-# This workflow performs structural checks; no imports of TINTOlib and no tests/FIT/MPI/build.
-name: G12 static source validation - TINTOlib 1.4.0 candidate
+# Maintained, read-only structural CI for TINTOlib.
+# pull_request validates PR merge refs; push validates changes integrated into main.
+# Does not import TINTOlib, install dependencies, run tests/FIT/MPI, or build artifacts.
+name: TINTOlib structural validation
 
 on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
   push:
     branches:
-      - release/v1.4.0-g5-local-20261120
+      - main
 
 permissions:
   contents: read
 
 concurrency:
-  group: g12-static-${{ github.workflow }}-${{ github.ref }}
+  group: tintolib-static-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -37,26 +43,26 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Parse Python and validate static release metadata only
+      - name: Parse Python and validate static source and metadata only
         shell: bash
         run: |
           set -euo pipefail
           python -I -B - <<'PY'
           import ast
           import json
+          import re
           import sys
           import tomllib
           from pathlib import Path
 
           def require(condition: bool, code: str):
               if not condition:
-                  raise SystemExit('G12_HOLD_' + code)
+                  raise SystemExit('TINTO_STATIC_HOLD_' + code)
 
           require(sys.version_info[:2] in ((3, 11), (3, 14)), 'PYTHON_MATRIX')
           package = Path('TINTOlib')
           tests = Path('tests')
           require(package.is_dir() and tests.is_dir(), 'SOURCE_LAYOUT')
-
           py_files = sorted(package.rglob('*.py')) + sorted(tests.glob('test_*.py'))
           require(len(py_files) >= 5, 'PYTHON_FILES_MISSING')
           for path in py_files:
@@ -64,54 +70,61 @@ jobs:
               try:
                   ast.parse(path.read_text(encoding='utf-8'), filename=str(path))
               except (SyntaxError, UnicodeError) as exc:
-                  raise SystemExit('G12_HOLD_AST_' + str(path)) from exc
-          print('G12_PYTHON_AST_ONLY_PASS', len(py_files))
+                  raise SystemExit('TINTO_STATIC_HOLD_AST_' + str(path)) from exc
+          print('TINTO_STATIC_PYTHON_AST_ONLY_PASS', len(py_files))
 
           metadata = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))
           project = metadata['project']
           require(project.get('name') == 'TINTOlib', 'PACKAGE_NAME')
-          require(project.get('version') == '1.4.0', 'PACKAGE_VERSION')
-          require(project.get('requires-python') == '>=3.9', 'PYTHON_REQUIRES')
+          version = project.get('version')
+          require(isinstance(version, str) and bool(re.fullmatch(
+              r'[0-9]+\.[0-9]+\.[0-9]+(?:a[0-9]+|b[0-9]+|rc[0-9]+|\.post[0-9]+|\.dev[0-9]+)?',
+              version)), 'PACKAGE_VERSION_FORMAT')
+          requires_python = project.get('requires-python')
+          require(isinstance(requires_python, str) and requires_python.startswith('>='),
+                  'PYTHON_REQUIRES_DECLARATION')
           classifiers = project.get('classifiers', [])
-          require('Programming Language :: Python :: 3.14' in classifiers, 'CLASSIFIER_314')
+          require(all('Programming Language :: Python :: ' + v in classifiers
+                      for v in ('3.11', '3.14')), 'MATRIX_CLASSIFIERS')
           extras = project.get('optional-dependencies', {})
           require(all(name in extras for name in ('greedy', 'refined', 'all')), 'EXTRAS')
           for name in ('greedy', 'all'):
-              require(any("python_version >= '3.14'" in item and 'numba' in item
-                          for item in extras[name]), 'NUMBA_MARKER_' + name)
+              require(any("python_version >= '3.14'" in dep and 'numba' in dep
+                          for dep in extras[name]), 'NUMBA_MARKER_' + name)
           for name in ('refined', 'all'):
-              require(any("python_version >= '3.14'" in item and 'numpy' in item
-                          for item in extras[name]), 'NUMPY_MARKER_' + name)
+              require(any("python_version >= '3.14'" in dep and 'numpy' in dep
+                          for dep in extras[name]), 'NUMPY_MARKER_' + name)
           require('/tests' in metadata['tool']['hatch']['build']['targets']['sdist']['include'],
                   'SDIST_TEST_DECLARATION')
-          print('G12_TOML_EXTRAS_AND_SDIST_CONTRACT_PASS')
+          print('TINTO_STATIC_TOML_EXTRAS_SDIST_PASS', version)
 
-          tree = ast.parse((package / 'bie.py').read_text(encoding='utf-8'))
-          cls = next((node for node in tree.body
+          bie = ast.parse((package / 'bie.py').read_text(encoding='utf-8'))
+          cls = next((node for node in bie.body
                       if isinstance(node, ast.ClassDef) and node.name == 'BIE'), None)
           require(cls is not None, 'BIE_CLASS')
           constructor = next((node for node in cls.body
                               if isinstance(node, ast.FunctionDef) and node.name == '__init__'), None)
           require(constructor is not None, 'BIE_CONSTRUCTOR')
-          args = constructor.args.posonlyargs + constructor.args.args
-          names = [arg.arg for arg in args]
+          names = [arg.arg for arg in constructor.args.posonlyargs + constructor.args.args]
           require(bool(names) and names[-1] == 'correlated', 'BIE_CORRELATED_PARAMETER')
           require(bool(constructor.args.defaults)
                   and isinstance(constructor.args.defaults[-1], ast.Constant)
                   and constructor.args.defaults[-1].value is True, 'BIE_DEFAULT_TRUE')
-          declared_tests = ast.parse((tests / 'test_cbie_v140_integration.py').read_text(encoding='utf-8'))
+          test_tree = ast.parse((tests / 'test_cbie_v140_integration.py').read_text(encoding='utf-8'))
           test_count = sum(isinstance(node, ast.FunctionDef) and node.name.startswith('test_')
-                           for klass in declared_tests.body if isinstance(klass, ast.ClassDef)
+                           for klass in test_tree.body if isinstance(klass, ast.ClassDef)
                            for node in klass.body)
-          require(test_count == 14, 'CBIE_TEST_DECLARATIONS')
-          print('G12_BIE_API_AND_14_TEST_DECLARATIONS_PASS')
+          require(test_count >= 14, 'CBIE_TEST_DECLARATION_FLOOR')
+          print('TINTO_STATIC_BIE_API_AND_TEST_DECLARATIONS_PASS', test_count)
 
           codemeta = json.loads(Path('codemeta.json').read_text(encoding='utf-8'))
-          require(codemeta.get('softwareVersion') == '1.4.0', 'CODEMETA_VERSION')
+          require(codemeta.get('softwareVersion') == version, 'CODEMETA_VERSION')
           cff = Path('CITATION.cff').read_text(encoding='utf-8')
-          require('version: "1.4.0"' in cff, 'CITATION_VERSION')
+          cff_versions = re.findall(r'(?m)^version:\s*[\x22\x27]?([^\s\x22\x27]+)', cff)
+          require(cff_versions == [version], 'CITATION_VERSION')
           changelog = Path('CHANGELOG.md').read_text(encoding='utf-8')
-          require('1.4.0' in changelog, 'CHANGELOG_VERSION')
-          print('G12_DOCUMENT_VERSION_CONSISTENCY_PASS')
-          print('G12_STATIC_CI_ONLY_PASS_NO_IMPORT_NO_FIT_NO_TEST_NO_BUILD_NO_MPI')
+          require(re.search(r'(?m)^##\s+' + re.escape(version) + r'\s+-\s+', changelog)
+                  is not None, 'CHANGELOG_VERSION_HEADER')
+          print('TINTO_STATIC_DOCUMENT_VERSION_CONSISTENCY_PASS', version)
+          print('TINTO_STATIC_ONLY_PASS_NO_IMPORT_NO_FIT_NO_TEST_NO_BUILD_NO_MPI')
           PY
