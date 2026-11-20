@@ -15,11 +15,7 @@ TINTOlib 1.4.0 integrates correlated Binary Image Encoding (cBIE, from Javier LÃ
 ### Fixed
 
 - Aligned transformed `X` and `y` positionally (`reset_index(drop=True)`) during supervised `BIE._fitAlg` correlation computation so non-consecutive `DataFrame` indices do not misalign features and targets when using `MinMaxScaler`.
-- Preserved all TINTOlib 1.3.4 fixes, including per-instance `MinMaxScaler` isolation, unsupervised X-only exports, and conditional `numpy`/`mpi4py` extra constraints for `refined` and `all`.
-
-### Validation
-
-- Verified 14/14 synthetic functional integration tests for `BIE`/`cBIE` on macOS ARM64 with CPython 3.14.10 (source-tree scope only; does not certify packaged wheels/sdists, other operating systems, or MPI runtimes).
+- Preserved the historical random MDS initialization in `REFINED` across scikit-learn versions, passing `MDS(init="random")` only where supported to avoid the MDS initialization deprecation warning.
 
 ## 1.3.4 - 2026-11-17
 
