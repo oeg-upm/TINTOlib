@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.0 - Unreleased
+## 1.4.0 - 2026-11-20
 
 TINTOlib 1.4.0 integrates correlated Binary Image Encoding (cBIE, from Javier López's PR #30) into `BIE` with an explicit opt-out to the original BIE ordering, while retaining all TINTOlib 1.3.4 fixes and declaring Python 3.14 in package classifiers.
 

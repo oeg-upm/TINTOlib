@@ -2,6 +2,7 @@ cff-version: 1.2.0
 message: "If you use TINTOlib, please cite the SoftwareX article below."
 title: "TINTOlib"
 version: "1.4.0"
+date-released: "2026-11-20"
 license: "Apache-2.0"
 type: software
 repository-code: "https://github.com/oeg-upm/TINTOlib"
@@ -16,7 +17,10 @@ keywords:
 identifiers:
   - type: url
     value: "https://github.com/oeg-upm/TINTOlib"
-    description: "Source repository for TINTOlib (1.4.0 candidate; tag pending publication)"
+    description: "Source repository for TINTOlib"
+  - type: url
+    value: "https://github.com/oeg-upm/TINTOlib/releases/tag/v1.4.0"
+    description: "GitHub Release for TINTOlib v1.4.0"
 authors:
   - name: "Ontology Engineering Group (UPM)"
   - name: "BorjaRei"

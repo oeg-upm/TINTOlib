@@ -16,12 +16,13 @@
   "license": "https://spdx.org/licenses/Apache-2.0",
   "dateCreated": "2023-02-09",
   "dateModified": "2026-11-20",
+  "datePublished": "2026-11-20",
   "softwareVersion": "1.4.0",
   "version": "v1.4.0",
   "developmentStatus": "active",
   "isAccessibleForFree": true,
-  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/releases",
-  "installUrl": "https://github.com/oeg-upm/TINTOlib/releases",
+  "downloadUrl": "https://github.com/oeg-upm/TINTOlib/releases/tag/v1.4.0",
+  "installUrl": "https://pypi.org/project/TINTOlib/1.4.0/",
   "readme": "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
   "buildInstructions": [
     "https://raw.githubusercontent.com/oeg-upm/TINTOlib/main/README.md",
@@ -135,7 +136,7 @@
       "identifier": "https://orcid.org/0000-0002-2990-7090"
     }
   ],
-  "releaseNotes": "https://github.com/oeg-upm/TINTOlib/releases",
+  "releaseNotes": "https://github.com/oeg-upm/TINTOlib/releases/tag/v1.4.0",
   "referencePublication": [
     {
       "@type": "ScholarlyArticle",
