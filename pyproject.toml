@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TINTOlib"
-version = "1.3.4"
+version = "1.4.0"
 authors = [
     { name="BorjaRei", email="borjareinoso@gmail.com" },
     { name= "manwestc", email="jcastillo@fi.upm.es"},
@@ -35,6 +35,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
@@ -74,6 +75,7 @@ packages = ["TINTOlib"]
 [tool.hatch.build.targets.sdist]
 include = [
     "/TINTOlib",
+    "/tests",
     "/LICENSE",
     "/README.md",
     "/CHANGELOG.md",

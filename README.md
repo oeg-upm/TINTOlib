@@ -123,10 +123,18 @@ TINTOlib includes a variety of methods for generating synthetic images. Below is
 |  [Combination](https://github.com/anuraganands/Non-image-data-classification-with-CNN/)   |   `Combination()`    |                                                                                      `problem` `transformer` `verbose` `zoom`                                                                                       |
 |             [SuperTML](https://github.com/GilesStrong/SuperTML_HiggsML_Test)              |     `SuperTML()`     |                                                              `problem` `transformer` `verbose` `pixels` `feature_importance` `font_size` `random_seed`                                                              |
 |       [FeatureWrap](https://link.springer.com/chapter/10.1007/978-3-319-70139-4_87)       |   `FeatureWrap()`    |                                                                               `problem` `transformer` `verbose` `size` `bins` `zoom`                                                                                |
-|                   [BIE](https://ieeexplore.ieee.org/document/10278393)                    |       `BIE()`        |                                                                                `problem` `transformer` `verbose` `precision` `zoom`                                                                                 |
+|                   [BIE](https://ieeexplore.ieee.org/document/10278393)                    |       `BIE()`        |                                                                                `problem` `transformer` `verbose` `precision` `zoom` `correlated`                                                                    |
 |          [Fotomics](https://www.biorxiv.org/content/10.1101/2022.07.08.499309v2)          |     `Fotomics()`      | `image_dim` `problem` `transformer` `verbose` `outliers` `min_percentile` `max_percentile`  `outliers_treatment` `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed` |
 |             [DeepInsight](https://www.nature.com/articles/s41598-019-47765-6)             |   `DeepInsight()`    |                                  `image_dim` `problem` `transformer` `verbose`  `assignment_method` `relocate` `algorithm_opt` `group_method` `zoom` `format` `cmap` `random_seed`                                  |
 |             Clusters                                                                      |   `Clusters()`       |                                  `problem` `normalize` `verbose` `algorithm` `n_clusters` `random_seed` `n_init` `max_iter` `algorithmMethod` `covariance_type` `ensamMethod` `bandwidth` `kernel` `metric` `RBFMethod`                                  |
+
+**BIE/cBIE in TINTOlib 1.4.0 (default behavior change relative to 1.3.4):** The default `BIE()` / `BIE(correlated=True)` uses the Pearson/greedy feature-ordering algorithm from Javier López's PR #30 for supervised `classification` and `regression`; it learns the ordering only in `fit` (with positional X/y alignment) and reuses it in `transform` as a transformation of observations without generating new observations or claiming default predictive-performance improvement. Select `BIE(correlated=False)` to obtain the original binary image encoding and preserve the feature order (no correlation calculation); this is also the behavior of `problem="unsupervised"` regardless of `correlated`. The user controls preprocessing of X and y, including any external numeric encoding of classification targets; no internal label encoder is introduced. Multiclass numeric encodings can change the learned spatial layout. Only in correlated supervised mode, undefined/non-finite Pearson correlations (e.g., constant training features or target) raise a descriptive `ValueError`; no values are imputed or substituted. **No new feature-schema validation is introduced:** callers remain responsible for consistent feature columns across `fit` and `transform`; pre-existing pandas/scikit-learn errors may still occur for incompatible inputs. The default `MinMaxScaler` remains isolated per instance, and unsupervised X-only exports remain supported as in 1.3.4. See [cBIE](https://doi.org/10.6339/24-JDS1122).
+
+```python
+from TINTOlib.bie import BIE
+bie_correlated = BIE()  # Equivalent to BIE(correlated=True)
+bie_classic = BIE(correlated=False)  # Original BIE feature order
+```
 
 ---
 
@@ -137,7 +145,7 @@ Some transformation methods in TINTOlib have specific system requirements or lim
 
 ### REFINED
 
-This method relies on `mpi4py` and an MPI runtime for parallel computation. In TINTOlib 1.3.4, the `refined` and `all` extras constrain NumPy to `<2.4` for Python below 3.14 and `>=2.5,<2.6` for Python 3.14 or later; these metadata constraints are not a universal compatibility guarantee. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
+This method relies on `mpi4py` and an MPI runtime for parallel computation. Since TINTOlib 1.3.4 (retained in 1.4.0), the `refined` and `all` extras constrain NumPy to `<2.4` for Python below 3.14 and `>=2.5,<2.6` for Python 3.14 or later; these metadata constraints are not a universal compatibility guarantee. Running MPI does not inherently require administrator permissions; permissions depend on how the runtime is installed. See the [mpi4py installation guide](https://mpi4py.readthedocs.io/en/stable/install.html) for supported environments.
 
 - **Linux**:
   REFINED currently launches `mpirun` with Open MPI options. On Debian/Ubuntu, install Open MPI:
@@ -200,14 +208,17 @@ pip install "TINTOlib[refined]" # REFINED and mpi4py
 pip install "TINTOlib[all]"     # All optional methods
 ```
 
-### Reproducing the tested Python 3.14 environment (TINTOlib 1.3.4)
+### Tested Python 3.14 environments (TINTOlib 1.3.4 historical baseline and 1.4.0 source-tree validation)
 
-The package declares `requires-python = ">=3.9"` and currently lists Python 3.9-3.13 in its classifiers. The following is **tested environment evidence**, not a guarantee that every version, platform, method option, or workflow behaves identically:
+The package declares `requires-python = ">=3.9"` and TINTOlib 1.4.0 lists Python 3.9-3.14 in its classifiers. Python 3.14 is intended to be supported without an OS-specific restriction in package metadata; optional runtime requirements (notably MPI for REFINED) remain platform-dependent. The following is **tested environment evidence**, not a guarantee that every version, platform, method option, or workflow behaves identically:
+
+The maintainer also reports successful use with Python 3.14 on a server on 19 November 2026. The server operating system, dependency versions, method coverage, and execution receipts have not been independently inspected for this report; do not present this statement as a cross-platform test-matrix certification.
 
 | Environment | Evidence available | Scope |
 | --- | --- | --- |
 | CPython 3.14.9, macOS ARM64, core dependencies | R13-S9, 16 November 2026: 12/12 small tabular-to-PNG `fit_transform` cases and 144/144 readable PNG files | TINTO, IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap, SuperTML-EF/VF, CLUSTERS-kmeans, DeepInsight-PCA and Fotomics; not every hyperparameter or CLUSTERS backend |
 | CPython 3.14.9, macOS ARM64, `refined` / `all` extras | G4-S3B/S3C, 16 November 2026: clean extra installations and successful synthetic REFINED fit/transform, with MPI invoked | Functional evidence for tested REFINED configurations; MPI worker count was not independently established from the receipts |
+| CPython 3.14.10, macOS ARM64, core dependencies (1.4.0 source tree) | G2-FUNCTIONAL-31410-R2, 20 November 2026: 14/14 synthetic BIE/cBIE integration tests PASS (0 fail, 0 error, 0 skip) | Supervised cBIE default, classic `correlated=False`, unsupervised X-only, positional index invariance, persistence, and error contracts; source-tree only, not packaged wheel/sdist, MPI, or cross-platform certification |
 
 The tested base profile used NumPy 2.5.5, pandas 2.3.3, SciPy 1.18.1, scikit-learn 1.9.1, Matplotlib 3.11.2, Pillow 12.3.0, bitstring 4.4.0, scikit-image 0.26.0 and tqdm 4.70.1. The tested REFINED extra also included mpi4py 4.1.2. These versions are **verified**, not proven *optimal* by a dependency-version comparison.
 
@@ -233,7 +244,7 @@ Choose one installation profile per fresh virtual environment. The commands abov
 
 **SuperTML / fonts:** The tested macOS ARM64 system had Arial available to Pillow at `/System/Library/Fonts/Supplemental/Arial.ttf`. SuperTML requests `arial.ttf` by name. Use a legally installed, discoverable font; do not redistribute font binaries with the package or test receipts.
 
-For Python **below 3.14**, the `refined` and `all` extras in 1.3.4 constrain NumPy to `<2.4`; for Python **3.14 or later**, their NumPy constraint is `>=2.5,<2.6`. These are dependency-resolution conditions, not a claim of runtime testing across every Python version or operating system. The release remains subject to its separate publication checklist.
+For Python **below 3.14**, the `refined` and `all` extras (introduced in 1.3.4 and retained in 1.4.0) constrain NumPy to `<2.4`; for Python **3.14 or later**, their NumPy constraint is `>=2.5,<2.6`. These are dependency-resolution conditions, not a claim of runtime testing across every Python version or operating system. The release remains subject to its separate publication checklist.
 
 However, if you prefer manual installation or want to explore the full environment:
 

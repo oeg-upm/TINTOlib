@@ -1,4 +1,5 @@
 # Standard library imports
+import inspect
 import math
 import os
 import pickle
@@ -128,7 +129,12 @@ class REFINED(MappingMethod):
         Euc_Dist = euclidean_distances(transposed_input)  # Euclidean distance
         Euc_Dist = np.maximum(Euc_Dist, Euc_Dist.transpose())  # Making the Euclidean distance matrix symmetric
 
-        embedding = MDS(n_components=2, random_state=self.random_seed)  # Reduce the dimensionality by MDS into 2 components
+        # Keep the historical random MDS initialization across scikit-learn versions.
+        # The explicit init keyword is available only since scikit-learn 1.8.
+        mds_kwargs = {"n_components": 2, "random_state": self.random_seed}
+        if "init" in inspect.signature(MDS).parameters:
+            mds_kwargs["init"] = "random"
+        embedding = MDS(**mds_kwargs)  # Reduce the dimensionality by MDS into 2 components
         mds_xy = embedding.fit_transform(transposed_input)  # Apply MDS
         self._write_message(">>>> MDS dimensionality reduction is done")
 
