@@ -1,0 +1,71 @@
+name: TINTOlib 1.4.0 - publish frozen assets to PyPI
+
+on:
+  workflow_dispatch:
+
+# Every permission is scoped per job; no standing release-triggered upload.
+permissions: {}
+
+concurrency:
+  group: tintolib-pypi-v1-4-0-one-shot
+  cancel-in-progress: false
+
+jobs:
+  publish-verified-artifacts:
+    name: Verify exact GitHub Release assets and publish once via OIDC
+    if: github.repository == 'oeg-upm/TINTOlib' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Authenticate existing GitHub Release and exact assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          RELEASE='v1.4.0'
+          MERGE_SHA='75842497a83aca5a5c493ae6ab0fb0909388a785'
+          WHEEL_SHA='d7cf6c5fcce3ce637b50560fa47f44ea3100dfa0283a016274b25f0ceed9b84d'
+          SDIST_SHA='5fe1ae050c4de134bfb27af56fe214eb8bb3678c6b4e71d32ebbf7ea03eb452a'
+          WHEEL='tintolib-1.4.0-py3-none-any.whl'
+          SDIST='tintolib-1.4.0.tar.gz'
+
+          # Do not upload a version already registered, including a partial upload.
+          STATUS="$(curl --silent --show-error --location --retry 0             --connect-timeout 10 --max-time 30 -o /dev/null -w '%{http_code}'             'https://pypi.org/pypi/TINTOlib/1.4.0/json')"
+          if [ "$STATUS" != 404 ]; then
+            echo 'HOLD_PYPI_VERSION_EXISTS_OR_STATUS_UNEXPECTED'
+            exit 2
+          fi
+
+          TAG_REF="$(gh api 'repos/oeg-upm/TINTOlib/git/ref/tags/v1.4.0')"
+          TAG_TYPE="$(jq -r '.object.type' <<< "$TAG_REF")"
+          TAG_SHA="$(jq -r '.object.sha' <<< "$TAG_REF")"
+          [ "$TAG_TYPE" = tag ] || { echo 'HOLD_TAG_NOT_ANNOTATED'; exit 2; }
+          TARGET_SHA="$(gh api "repos/oeg-upm/TINTOlib/git/tags/$TAG_SHA" --jq '.object.sha')"
+          [ "$TARGET_SHA" = "$MERGE_SHA" ] || { echo 'HOLD_TAG_TARGET_SHA'; exit 2; }
+
+          RELEASE_JSON="$(gh api 'repos/oeg-upm/TINTOlib/releases/tags/v1.4.0')"
+          if ! jq --exit-status             --arg wh "sha256:$WHEEL_SHA"             --arg sd "sha256:$SDIST_SHA"             --arg wheel "$WHEEL" --arg sdist "$SDIST" '
+              .tag_name == "v1.4.0" and .draft == false and .prerelease == false and
+              ([.assets[].name] | sort) == ([$wheel, $sdist] | sort) and
+              ([.assets[] | select(.name == $wheel) | .digest] == [$wh]) and
+              ([.assets[] | select(.name == $sdist) | .digest] == [$sd])
+            ' <<< "$RELEASE_JSON" >/dev/null; then
+            echo 'HOLD_RELEASE_METADATA_OR_ASSET_DIGEST'
+            exit 2
+          fi
+
+          mkdir -p dist
+          gh release download "$RELEASE" --repo 'oeg-upm/TINTOlib'             --dir dist --pattern "$WHEEL"
+          gh release download "$RELEASE" --repo 'oeg-upm/TINTOlib'             --dir dist --pattern "$SDIST"
+          [ "$(find dist -maxdepth 1 -type f | wc -l | tr -d ' ')" = 2 ]             || { echo 'HOLD_UNEXPECTED_DIST_INVENTORY'; exit 2; }
+          printf '%s  %s\n%s  %s\n' "$WHEEL_SHA" "dist/$WHEEL"             "$SDIST_SHA" "dist/$SDIST" | sha256sum --check
+          echo 'G17_RELEASE_ASSETS_VERIFIED_PASS_NO_BUILD'
+
+      - name: Publish the exact frozen distributions to PyPI via OIDC
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086
+        with:
+          packages-dir: dist/
