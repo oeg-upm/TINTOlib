@@ -78,8 +78,8 @@ PATCHED = [
     ),
     (
         "BIE", BIE, bie_module,
-        ["problem", "transformer", "verbose", "precision", "zoom"],
-        dict(problem=None, verbose=None, precision=32, zoom=1),
+        ["problem", "transformer", "verbose", "precision", "zoom", "correlated"],
+        dict(problem=None, verbose=None, precision=32, zoom=1, correlated=True),
     ),
     (
         "BarGraph", BarGraph, bargraph_module,

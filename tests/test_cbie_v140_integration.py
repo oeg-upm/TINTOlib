@@ -168,6 +168,43 @@ class CBIEIntegratedContractTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "finite, defined Pearson"):
                     model.fit(frame)
 
+    def test_failed_correlated_refit_invalidates_prior_model(self):
+        """Do not silently export a classic layout after failed reordering."""
+        model = BIE(problem="classification", transformer=None)
+        model.fit(self.frame)
+        self.assertTrue(model._fitted)
+        self.assertEqual(len(model._BIE__columns_sorted), 4)
+        bad = self.frame.copy()
+        bad["f2"] = 7.0
+        with self.assertRaisesRegex(ValueError, "finite, defined Pearson"):
+            model.fit(bad)
+        self.assertFalse(model._fitted)
+        self.assertEqual(model._BIE__columns_sorted, [])
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(RuntimeError):
+                model.transform(self.frame, tmp)
+
+    def test_failed_fit_transform_invalidates_prior_model(self):
+        """Combined fit-transform must not retain stale fitted state on error."""
+        model = BIE(problem="classification", transformer=None)
+        model.fit(self.frame)
+        bad = self.frame.copy()
+        bad["target"] = 1
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, "finite, defined Pearson"):
+                model.fit_transform(bad, tmp)
+        self.assertFalse(model._fitted)
+
+    def test_failed_input_validation_refit_invalidates_prior_model(self):
+        """A failure before _fitAlg also invalidates the prior fitted model."""
+        model = BIE(problem="classification", transformer=None)
+        model.fit(self.frame)
+        bad = self.frame.copy()
+        bad.loc[0, "f0"] = np.nan
+        with self.assertRaisesRegex(TypeError, "missing values"):
+            model.fit(bad)
+        self.assertFalse(model._fitted)
+
     def test_nan_values_are_rejected_by_existing_base_loader(self):
         frame = self.frame.copy()
         frame.loc[0, "f0"] = np.nan
