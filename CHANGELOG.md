@@ -1,5 +1,52 @@
 # Changelog
 
+## 1.4.0 - 2026-11-21
+
+TINTOlib 1.4.0 integrates correlated Binary Image Encoding (cBIE, from Javier López's PR #30) into `BIE` with an explicit opt-out to the original BIE ordering, while retaining all TINTOlib 1.3.4 fixes and declaring Python 3.14 in package classifiers.
+
+### Changed
+
+- **Behavior change in `BIE()` (supervised default):** `BIE()` and `BIE(correlated=True)` now use the Pearson/greedy feature-ordering algorithm for supervised `classification` and `regression`. Feature ordering is learned only during `fit` and reused during `transform` as a deterministic transformation of observations (it does not generate new observations and does not claim default predictive-performance gains).
+- Added final parameter `correlated: bool = True` to `BIE(...)`, preserving all previous parameter positions. Pass `BIE(correlated=False)` to retain the original IEEE-754 feature order without computing Pearson correlations.
+- `BIE(problem="unsupervised")` always preserves the original feature order and X-only (`y=None`) export regardless of `correlated`.
+- Callers remain responsible for numeric preprocessing of `X` and external numeric encoding of classification targets `y`; no internal label encoder, no new feature-schema validation, and no value imputation are introduced. Undefined/non-finite Pearson correlations (e.g., constant training features or target) raise a descriptive `ValueError` only in supervised `correlated=True` mode.
+- Added `"Programming Language :: Python :: 3.14"` to `pyproject.toml` classifiers. Optional runtime requirements (notably MPI for `REFINED`) remain platform-dependent.
+
+### Fixed
+
+- Aligned transformed `X` and `y` positionally (`reset_index(drop=True)`) during supervised `BIE._fitAlg` correlation computation so non-consecutive `DataFrame` indices do not misalign features and targets when using `MinMaxScaler`.
+- Preserved the historical random MDS initialization in `REFINED` across scikit-learn versions, passing `MDS(init="random")` only where supported to avoid the MDS initialization deprecation warning.
+
+## 1.3.4 - 2026-11-17
+
+TINTOlib 1.3.4 is a maintenance release for collaborator testing. It includes
+corrections to tabular-to-image transformations and updates dependency constraints
+relative to TINTOlib 1.3.3.
+
+### Changed
+
+- Updated REFINED's parallel Hill-climbing helper to use NumPy reductions. No
+  quantitative runtime improvement is claimed.
+- Updated optional dependency constraints for `greedy`, `refined` and `all` by
+  Python version, including NumPy `>=2.5,<2.6` for REFINED on Python 3.14 and
+  `<2.4` on earlier versions.
+
+### Fixed
+
+- Prevented sharing mutable default preprocessing transformers between model
+  instances of IGTD, BIE, BarGraph, DistanceMatrix, Combination, FeatureWrap,
+  SuperTML and REFINED.
+- Corrected missing-label handling in supported unsupervised export workflows;
+  SuperTML VF explicitly requires labels.
+- Adjusted REFINED's image-pixel assignment to extract a scalar tabular value.
+
+### Installation
+
+For this GitHub pre-release, download the version 1.3.4 wheel from the release
+assets and install that local wheel. Version 1.3.4 is not being uploaded to PyPI
+as part of the collaborator-testing phase. REFINED requires a system MPI runtime
+in addition to `mpi4py`; SuperTML requires an available Arial font.
+
 ## 1.3.3 - 2026-11-12
 
 TINTOlib 1.3.3 fixes TINTO and IGTD image generation and feature-coordinate exports, isolates default preprocessing between models, and strengthens Clusters image encoding and saved-state validation.

@@ -1,0 +1,130 @@
+# Maintained, read-only structural CI for TINTOlib.
+# pull_request validates PR merge refs; push validates changes integrated into main.
+# Does not import TINTOlib, install dependencies, run tests/FIT/MPI, or build artifacts.
+name: TINTOlib structural validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tintolib-static-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  static-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.14']
+    env:
+      TEST_ACCESS: '0'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout event ref with no persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Select Python interpreter
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Parse Python and validate static source and metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PY'
+          import ast
+          import json
+          import re
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          def require(condition: bool, code: str):
+              if not condition:
+                  raise SystemExit('TINTO_STATIC_HOLD_' + code)
+
+          require(sys.version_info[:2] in ((3, 11), (3, 14)), 'PYTHON_MATRIX')
+          package = Path('TINTOlib')
+          tests = Path('tests')
+          require(package.is_dir() and tests.is_dir(), 'SOURCE_LAYOUT')
+          py_files = sorted(package.rglob('*.py')) + sorted(tests.glob('test_*.py'))
+          require(len(py_files) >= 5, 'PYTHON_FILES_MISSING')
+          for path in py_files:
+              require(path.is_file() and not path.is_symlink(), 'SOURCE_FILE_TYPE')
+              try:
+                  ast.parse(path.read_text(encoding='utf-8'), filename=str(path))
+              except (SyntaxError, UnicodeError) as exc:
+                  raise SystemExit('TINTO_STATIC_HOLD_AST_' + str(path)) from exc
+          print('TINTO_STATIC_PYTHON_AST_ONLY_PASS', len(py_files))
+
+          metadata = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))
+          project = metadata['project']
+          require(project.get('name') == 'TINTOlib', 'PACKAGE_NAME')
+          version = project.get('version')
+          require(isinstance(version, str) and bool(re.fullmatch(
+              r'[0-9]+\.[0-9]+\.[0-9]+(?:a[0-9]+|b[0-9]+|rc[0-9]+|\.post[0-9]+|\.dev[0-9]+)?',
+              version)), 'PACKAGE_VERSION_FORMAT')
+          requires_python = project.get('requires-python')
+          require(isinstance(requires_python, str) and requires_python.startswith('>='),
+                  'PYTHON_REQUIRES_DECLARATION')
+          classifiers = project.get('classifiers', [])
+          require(all('Programming Language :: Python :: ' + v in classifiers
+                      for v in ('3.11', '3.14')), 'MATRIX_CLASSIFIERS')
+          extras = project.get('optional-dependencies', {})
+          require(all(name in extras for name in ('greedy', 'refined', 'all')), 'EXTRAS')
+          for name in ('greedy', 'all'):
+              require(any("python_version >= '3.14'" in dep and 'numba' in dep
+                          for dep in extras[name]), 'NUMBA_MARKER_' + name)
+          for name in ('refined', 'all'):
+              require(any("python_version >= '3.14'" in dep and 'numpy' in dep
+                          for dep in extras[name]), 'NUMPY_MARKER_' + name)
+          require('/tests' in metadata['tool']['hatch']['build']['targets']['sdist']['include'],
+                  'SDIST_TEST_DECLARATION')
+          print('TINTO_STATIC_TOML_EXTRAS_SDIST_PASS', version)
+
+          bie = ast.parse((package / 'bie.py').read_text(encoding='utf-8'))
+          cls = next((node for node in bie.body
+                      if isinstance(node, ast.ClassDef) and node.name == 'BIE'), None)
+          require(cls is not None, 'BIE_CLASS')
+          constructor = next((node for node in cls.body
+                              if isinstance(node, ast.FunctionDef) and node.name == '__init__'), None)
+          require(constructor is not None, 'BIE_CONSTRUCTOR')
+          names = [arg.arg for arg in constructor.args.posonlyargs + constructor.args.args]
+          require(bool(names) and names[-1] == 'correlated', 'BIE_CORRELATED_PARAMETER')
+          require(bool(constructor.args.defaults)
+                  and isinstance(constructor.args.defaults[-1], ast.Constant)
+                  and constructor.args.defaults[-1].value is True, 'BIE_DEFAULT_TRUE')
+          test_tree = ast.parse((tests / 'test_cbie_v140_integration.py').read_text(encoding='utf-8'))
+          test_count = sum(isinstance(node, ast.FunctionDef) and node.name.startswith('test_')
+                           for klass in test_tree.body if isinstance(klass, ast.ClassDef)
+                           for node in klass.body)
+          require(test_count >= 14, 'CBIE_TEST_DECLARATION_FLOOR')
+          print('TINTO_STATIC_BIE_API_AND_TEST_DECLARATIONS_PASS', test_count)
+
+          codemeta = json.loads(Path('codemeta.json').read_text(encoding='utf-8'))
+          require(codemeta.get('softwareVersion') == version, 'CODEMETA_VERSION')
+          cff = Path('CITATION.cff').read_text(encoding='utf-8')
+          cff_versions = re.findall(r'(?m)^version:\s*[\x22\x27]?([^\s\x22\x27]+)', cff)
+          require(cff_versions == [version], 'CITATION_VERSION')
+          changelog = Path('CHANGELOG.md').read_text(encoding='utf-8')
+          require(re.search(r'(?m)^##\s+' + re.escape(version) + r'\s+-\s+', changelog)
+                  is not None, 'CHANGELOG_VERSION_HEADER')
+          print('TINTO_STATIC_DOCUMENT_VERSION_CONSISTENCY_PASS', version)
+          print('TINTO_STATIC_ONLY_PASS_NO_IMPORT_NO_FIT_NO_TEST_NO_BUILD_NO_MPI')
+          PY

@@ -1,4 +1,5 @@
 # Standard library imports
+import inspect
 import math
 import os
 import pickle
@@ -25,6 +26,8 @@ import TINTOlib.utils.constants as constants
 ###########################################################
 ################    REFINED    ##############################
 ###########################################################
+
+_DEFAULT_TRANSFORMER = object()
 
 class REFINED(MappingMethod):
     """
@@ -75,7 +78,7 @@ class REFINED(MappingMethod):
     def __init__(
         self,
         problem: Optional[str] = None,
-        transformer = MinMaxScaler(),
+        transformer = _DEFAULT_TRANSFORMER,
         verbose: Optional[bool] = None,
         hcIterations: Optional[int] = default_hc_iterations,
         n_processors: Optional[int] = default_n_processors,
@@ -84,6 +87,9 @@ class REFINED(MappingMethod):
         cmap=default_cmap,
         random_seed: Optional[int] = default_random_seed,
     ):   
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer, zoom=zoom,format=format, cmap=cmap)
         if n_processors < 2:
             raise ValueError(f"n_processors must be greater than 1 (got {n_processors})")
@@ -104,7 +110,8 @@ class REFINED(MappingMethod):
         for i in range(len(X_REFINED_MDS)):
             shape = int(math.sqrt(X_REFINED_MDS[i].shape[0]))
             data = X_REFINED_MDS[i].reshape(shape, shape)
-            self._save_image(data,Y[i],i)
+            target = None if Y is None else Y[i]
+            self._save_image(data,target,i)
 
     def _fitAlg(self, x: pd.DataFrame, y: Union[pd.DataFrame, None]):
         Desc = x.columns.tolist()
@@ -122,7 +129,12 @@ class REFINED(MappingMethod):
         Euc_Dist = euclidean_distances(transposed_input)  # Euclidean distance
         Euc_Dist = np.maximum(Euc_Dist, Euc_Dist.transpose())  # Making the Euclidean distance matrix symmetric
 
-        embedding = MDS(n_components=2, random_state=self.random_seed)  # Reduce the dimensionality by MDS into 2 components
+        # Keep the historical random MDS initialization across scikit-learn versions.
+        # The explicit init keyword is available only since scikit-learn 1.8.
+        mds_kwargs = {"n_components": 2, "random_state": self.random_seed}
+        if "init" in inspect.signature(MDS).parameters:
+            mds_kwargs["init"] = "random"
+        embedding = MDS(**mds_kwargs)  # Reduce the dimensionality by MDS into 2 components
         mds_xy = embedding.fit_transform(transposed_input)  # Apply MDS
         self._write_message(">>>> MDS dimensionality reduction is done")
 

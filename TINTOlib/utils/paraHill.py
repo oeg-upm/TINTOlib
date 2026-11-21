@@ -29,7 +29,7 @@ def universial_corr(dist_matr, mapping_in_int):
     feature_dist = feature_dist.reshape(len(feature_dist),1)
     ## pearsonr returns a tuple
     #corrs = pearsonr(feature_dist,pixel_dist)[0]
-    L2_Norm = np.sqrt(sum((pixel_dist - feature_dist)**2)/sum(feature_dist**2))
+    L2_Norm = np.sqrt(np.sum((pixel_dist - feature_dist)**2)/np.sum(feature_dist**2))
     return L2_Norm
 #%%
 def evaluate_swap(coord1,coord2,dist_matr,mapping_in_int,original_corr = -2):

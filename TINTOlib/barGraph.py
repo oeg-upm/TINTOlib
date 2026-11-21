@@ -17,6 +17,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ################    BarGraph    ###########################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class BarGraph(AbstractImageMethod):
     """
     BarGraph: Represents normalized variable values within [0, 1] in a bar graph format.
@@ -54,13 +56,16 @@ class BarGraph(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose = None,
 
         pixel_width: int = default_pixel_width,
         gap: int = default_gap,
         zoom: int = default_zoom,
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         if not isinstance(pixel_width, int):
@@ -115,4 +120,5 @@ class BarGraph(AbstractImageMethod):
                     (self.gap+(step_column*i_bar)) : (self.gap+(step_column*i_bar)) + self.pixel_width # The width of the column
                 ] = 1
                 
-            self._save_image(image,Y[i],i)
+            target = None if Y is None else Y[i]
+            self._save_image(image,target,i)

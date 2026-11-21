@@ -18,6 +18,8 @@ from TINTOlib.abstractImageMethod import AbstractImageMethod
 ################    Distance Matrix    ####################
 ###########################################################
 
+_DEFAULT_TRANSFORMER = object()
+
 class DistanceMatrix(AbstractImageMethod):
     """
     DistanceMatrix: Represents a distance matrix of all normalized variables within the range [0, 1].
@@ -44,10 +46,13 @@ class DistanceMatrix(AbstractImageMethod):
     def __init__(
         self,
         problem = None,
-        transformer=MinMaxScaler(),
+        transformer=_DEFAULT_TRANSFORMER,
         verbose = None,
         zoom: int = default_zoom,
     ):
+        if transformer is _DEFAULT_TRANSFORMER:
+            transformer = MinMaxScaler()
+
         super().__init__(problem=problem, verbose=verbose, transformer=transformer)
 
         self.zoom = zoom
@@ -82,4 +87,5 @@ class DistanceMatrix(AbstractImageMethod):
             image_norm = (imgI - np.min(imgI)) / (np.max(imgI) - np.min(imgI))
             image = np.repeat(np.repeat(image_norm, self.zoom, axis=0), self.zoom, axis=1)
 
-            self._save_image(image,Y[ins],ins)
+            target = None if Y is None else Y[ins]
+            self._save_image(image,target,ins)

@@ -104,6 +104,8 @@ class AbstractImageMethod(ABC):
         Parameters:
         - data: Path to CSV file or a pandas DataFrame containing data and targets.
         """
+        # A failed refit must never leave an earlier learned mapping usable.
+        self._fitted = False
         with (tqdm(total=100) if self.verbose == True else nullcontext()) as self.bar:
             self.__progress=0
             dataset = self._load_data(data)
@@ -160,6 +162,8 @@ class AbstractImageMethod(ABC):
         """
 
 
+        # Invalidate previous fitted state before any new fit-transform attempt.
+        self._fitted = False
         with (tqdm(total=100,dynamic_ncols=True) if self.verbose==True else nullcontext()) as bar:
             self.__imgs_routes=[]
             self.bar=bar
